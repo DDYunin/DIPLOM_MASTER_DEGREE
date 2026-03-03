@@ -4,7 +4,7 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
-import { useSessionStore } from '@/entities/session/model/store'
+import { useSessionStore } from '@/entities/session/index'
 
 const email = ref('')
 const password = ref('')
@@ -17,7 +17,7 @@ const handleSubmit = async () => {
   if (!email.value || !password.value) {
     return
   }
-  
+
   try {
     isLoading.value = true
     await sessionStore.login(email.value, password.value, rememberMe.value)
@@ -45,12 +45,7 @@ const handleSubmit = async () => {
     <form @submit.prevent="handleSubmit" class="form">
       <div class="field">
         <label for="email">Email Address</label>
-        <InputText 
-          id="email" 
-          v-model="email" 
-          placeholder="student@university.edu" 
-          class="w-full"
-        />
+        <InputText id="email" v-model="email" placeholder="student@university.edu" class="w-full" />
       </div>
 
       <div class="field">
@@ -60,11 +55,11 @@ const handleSubmit = async () => {
         </div>
         <!-- :feedback="false" убирает индикатор сложности пароля -->
         <!-- toggleMask добавляет иконку глазика -->
-        <Password 
-          id="password" 
-          v-model="password" 
-          :feedback="false" 
-          toggleMask 
+        <Password
+          id="password"
+          v-model="password"
+          :feedback="false"
+          toggleMask
           placeholder="••••••••"
           inputClass="w-full"
           class="w-full"
@@ -76,12 +71,7 @@ const handleSubmit = async () => {
         <label for="remember" class="remember-label">Remember me for 30 days</label>
       </div>
 
-      <Button 
-        type="submit" 
-        label="Sign In" 
-        class="submit-btn" 
-        :loading="isLoading"
-      />
+      <Button type="submit" label="Sign In" class="submit-btn" :loading="isLoading" />
     </form>
   </div>
 </template>
@@ -91,7 +81,9 @@ const handleSubmit = async () => {
   background: #ffffff;
   padding: 2.5rem 2rem;
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
   /* Синяя полоска снизу, как на макете */
   border-bottom: 4px solid var(--p-primary-color);
 }
