@@ -1,67 +1,56 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
+
+// Импортируем мок-данные сущности
 import { mockUsers } from '@/entities/user'
 
-const users = ref(mockUsers)
-const selectedUsers = ref()
+// Импортируем фичи
+import { SearchUser } from '@/features/search-user'
+import { FilterUsersByRole } from '@/features/filter-users-by-role'
 
-// Утилита для стилизации бейджей ролей
-const getRoleClass = (role: string) => {
-  const map: Record<string, string> = {
-    Teacher: 'role-teacher',
-    Student: 'role-student',
-    Admin: 'role-admin',
-    Moderator: 'role-moderator'
-  }
-  return ['role-badge', map[role]]
-}
+// Локальное состояние для фичей
+const searchQuery = ref('')
+const selectedRole = ref('All Users')
 
-// Утилита для статусов
-const getStatusClass = (status: string) => {
-  return status === 'Active'
-    ? 'status-active'
-    : status === 'Offline'
-      ? 'status-offline'
-      : 'status-blocked'
-}
+// Вычисляемое свойство для локальной фильтрации
+const filteredUsers = computed(() => {
+  return mockUsers.filter((user) => {
+    // 1. Фильтр по роли
+    const matchRole = selectedRole.value === 'All Users' || user.role === selectedRole.value
+
+    // 2. Фильтр по поиску (имя или email)
+    const searchLower = searchQuery.value.toLowerCase()
+    const matchSearch =
+      user.name.toLowerCase().includes(searchLower) ||
+      user.email.toLowerCase().includes(searchLower)
+
+    return matchRole && matchSearch
+  })
+})
+
+// Утилиты стилизации бейджей
+const getRoleClass = (role: string) => ['role-badge', `role-${role.toLowerCase()}`]
+const getStatusClass = (status: string) => `status-${status.toLowerCase()}`
 </script>
 
 <template>
   <div class="table-widget-card">
-    <!-- Toolbar (Вкладки и поиск) -->
+    <!-- Toolbar с нашими новыми фичами -->
     <div class="table-toolbar">
-      <div class="tabs">
-        <button class="tab active">All Users</button>
-        <button class="tab">Admins</button>
-        <button class="tab">Teachers</button>
-        <button class="tab">Students</button>
-        <div class="divider"></div>
-        <button class="tab more-filters"><i class="pi pi-filter"></i> More Filters</button>
-      </div>
-
-      <IconField iconPosition="left">
-        <InputIcon class="pi pi-search" />
-        <InputText placeholder="Search by name, email..." class="search-input" />
-      </IconField>
+      <FilterUsersByRole v-model="selectedRole" />
+      <SearchUser v-model="searchQuery" />
     </div>
 
-    <!-- Сама таблица -->
-    <DataTable
-      :value="users"
-      v-model:selection="selectedUsers"
-      dataKey="id"
-      class="custom-table"
-      :rows="5"
-      paginator
-    >
-      <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+    <!-- Таблица (клиентская фильтрация и пагинация) -->
+    <!-- :value передаем вычисляемое свойство filteredUsers -->
+    <DataTable :value="filteredUsers" paginator :rows="5" dataKey="id" class="custom-table">
+      <template #empty>
+        <div class="empty-message">No users found.</div>
+      </template>
 
       <Column field="name" header="USER">
         <template #body="slotProps">
@@ -112,10 +101,9 @@ const getStatusClass = (status: string) => {
 .table-widget-card {
   background: white;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
-
 .table-toolbar {
   display: flex;
   justify-content: space-between;
@@ -123,45 +111,13 @@ const getStatusClass = (status: string) => {
   margin-bottom: 1.5rem;
   padding: 0.5rem;
 }
-
-.tabs {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.tab {
-  background: none;
-  border: none;
-  font-size: 0.875rem;
-  font-weight: 500;
+.empty-message {
+  text-align: center;
+  padding: 2rem;
   color: #64748b;
-  cursor: pointer;
-  padding: 0.5rem;
-}
-.tab.active {
-  color: #0f172a;
-  font-weight: 600;
-}
-.divider {
-  width: 1px;
-  height: 1.5rem;
-  background: #e2e8f0;
-  margin: 0 0.5rem;
-}
-.more-filters {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #475569;
 }
 
-.search-input {
-  width: 280px;
-  border-radius: 8px;
-}
-
-/* Кастомные стили ячеек таблицы */
+/* Стили ячеек (идентичны предыдущим) */
 .user-cell {
   display: flex;
   align-items: center;

@@ -50,5 +50,25 @@ export const mockUsers: User[] = [
     department: 'Student Affairs',
     subDepartment: 'Administration',
     status: 'Active'
+  },
+  {
+    id: '6',
+    name: 'John Doe',
+    email: 'john.d@student.edu',
+    avatar: 'https://i.pravatar.cc/150?u=6',
+    role: 'Student',
+    department: 'History',
+    subDepartment: 'Faculty of Arts',
+    status: 'Active'
+  },
+  {
+    id: '7',
+    name: 'Jane Smith',
+    email: 'jane.s@eduteach.com',
+    avatar: 'https://i.pravatar.cc/150?u=7',
+    role: 'Teacher',
+    department: 'Literature',
+    subDepartment: 'Faculty of Arts',
+    status: 'Offline'
   }
 ]

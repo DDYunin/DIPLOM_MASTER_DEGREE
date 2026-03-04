@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { UsersTable } from '@/widgets/users-table'
+import { ImportCSV } from '@/features/import-csv'
 import Button from 'primevue/button'
 </script>
 
@@ -11,7 +12,11 @@ import Button from 'primevue/button'
         <p class="page-subtitle">Manage access, roles, and status for all university members.</p>
       </div>
       <div class="page-actions">
-        <Button label="Import CSV" icon="pi pi-file-excel" outlined class="btn-import" />
+        <!-- Интегрированная фича импорта CSV -->
+        <ImportCSV />
+
+        <!-- Кнопка "Add User" пока остаётся просто UI-элементом страницы, 
+             но в будущем её тоже можно вынести в фичу 'create-user' -->
         <Button label="Add User" icon="pi pi-plus" class="btn-add" />
       </div>
     </div>
@@ -56,10 +61,6 @@ import Button from 'primevue/button'
 .page-actions {
   display: flex;
   gap: 1rem;
-}
-.btn-import {
-  border-color: #cbd5e1;
-  color: #475569;
 }
 .btn-add {
   background: var(--p-primary-color);
