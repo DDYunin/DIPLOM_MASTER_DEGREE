@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { LoginPage } from '@/pages/login'
 import { UsersPage } from '@/pages/users'
+import { AdminRoot } from '@/pages/admin-root'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,9 +13,19 @@ export const router = createRouter({
       component: LoginPage
     },
     {
-      path: '/',
-      name: 'admin-users',
-      component: UsersPage
+      path: '/admin',
+      component: AdminRoot,
+      children: [
+        {
+          path: '',
+          redirect: { name: 'admin-users' }
+        },
+        {
+          path: 'users', // Роут (/admin/users)
+          name: 'admin-users',
+          component: UsersPage
+        }
+      ]
     }
   ]
 })
