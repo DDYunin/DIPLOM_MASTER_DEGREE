@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginPage from '@/pages/login/ui/LoginPage.vue'
+import { LoginPage } from '@/pages/login'
+import { UsersPage } from '@/pages/users'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,8 +13,8 @@ export const router = createRouter({
     },
     {
       path: '/',
-      name: 'admin',
-      component: LoginPage
+      name: 'admin-users',
+      component: UsersPage
     }
   ]
 })
