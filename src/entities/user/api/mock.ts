@@ -1,6 +1,7 @@
-import type { User } from '../model/types'
+import { ref } from 'vue'
+import type { User, StudentProfile } from '../model/types'
 
-export const mockUsers: User[] = [
+export const mockUsers = ref<User[]>([
   {
     id: '1',
     name: 'Sarah Wilson',
@@ -71,4 +72,20 @@ export const mockUsers: User[] = [
     subDepartment: 'Faculty of Arts',
     status: 'Offline'
   }
-]
+])
+
+export const mockStudentProfile: StudentProfile = {
+  id: '1',
+  name: 'Marcus Johnson',
+  email: 'marcus.j@university.edu',
+  avatar: '',
+  role: 'Student',
+  department: 'Computer Science',
+  subDepartment: 'Engineering',
+  status: 'Active',
+  studentId: 'STU-2023-8492',
+  lastLogin: '2 hours ago',
+  username: 'mjohnson23',
+  cohort: 'CS-2024 (Computer Science)',
+  notes: 'Internal notes about this account...'
+}

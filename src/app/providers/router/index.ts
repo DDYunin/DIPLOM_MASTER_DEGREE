@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { LoginPage } from '@/pages/login'
 import { UsersPage } from '@/pages/users'
 import { AdminRoot } from '@/pages/admin-root'
+import { StudentProfilePage } from '@/pages/student-profile'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,11 @@ export const router = createRouter({
           path: 'users', // Роут (/admin/users)
           name: 'admin-users',
           component: UsersPage
+        },
+        {
+          path: 'users/student/:id', // Динамический параметр :id
+          name: 'admin-student-profile',
+          component: StudentProfilePage
         }
       ]
     }

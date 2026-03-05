@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 
 // Импортируем мок-данные сущности
-import { mockUsers } from '@/entities/user'
+import { mockUsers, type User } from '@/entities/user'
 
 // Импортируем фичи
 import { SearchUser } from '@/features/search-user'
 import { FilterUsersByRole } from '@/features/filter-users-by-role'
+
+const router = useRouter()
 
 // Локальное состояние для фичей
 const searchQuery = ref('')
@@ -18,7 +22,7 @@ const selectedRole = ref('All Users')
 
 // Вычисляемое свойство для локальной фильтрации
 const filteredUsers = computed(() => {
-  return mockUsers.filter((user) => {
+  return mockUsers.value.filter((user) => {
     // 1. Фильтр по роли
     const matchRole = selectedRole.value === 'All Users' || user.role === selectedRole.value
 
@@ -31,6 +35,24 @@ const filteredUsers = computed(() => {
     return matchRole && matchSearch
   })
 })
+
+// Обработчик клика по строке
+const onRowClick = (event: { data: User }) => {
+  const user = event.data
+  // Проверяем, что это студент, прежде чем делать переход
+  if (user.role === 'Student') {
+    // Используем именованный роут для надежности
+    router.push({
+      name: 'admin-student-profile',
+      params: { id: user.id }
+    })
+  }
+}
+
+// Динамический класс для строки (добавляем класс, если это студент)
+const getRowClass = (user: User) => {
+  return user.role === 'Student' ? 'clickable-student-row' : ''
+}
 
 // Утилиты стилизации бейджей
 const getRoleClass = (role: string) => ['role-badge', `role-${role.toLowerCase()}`]
@@ -47,7 +69,15 @@ const getStatusClass = (status: string) => `status-${status.toLowerCase()}`
 
     <!-- Таблица (клиентская фильтрация и пагинация) -->
     <!-- :value передаем вычисляемое свойство filteredUsers -->
-    <DataTable :value="filteredUsers" paginator :rows="5" dataKey="id" class="custom-table">
+    <DataTable
+      :value="filteredUsers"
+      paginator
+      :rows="5"
+      dataKey="id"
+      class="custom-table"
+      @row-click="onRowClick"
+      :rowClass="getRowClass"
+    >
       <template #empty>
         <div class="empty-message">No users found.</div>
       </template>
@@ -199,5 +229,15 @@ const getStatusClass = (status: string) => `status-${status.toLowerCase()}`
 
 .action-btn {
   color: #94a3b8;
+}
+
+/* Используем :deep(), так как строки <tr> генерируются внутри дочернего компонента DataTable */
+:deep(.clickable-student-row) {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+:deep(.clickable-student-row:hover) {
+  background-color: #f8fafc !important; /* Цвет при наведении (светло-серый) */
 }
 </style>

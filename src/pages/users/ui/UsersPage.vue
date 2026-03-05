@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UsersTable } from '@/widgets/users-table'
 import { ImportCSV } from '@/features/import-csv'
+import { AddUser } from '@/features/add-user'
 import Button from 'primevue/button'
 </script>
 
@@ -14,10 +15,8 @@ import Button from 'primevue/button'
       <div class="page-actions">
         <!-- Интегрированная фича импорта CSV -->
         <ImportCSV />
-
-        <!-- Кнопка "Add User" пока остаётся просто UI-элементом страницы, 
-             но в будущем её тоже можно вынести в фичу 'create-user' -->
-        <Button label="Add User" icon="pi pi-plus" class="btn-add" />
+        <!-- НАША НОВАЯ ФИЧА ДОБАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯ -->
+        <AddUser />
       </div>
     </div>
 
