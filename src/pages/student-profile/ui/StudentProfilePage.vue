@@ -13,8 +13,10 @@ const profile = ref(mockStudentProfile)
   <div class="profile-page">
     <!-- Breadcrumbs (Хлебные крошки) -->
     <div class="breadcrumbs">
-      <span class="crumb">Users</span> <span class="separator">/</span>
-      <span class="crumb">Students</span> <span class="separator">/</span>
+      <RouterLink class="crumb" :to="{ name: 'admin-users' }">Users</RouterLink>
+      <span class="separator">/</span>
+      <span class="crumb">Students</span>
+      <span class="separator">/</span>
       <span class="crumb active">{{ profile.name }}</span>
     </div>
 

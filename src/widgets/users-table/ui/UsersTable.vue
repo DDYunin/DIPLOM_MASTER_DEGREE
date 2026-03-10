@@ -47,11 +47,14 @@ const onRowClick = (event: { data: User }) => {
       params: { id: user.id }
     })
   }
+  if (user.role === 'Teacher') {
+    router.push({ name: 'admin-teacher-profile', params: { id: user.id } }) // <--- Добавили переход
+  }
 }
 
 // Динамический класс для строки (добавляем класс, если это студент)
 const getRowClass = (user: User) => {
-  return user.role === 'Student' ? 'clickable-student-row' : ''
+  return user.role === 'Student' || user.role === 'Teacher' ? 'clickable-student-row' : ''
 }
 
 // Утилиты стилизации бейджей

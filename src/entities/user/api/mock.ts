@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import type { User, StudentProfile } from '../model/types'
+import type { User, StudentProfile, TeacherProfile } from '../model/types'
 
 export const mockUsers = ref<User[]>([
   {
@@ -88,4 +88,28 @@ export const mockStudentProfile: StudentProfile = {
   username: 'mjohnson23',
   cohort: 'CS-2024 (Computer Science)',
   notes: 'Internal notes about this account...'
+}
+
+export const mockTeacherProfile: TeacherProfile = {
+  id: '2',
+  name: 'Eleanor Rigby',
+  email: 'e.rigby@university.edu',
+  avatar: '', // Инициалы ER
+  role: 'Teacher',
+  department: 'Computer Science',
+  subDepartment: 'Faculty',
+  status: 'Active',
+  employeeId: 'FAC-2023-884',
+  lastLogin: '1 hour ago',
+  groups: ['Faculty Member', 'Curriculum Editor', 'Lab Supervisor'],
+  permissions: {
+    publishGrades: true,
+    manageUsers: false
+  },
+  courses: [
+    { code: 'CS-101', name: 'Intro to Computer Science', semester: 'Fall 2023', status: 'Active' },
+    { code: 'CS-204', name: 'Data Structures', semester: 'Fall 2023', status: 'Active' },
+    { code: 'MATH-301', name: 'Advanced Calculus', semester: 'Spring 2024', status: 'Upcoming' }
+  ],
+  twoFactorEnabled: false
 }
