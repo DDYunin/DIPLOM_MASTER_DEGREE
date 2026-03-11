@@ -1,34 +1,54 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const handleLogout = () => {
+  // Очистка сессии (Pinia, localStorage) будет здесь
+  router.push('/login')
+}
 </script>
 
 <template>
-  <div class="sidebar-content">
-    <div class="logo">
-      <i class="pi pi-graduation-cap text-blue-600 text-2xl"></i>
-      <span class="logo-text">EduTeacher</span>
+  <div class="sidebar-container">
+    <div class="sidebar-top">
+      <div class="logo">
+        <i class="pi pi-graduation-cap text-blue-600 text-2xl"></i>
+        <span class="logo-text">EduAdmin</span>
+      </div>
+
+      <nav class="nav-menu">
+        <RouterLink to="/admin/users" class="nav-item" active-class="active">
+          <i class="pi pi-users"></i> User Management
+        </RouterLink>
+        <a href="#" class="nav-item"><i class="pi pi-sitemap"></i> Hierarchy</a>
+        <!-- ССЫЛКА НА ПРОФИЛЬ АДМИНА -->
+        <RouterLink to="/admin/profile" class="nav-item" active-class="active">
+          <i class="pi pi-cog"></i> Profile
+        </RouterLink>
+      </nav>
     </div>
 
-    <nav class="nav-menu">
-      <RouterLink to="/admin" class="nav-item" exact-active-class="active">
-        <i class="pi pi-th-large"></i> Dashboard
-      </RouterLink>
-      <RouterLink to="/admin/users" class="nav-item" active-class="active">
-        <i class="pi pi-users"></i> Users
-      </RouterLink>
-      <!-- Заглушки для будущих страниц -->
-      <a href="#" class="nav-item"><i class="pi pi-calendar"></i> Calendar</a>
-      <a href="#" class="nav-item"><i class="pi pi-book"></i> Courses</a>
-    </nav>
+    <!-- КНОПКА LOGOUT ВНИЗУ (как на макете) -->
+    <div class="sidebar-bottom">
+      <div class="divider"></div>
+      <button class="logout-btn" @click="handleLogout">
+        <i class="pi pi-sign-out"></i> Log Out
+      </button>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.sidebar-content {
-  padding: 1.5rem;
+.sidebar-container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   height: 100%;
+  background: white;
+}
+.sidebar-top {
+  padding: 1.5rem;
 }
 .logo {
   display: flex;
@@ -36,7 +56,7 @@ import { RouterLink } from 'vue-router'
   gap: 0.75rem;
   font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   color: #0f172a;
 }
 .nav-menu {
@@ -56,10 +76,42 @@ import { RouterLink } from 'vue-router'
   transition: all 0.2s;
 }
 .nav-item:hover {
-  background: #f1f5f9;
+  background: #f8fafc;
+  color: #0f172a;
 }
+
+/* Активный пункт меню как на макете (синий фон, синий текст) */
 .nav-item.active {
   background: #eff6ff;
-  color: var(--p-primary-color);
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* Нижняя часть с логаутом */
+.sidebar-bottom {
+  padding: 1.5rem;
+}
+.divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin-bottom: 1rem;
+}
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  color: #ef4444; /* Красный цвет */
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.logout-btn:hover {
+  background: #fef2f2;
 }
 </style>
