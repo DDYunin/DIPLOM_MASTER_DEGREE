@@ -1,4 +1,4 @@
-import type { OrgTreeNode } from './model/types'
+import type { OrgTreeNode, OrgUnitData, OrgUnitType } from './model/types'
 import { mockOrgTree } from './api/mock'
 
-export { type OrgTreeNode, mockOrgTree }
+export { type OrgTreeNode, type OrgUnitData, type OrgUnitType, mockOrgTree }

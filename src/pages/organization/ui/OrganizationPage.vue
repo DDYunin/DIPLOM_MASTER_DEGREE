@@ -5,47 +5,70 @@ import { OrgTreeBuilder } from '@/widgets/org-tree-builder'
 import { OrgUnitDetails } from '@/widgets/org-unit-details'
 import type { OrgTreeNode } from '@/entities/organization'
 
-// Состояние выбранного узла
 const selectedNode = ref<OrgTreeNode | null>(null)
+const isEditing = ref(false) // Глобальное состояние редактирования
 
 const handleNodeSelect = (node: OrgTreeNode) => {
   selectedNode.value = node
+  isEditing.value = false // Сбрасываем режим редактирования при смене узла
 }
 
-const handleSaveChanges = () => {
-  alert('Hierarchy saved!')
+const handleSaveDetails = (updatedNode: OrgTreeNode) => {
+  // В реальном приложении здесь будет API вызов.
+  // Для мока мы просто обновляем selectedNode. Дерево (если оно завязано на реактивность) тоже обновится.
+  selectedNode.value = updatedNode
+
+  // Примечание: Чтобы обновить именно mockOrgTree, нужно найти узел по ID и заменить его.
+  // Для простоты UI-демонстрации обновление selectedNode достаточно.
+
+  console.log('Saved to server:', updatedNode)
+}
+
+const closePanel = () => {
+  selectedNode.value = null
+  isEditing.value = false
 }
 </script>
 
 <template>
   <div class="organization-page">
-    <!-- Шапка страницы -->
+	<!-- TODO: лишнее -->
+    <div class="page-header">
+      <h1 class="page-title">Hierarchy Builder</h1>
+      <div class="header-actions">
+        <button class="icon-btn"><i class="pi pi-moon"></i></button>
+        <button class="icon-btn"><i class="pi pi-bell"></i><span class="badge"></span></button>
+        <!-- Кнопка изменена на View Logs по новому макету -->
+        <Button label="View Logs" icon="pi pi-history" outlined class="btn-logs" />
+      </div>
+    </div>
 
-
-    <!-- Layout с двумя колонками (Grid) -->
     <div class="builder-layout">
-      <!-- Левая часть (Дерево) -->
       <div class="left-panel">
-        <OrgTreeBuilder @select-node="handleNodeSelect" />
+        <OrgTreeBuilder :isEditing="isEditing" @select-node="handleNodeSelect" />
       </div>
 
-      <!-- Правая часть (Детали) -->
       <div class="right-panel">
-        <OrgUnitDetails :selectedNode="selectedNode" @close="selectedNode = null" />
+        <OrgUnitDetails
+          :selectedNode="selectedNode"
+          v-model:isEditing="isEditing"
+          @save="handleSaveDetails"
+          @close="closePanel"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* Стили страницы остались теми же... */
 .organization-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 72px); /* Вычитаем высоту глобального хедера, если он есть */
+  height: calc(100vh - 72px);
   overflow: hidden;
-  margin: -2rem; /* Компенсируем padding из AdminLayout для полноэкранного вида */
+  margin: -2rem;
 }
-
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -83,10 +106,10 @@ const handleSaveChanges = () => {
   background: #ef4444;
   border-radius: 50%;
 }
-.btn-save {
-  background: #3b82f6;
-  border: none;
-}
+.btn-logs {
+  color: #475569;
+  border-color: #cbd5e1;
+} /* Стиль кнопки логов */
 
 .builder-layout {
   display: flex;
@@ -94,7 +117,6 @@ const handleSaveChanges = () => {
   overflow: hidden;
   background: #f8fafc;
 }
-
 .left-panel {
   flex-grow: 1;
   overflow: hidden;
@@ -106,7 +128,6 @@ const handleSaveChanges = () => {
   transition: width 0.3s;
 }
 
-/* Адаптив: Скрываем правую панель на планшетах, если ничего не выбрано */
 @media (max-width: 1024px) {
   .right-panel {
     position: absolute;
@@ -120,6 +141,5 @@ const handleSaveChanges = () => {
     transform: translateX(100%);
     transition: transform 0.3s;
   }
-  /* Если нужно показывать на мобилках по клику, тут потребуется добавить класс .is-open */
 }
 </style>

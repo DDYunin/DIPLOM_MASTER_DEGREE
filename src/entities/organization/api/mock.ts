@@ -1,6 +1,7 @@
+import { ref } from 'vue'
 import type { OrgTreeNode } from '../model/types'
 
-export const mockOrgTree: OrgTreeNode[] = [
+export const mockOrgTree = ref<OrgTreeNode[]>([
   {
     key: 'uni-1',
     label: 'University of Technology',
@@ -56,4 +57,4 @@ export const mockOrgTree: OrgTreeNode[] = [
       }
     ]
   }
-]
+])
