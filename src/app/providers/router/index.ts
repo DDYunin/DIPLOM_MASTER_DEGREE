@@ -5,6 +5,7 @@ import { AdminRoot } from '@/pages/admin-root'
 import { StudentProfilePage } from '@/pages/student-profile'
 import { TeacherProfilePage } from '@/pages/teacher-profile'
 import { AdminProfilePage } from '@/pages/admin-profile'
+import { OrganizationPage } from '@/pages/organization'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,6 +43,11 @@ export const router = createRouter({
           path: 'profile',
           name: 'admin-profile',
           component: AdminProfilePage
+        },
+        {
+          path: 'organization',
+          name: 'admin-organization',
+          component: OrganizationPage
         }
       ]
     }

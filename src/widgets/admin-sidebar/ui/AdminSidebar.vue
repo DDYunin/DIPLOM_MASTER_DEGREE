@@ -21,7 +21,9 @@ const handleLogout = () => {
         <RouterLink to="/admin/users" class="nav-item" active-class="active">
           <i class="pi pi-users"></i> User Management
         </RouterLink>
-        <a href="#" class="nav-item"><i class="pi pi-sitemap"></i> Hierarchy</a>
+        <RouterLink to="/admin/organization" class="nav-item" active-class="active">
+          <i class="pi pi-sitemap"></i> Organization
+        </RouterLink>
         <!-- ССЫЛКА НА ПРОФИЛЬ АДМИНА -->
         <RouterLink to="/admin/profile" class="nav-item" active-class="active">
           <i class="pi pi-cog"></i> Profile
