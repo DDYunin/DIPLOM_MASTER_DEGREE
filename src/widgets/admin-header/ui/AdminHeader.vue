@@ -1,18 +1,23 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Button from 'primevue/button'
+
+import { LanguageSwitcher } from '@/features/change-language'
+
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="header-content">
-    <h2 class="header-title">User Management</h2>
     <div class="header-actions">
       <IconField iconPosition="left">
         <InputIcon class="pi pi-search" />
-        <InputText placeholder="Search everywhere..." class="global-search" />
+        <InputText :placeholder="t('common.search')" class="global-search" />
       </IconField>
+      <LanguageSwitcher />
       <Button icon="pi pi-bell" text rounded class="icon-btn" />
       <Button icon="pi pi-question-circle" text rounded class="icon-btn" />
     </div>
@@ -23,14 +28,8 @@ import Button from 'primevue/button'
 .header-content {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-}
-.header-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #0f172a;
-  margin: 0;
 }
 .header-actions {
   display: flex;
@@ -45,5 +44,11 @@ import Button from 'primevue/button'
 }
 .icon-btn {
   color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .global-search {
+    width: 200px;
+  }
 }
 </style>

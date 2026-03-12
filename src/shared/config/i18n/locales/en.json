@@ -1,0 +1,21 @@
+{
+  "common": {
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "search": "Search...",
+    "status": "Status",
+    "role": "Role"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "users": "User Management",
+    "organization": "Hierarchy",
+    "profile": "Profile",
+    "logout": "Log Out"
+  },
+  "adminProfile": {
+    "title": "System Settings",
+    "generalConfig": "General Configuration",
+    "generalDesc": "Manage your administrative profile and monitor system integrity."
+  }
+}

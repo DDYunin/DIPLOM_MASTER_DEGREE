@@ -25,12 +25,12 @@ export const router = createRouter({
           redirect: { name: 'admin-users' }
         },
         {
-          path: 'users', // Роут (/admin/users)
+          path: 'users',
           name: 'admin-users',
           component: UsersPage
         },
         {
-          path: 'users/student/:id', // Динамический параметр :id
+          path: 'users/student/:id',
           name: 'admin-student-profile',
           component: StudentProfilePage
         },
