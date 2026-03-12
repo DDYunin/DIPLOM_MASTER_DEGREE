@@ -17,5 +17,48 @@
     "title": "System Settings",
     "generalConfig": "General Configuration",
     "generalDesc": "Manage your administrative profile and monitor system integrity."
+  },
+  "primevue": {
+    "emptyMessage": "No available options",
+    "emptyFilterMessage": "No results found",
+    "clear": "Clear",
+    "apply": "Apply",
+    "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+    "monthNames": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "monthNamesShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "today": "Today",
+    "firstDayOfWeek": 0,
+    "passwordPrompt": "Enter a password",
+    "weak": "Weak",
+    "medium": "Medium",
+    "strong": "Strong"
   }
 }

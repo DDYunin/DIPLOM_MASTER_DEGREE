@@ -1,25 +1,49 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { usePrimeVue } from 'primevue/config'
 import Select from 'primevue/select'
 
-const { locale } = useI18n()
+const { locale, getLocaleMessage } = useI18n()
+const primevue = usePrimeVue()
 
 const languages = ref([
   { label: 'EN', code: 'en' },
   { label: 'RU', code: 'ru' }
 ])
 
+// Функция для синхронизации локали PrimeVue
+const syncPrimeVueLocale = (langCode: string) => {
+  // Получаем весь объект переводов для выбранного языка (ru или en)
+  const messages = getLocaleMessage(langCode) as any
+
+  // Если внутри есть ключ primevue, применяем его к конфигурации библиотеки
+  if (messages && messages.primevue) {
+    primevue.config.locale = messages.primevue
+  }
+}
+
+// При инициализации компонента сразу задаем правильную локаль PrimeVue
+onMounted(() => {
+  syncPrimeVueLocale(locale.value)
+})
+
 const selectedLang = ref(languages.value.find((l) => l.code === locale.value) || languages.value[0])
 
-// При изменении селекта меняем локаль и сохраняем в localStorage
+// Слушаем изменения селекта
 watch(selectedLang, (newVal) => {
+  // 1. Меняем язык для наших текстов (vue-i18n)
   if (!newVal) {
     return
   }
+
   locale.value = newVal.code
+
+  // 2. Сохраняем в localStorage
   localStorage.setItem('app-locale', newVal.code)
-  // Здесь позже добавим смену локали и для PrimeVue компонентов (календари и т.д.)
+
+  // 3. Синхронизируем язык внутри компонентов PrimeVue (календари, фильтры и т.д.)
+  syncPrimeVueLocale(newVal.code)
 })
 </script>
 
