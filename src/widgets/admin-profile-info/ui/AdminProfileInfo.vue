@@ -7,6 +7,8 @@ import Tag from 'primevue/tag'
 import Avatar from 'primevue/avatar'
 import type { AdminProfile } from '@/entities/admin'
 
+import { WidgetCard } from '@/shared/ui/'
+
 // TODO: Достаточно DefineModel
 const props = defineProps<{ modelValue: AdminProfile }>()
 const emit = defineEmits(['update:modelValue'])
@@ -26,88 +28,65 @@ const getInitials = (name: string) =>
 </script>
 
 <template>
-  <div class="widget-card">
-    <div class="card-header">
-      <h3 class="card-title"><i class="pi pi-user text-blue-500"></i> Profile Information</h3>
+  <WidgetCard icon="pi-user" title="Profile Information" iconColorToken="#3b82f6">
+    <template #header-actions>
       <a href="#" class="edit-link">Edit Profile</a>
-    </div>
-
-    <div class="profile-content">
-      <!-- Блок с аватаркой -->
-      <div class="avatar-section">
-        <div class="avatar-wrapper">
-          <Avatar
-            :label="getInitials(profile.fullName)"
-            size="xlarge"
-            shape="circle"
-            class="custom-avatar"
-          />
-          <!-- Иконка камеры поверх аватарки -->
-          <button class="camera-btn" title="Change Avatar">
-            <i class="pi pi-camera"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Сетка инпутов -->
-      <div class="form-grid">
-        <div class="field">
-          <label>FULL NAME</label>
-          <InputText v-model="profile.fullName" />
-        </div>
-
-        <div class="field">
-          <label>ROLE</label>
-          <!-- Роль обычно нельзя поменять самому себе, делаем её в виде Tag -->
-          <div class="role-display">
-            <Tag severity="info" :value="profile.role" rounded class="role-tag" />
+    </template>
+    <template #default>
+      <div class="profile-content">
+        <!-- Блок с аватаркой -->
+        <div class="avatar-section">
+          <div class="avatar-wrapper">
+            <Avatar
+              :label="getInitials(profile.fullName)"
+              size="xlarge"
+              shape="circle"
+              class="custom-avatar"
+            />
+            <!-- Иконка камеры поверх аватарки -->
+            <button class="camera-btn" title="Change Avatar">
+              <i class="pi pi-camera"></i>
+            </button>
           </div>
         </div>
 
-        <div class="field">
-          <label>EMAIL ADDRESS</label>
-          <IconField iconPosition="left">
-            <InputIcon class="pi pi-envelope" />
-            <InputText v-model="profile.email" class="w-full" />
-          </IconField>
-        </div>
+        <!-- Сетка инпутов -->
+        <div class="form-grid">
+          <div class="field">
+            <label>FULL NAME</label>
+            <InputText v-model="profile.fullName" />
+          </div>
 
-        <div class="field">
-          <label>PHONE NUMBER</label>
-          <IconField iconPosition="left">
-            <InputIcon class="pi pi-phone" />
-            <InputText v-model="profile.phone" class="w-full" />
-          </IconField>
+          <div class="field">
+            <label>ROLE</label>
+            <!-- Роль обычно нельзя поменять самому себе, делаем её в виде Tag -->
+            <div class="role-display">
+              <Tag severity="info" :value="profile.role" rounded class="role-tag" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label>EMAIL ADDRESS</label>
+            <IconField iconPosition="left">
+              <InputIcon class="pi pi-envelope" />
+              <InputText v-model="profile.email" class="w-full" />
+            </IconField>
+          </div>
+
+          <div class="field">
+            <label>PHONE NUMBER</label>
+            <IconField iconPosition="left">
+              <InputIcon class="pi pi-phone" />
+              <InputText v-model="profile.phone" class="w-full" />
+            </IconField>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </WidgetCard>
 </template>
 
 <style scoped>
-.widget-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 1rem;
-}
-.card-title {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
 .edit-link {
   color: #3b82f6;
   font-size: 0.875rem;

@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import Password from 'primevue/password'
 import Message from 'primevue/message'
 
+import { WidgetCard } from '@/shared/ui/'
+
 // Локальное состояние для паролей
 const passwords = ref({
   current: '',
@@ -15,74 +17,53 @@ defineExpose({ passwords })
 </script>
 
 <template>
-  <div class="widget-card">
-    <div class="card-header">
-      <h3 class="card-title"><i class="pi pi-lock text-blue-500"></i> Security & Password</h3>
-    </div>
-
-    <div class="form-layout">
-      <div class="field full-width">
-        <label>CURRENT PASSWORD</label>
-        <Password
-          v-model="passwords.current"
-          :feedback="false"
-          toggleMask
-          class="w-full"
-          inputClass="w-full"
-        />
-      </div>
-
-      <div class="password-row">
-        <div class="field">
-          <label>NEW PASSWORD</label>
+  <WidgetCard icon="pi-loc" title="Security & Password" iconColorToken="#3b82f6">
+    <template #default>
+      <div class="form-layout">
+        <div class="field full-width">
+          <label>CURRENT PASSWORD</label>
           <Password
-            v-model="passwords.new"
-            :feedback="true"
-            toggleMask
-            class="w-full"
-            inputClass="w-full"
-          />
-        </div>
-        <div class="field">
-          <label>CONFIRM NEW PASSWORD</label>
-          <Password
-            v-model="passwords.confirm"
+            v-model="passwords.current"
             :feedback="false"
             toggleMask
             class="w-full"
             inputClass="w-full"
           />
         </div>
-      </div>
 
-      <!-- Информационное сообщение как на макете -->
-      <Message severity="info" :closable="false" class="custom-message">
-        Password must be at least 8 characters long and contain one special character.
-      </Message>
-    </div>
-  </div>
+        <div class="password-row">
+          <div class="field">
+            <label>NEW PASSWORD</label>
+            <Password
+              v-model="passwords.new"
+              :feedback="true"
+              toggleMask
+              class="w-full"
+              inputClass="w-full"
+            />
+          </div>
+          <div class="field">
+            <label>CONFIRM NEW PASSWORD</label>
+            <Password
+              v-model="passwords.confirm"
+              :feedback="false"
+              toggleMask
+              class="w-full"
+              inputClass="w-full"
+            />
+          </div>
+        </div>
+
+        <!-- Информационное сообщение как на макете -->
+        <Message severity="info" :closable="false" class="custom-message">
+          Password must be at least 8 characters long and contain one special character.
+        </Message>
+      </div>
+    </template>
+  </WidgetCard>
 </template>
 
 <style scoped>
-.widget-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-.card-header {
-  margin-bottom: 1.5rem;
-}
-.card-title {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .form-layout {
   display: flex;
   flex-direction: column;

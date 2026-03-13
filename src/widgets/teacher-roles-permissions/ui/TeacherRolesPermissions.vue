@@ -5,6 +5,8 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import type { TeacherProfile } from '@/entities/user'
 import { AddPermissionScope } from '@/features/add-permission-scope'
 
+import { WidgetCard } from '@/shared/ui/'
+
 const props = defineProps<{ profile: TeacherProfile }>()
 
 // Локальное состояние для переключателей (тогглов)
@@ -29,84 +31,53 @@ const removeGroup = (groupToRemove: string) => {
 </script>
 
 <template>
-  <div class="widget-card">
-    <div class="card-header">
-      <div class="title-block">
-        <h3 class="card-title"><i class="pi pi-check-circle"></i> Roles & Permissions</h3>
-        <p class="card-subtitle">Access levels and administrative groups assigned to this user.</p>
-      </div>
-      <!-- Вставляем фичу. Она сама отрендерит кнопку "Add Permission" 
-           и откроет модалку. Нам нужно только слушать событие @add -->
+  <WidgetCard
+    icon="pi-check-circle"
+    title="Roles & Permissions"
+    iconColorToken="#3b82f6"
+    subtitle="Access levels and administrative groups assigned to this user"
+  >
+    <template #header-actions>
       <AddPermissionScope @add="handleAddGroups" />
-    </div>
-
-    <div class="groups-section">
-      <label class="section-label">ASSIGNED GROUPS</label>
-      <div class="chips-container">
-        <!-- Отрисовываем группы. У Chip есть событие @remove для крестика -->
-        <Chip
-          v-for="group in groups"
-          :key="group"
-          :label="group"
-          removable
-          @remove="removeGroup(group)"
-          class="custom-chip"
-        />
-      </div>
-    </div>
-
-    <div class="permissions-grid">
-      <div class="permission-item">
-        <div class="perm-text">
-          <span class="perm-name">Publish Grades</span>
-          <span class="perm-desc">Can finalize term grades</span>
+    </template>
+    <template #default>
+      <div class="groups-section">
+        <label class="section-label">ASSIGNED GROUPS</label>
+        <div class="chips-container">
+          <!-- Отрисовываем группы. У Chip есть событие @remove для крестика -->
+          <Chip
+            v-for="group in groups"
+            :key="group"
+            :label="group"
+            removable
+            @remove="removeGroup(group)"
+            class="custom-chip"
+          />
         </div>
-        <ToggleSwitch v-model="permissions.publishGrades" />
       </div>
 
-      <div class="permission-item">
-        <div class="perm-text">
-          <span class="perm-name">Manage System Users</span>
-          <span class="perm-desc">Can add new students</span>
+      <div class="permissions-grid">
+        <div class="permission-item">
+          <div class="perm-text">
+            <span class="perm-name">Publish Grades</span>
+            <span class="perm-desc">Can finalize term grades</span>
+          </div>
+          <ToggleSwitch v-model="permissions.publishGrades" />
         </div>
-        <ToggleSwitch v-model="permissions.manageUsers" />
+
+        <div class="permission-item">
+          <div class="perm-text">
+            <span class="perm-name">Manage System Users</span>
+            <span class="perm-desc">Can add new students</span>
+          </div>
+          <ToggleSwitch v-model="permissions.manageUsers" />
+        </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </WidgetCard>
 </template>
 
 <style scoped>
-.widget-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
-}
-.card-title {
-  margin: 0 0 0.25rem 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.card-title i {
-  color: #3b82f6;
-}
-.card-subtitle {
-  margin: 0;
-  font-size: 0.875rem;
-  color: #64748b;
-}
-
 .groups-section {
   margin-bottom: 1.5rem;
 }

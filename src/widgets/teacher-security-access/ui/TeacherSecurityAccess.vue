@@ -4,66 +4,44 @@ import Button from 'primevue/button'
 import ToggleSwitch from 'primevue/toggleswitch'
 import type { TeacherProfile } from '@/entities/user'
 
+import { WidgetCard } from '@/shared/ui/'
+
 const props = defineProps<{ profile: TeacherProfile }>()
 const mfaEnabled = ref(props.profile.twoFactorEnabled)
 </script>
 
 <template>
-  <div class="widget-card">
-    <div class="card-header">
-      <h3 class="card-title"><i class="pi pi-shield"></i> Security & Access</h3>
-    </div>
-
-    <div class="security-grid">
-      <!-- Карточка Password Reset -->
-      <div class="security-box">
-        <div class="box-icon bg-blue"><i class="pi pi-key"></i></div>
-        <div class="box-content">
-          <span class="box-title">Password Reset</span>
-          <span class="box-desc">Send a password reset link to the user's email address.</span>
-          <Button label="Send Link" outlined class="action-btn" />
+  <WidgetCard icon="pi-shield" title="Security & Access" iconColorToken="#3b82f6">
+    <template #default>
+      <div class="security-grid">
+        <!-- Карточка Password Reset -->
+        <div class="security-box">
+          <div class="box-icon bg-blue"><i class="pi pi-key"></i></div>
+          <div class="box-content">
+            <span class="box-title">Password Reset</span>
+            <span class="box-desc">Send a password reset link to the user's email address.</span>
+            <Button label="Send Link" outlined class="action-btn" />
+          </div>
         </div>
-      </div>
 
-      <!-- Карточка 2FA -->
-      <div class="security-box">
-        <div class="box-icon bg-blue"><i class="pi pi-mobile"></i></div>
-        <div class="box-content">
-          <span class="box-title">Multi-Factor Auth</span>
-          <span class="box-desc">Enforce 2FA on next login.</span>
-          <div class="toggle-row">
-            <ToggleSwitch v-model="mfaEnabled" />
-            <span class="toggle-label">{{ mfaEnabled ? 'Enabled' : 'Disabled' }}</span>
+        <!-- Карточка 2FA -->
+        <div class="security-box">
+          <div class="box-icon bg-blue"><i class="pi pi-mobile"></i></div>
+          <div class="box-content">
+            <span class="box-title">Multi-Factor Auth</span>
+            <span class="box-desc">Enforce 2FA on next login.</span>
+            <div class="toggle-row">
+              <ToggleSwitch v-model="mfaEnabled" />
+              <span class="toggle-label">{{ mfaEnabled ? 'Enabled' : 'Disabled' }}</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </WidgetCard>
 </template>
 
 <style scoped>
-.widget-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-.card-header {
-  margin-bottom: 1.5rem;
-}
-.card-title {
-  margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #0f172a;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.card-title i {
-  color: #3b82f6;
-}
-
 .security-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
