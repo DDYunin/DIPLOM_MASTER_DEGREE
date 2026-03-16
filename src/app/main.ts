@@ -8,6 +8,7 @@ import { router } from './providers/router'
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
 import 'primeicons/primeicons.css'
+import ToastService from 'primevue/toastservice'
 
 // ИМПОРТИРУЕМ I18N
 import { i18n } from '@/shared/config/i18n'
@@ -26,5 +27,6 @@ app.use(PrimeVue, {
     preset: Aura
   }
 })
+app.use(ToastService)
 
 app.mount('#app')

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "fullName": "Sarah Wilson",
+    "email": "sarah.w@eduteach.com",
+    "role": "Teacher",
+    "department": "Mathematics",
+    "status": "Active"
+  },
+  {
+    "id": "2",
+    "fullName": "James Rodriguez",
+    "email": "j.rodriguez@student.edu",
+    "role": "Student",
+    "department": "Computer Science",
+    "cohort": "CS-2024",
+    "status": "Active"
+  },
+  {
+    "id": "admin-1",
+    "fullName": "Thomas Anderson",
+    "email": "admin@university.edu",
+    "role": "Super Admin",
+    "phone": "+1 (555) 019-2834",
+    "status": "Active"
+  }
+]

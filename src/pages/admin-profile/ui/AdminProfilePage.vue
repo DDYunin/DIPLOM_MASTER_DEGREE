@@ -1,19 +1,46 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Button from 'primevue/button'
-import { mockAdminProfile } from '@/entities/admin'
+import Skeleton from 'primevue/skeleton'
+
+import { useUserStore } from '@/entities/user'
+import { useNotifications } from '@/shared/model/useNotifications'
 
 import { AdminProfileInfo } from '@/widgets/admin-profile-info'
 import { AdminSecurityPassword } from '@/widgets/admin-security-password'
 
-const profileDraft = ref({ ...mockAdminProfile })
-const securityRef = ref<InstanceType<typeof AdminSecurityPassword> | null>(null)
+import type { User } from '@/entities/user'
 
-const handleSaveChanges = () => {
-  const passwordData = securityRef.value?.passwords
-  console.log('Saving Profile:', profileDraft.value)
-  console.log('Password Changes:', passwordData)
-  alert('Settings saved successfully!')
+const userStore = useUserStore()
+const notifications = useNotifications()
+
+// Черновик формы. Изначально null, пока данные не загрузятся.
+const profileDraft = ref<User | null>(null)
+
+onMounted(async () => {
+  // 1. Убеждаемся, что пользователи загружены
+  // (В реальном приложении здесь был бы запрос профиля текущего пользователя: await userStore.fetchMe())
+  if (userStore.users.length === 0) {
+    await userStore.loadUsers()
+  }
+
+  // 2. Ищем админа (ID 'admin-1' мы задали в mock-данных)
+  const adminData = userStore.getUserById('admin-1')
+
+  // 3. Создаем ЛОКАЛЬНУЮ КОПИЮ для редактирования
+  if (adminData) {
+    profileDraft.value = { ...adminData }
+  }
+})
+
+const handleSaveChanges = async () => {
+  if (!profileDraft.value) return
+
+  // Вызываем экшен стора. Если будет ошибка сети — API клиент сам выбросит Toast с ошибкой.
+  await userStore.updateUser(profileDraft.value.id, profileDraft.value)
+
+  // Если код дошел сюда, значит запрос успешен! Показываем Toast.
+  notifications.showToast('success', 'Success', 'System settings have been updated.')
 }
 </script>
 
@@ -30,14 +57,27 @@ const handleSaveChanges = () => {
         <p class="sub-desc">Manage your administrative profile.</p>
       </div>
 
-      <div class="content-column">
+      <!-- Если данные загружаются, показываем заглушку (Skeleton) -->
+      <div v-if="userStore.isLoading || !profileDraft" class="content-column">
+        <Skeleton width="100%" height="300px" borderRadius="12px" />
+        <Skeleton width="100%" height="200px" borderRadius="12px" />
+      </div>
+
+      <!-- Когда данные есть, рендерим форму -->
+      <div v-else class="content-column">
         <AdminProfileInfo v-model="profileDraft" />
         <AdminSecurityPassword ref="securityRef" />
 
-        <!-- Кнопки действий внизу страницы -->
         <div class="form-actions">
           <Button label="Cancel" outlined class="btn-cancel" />
-          <Button label="Save Changes" class="btn-save" @click="handleSaveChanges" />
+          <!-- Кнопку можно задизейблить или показать лоадер, если стор грузит данные -->
+          <Button
+            label="Save Changes"
+            class="btn-save"
+            icon="pi pi-check"
+            :loading="userStore.isLoading"
+            @click="handleSaveChanges"
+          />
         </div>
       </div>
     </div>
