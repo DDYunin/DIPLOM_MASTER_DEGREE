@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { mockTeacherProfile } from '@/entities/user'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import Button from 'primevue/button'
+import Skeleton from 'primevue/skeleton'
+
+import { useUserStore, type User } from '@/entities/user'
+import { useNotifications } from '@/shared/model/useNotifications'
+
 
 // Импорт виджетов
 import { TeacherProfileHeader } from '@/widgets/teacher-profile-header'
@@ -8,9 +14,33 @@ import { TeacherRolesPermissions } from '@/widgets/teacher-roles-permissions'
 import { TeacherAssignedCourses } from '@/widgets/teacher-assigned-courses'
 import { TeacherSecurityAccess } from '@/widgets/teacher-security-access'
 import { TeacherAccountInfo } from '@/widgets/teacher-account-Info'
-// *Представь, что здесь также импортирован TeacherAccountInfo*
 
-const profile = ref(mockTeacherProfile)
+const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
+const notifications = useNotifications()
+
+const profileDraft = ref<User | null>(null)
+
+onMounted(async () => {
+  const userId = route.params.id as string
+  if (userStore.users.length === 0) await userStore.loadUsers()
+
+  debugger
+  const teacherData = userStore.getUserById(userId)
+  if (teacherData) {
+    profileDraft.value = { ...teacherData }
+  } else {
+    notifications.showToast('error', 'Not Found', 'Teacher not found.')
+    router.push('/admin/users')
+  }
+})
+
+const handleSaveChanges = async () => {
+  if (!profileDraft.value) return
+  await userStore.updateUser(profileDraft.value.id, profileDraft.value)
+  notifications.showToast('success', 'Success', 'Teacher profile updated successfully.')
+}
 </script>
 
 <template>
@@ -20,18 +50,26 @@ const profile = ref(mockTeacherProfile)
       <span class="separator">/</span>
       <span class="crumb">Teachers</span>
       <span class="separator">/</span>
-      <span class="crumb active">{{ profile.name }}</span>
+      <span class="crumb active">{{ profileDraft?.fullName ?? 'Loading...' }}</span>
     </div>
 
     <!-- Тот самый layout-контейнер (одна колонка, ограничение ширины) -->
     <div class="profile-container">
-      <TeacherProfileHeader :profile="profile" />
+      <div v-if="userStore.isLoading || !profileDraft" class="flex flex-col gap-4">
+        <Skeleton width="100%" height="300px" borderRadius="12px" />
+        <Skeleton width="100%" height="200px" borderRadius="12px" />
+      </div>
 
       <div class="content-column">
-        <TeacherAccountInfo :profile="profile" />
-        <TeacherRolesPermissions :profile="profile" />
-        <TeacherAssignedCourses :profile="profile" />
-        <TeacherSecurityAccess :profile="profile" />
+        <TeacherProfileHeader :profile="profileDraft" />
+        <TeacherAccountInfo :profile="profileDraft" />
+        <TeacherRolesPermissions :profile="profileDraft" />
+        <TeacherAssignedCourses :profile="profileDraft" />
+        <TeacherSecurityAccess :profile="profileDraft" />
+        <div class="form-actions">
+          <Button label="Cancel" outlined @click="router.back()" />
+          <Button label="Save Changes" icon="pi pi-check" @click="handleSaveChanges" />
+        </div>
       </div>
     </div>
   </div>
@@ -85,5 +123,12 @@ const profile = ref(mockTeacherProfile)
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 </style>

@@ -51,9 +51,16 @@ const cancelEditing = () => {
 
 const saveChanges = () => {
   // Форматируем обратно дату
+  // if (draft.value.createdDateObj) {
+  //   const d = draft.value.createdDateObj
+  //   draft.value.createdDate = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`
+  // }
   if (draft.value.createdDateObj) {
-    const d = draft.value.createdDateObj
-    draft.value.createdDate = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`
+    const d = draft.value.createdDateObj as Date
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    draft.value.createdDate = `${month}/${day}/${d.getFullYear()}`
+    delete draft.value.createdDateObj // Убираем временный объект
   }
 
   // Отправляем сохраненные данные наверх
@@ -100,18 +107,18 @@ const saveChanges = () => {
       </div>
 
       <div class="meta-list">
-        <div class="meta-item">
+        <div v-if="selectedNode.data.parentDept" class="meta-item">
           <span class="meta-label">PARENT DEPT</span>
           <span class="meta-value"
             ><i class="pi pi-folder text-gray"></i> {{ selectedNode.data.parentDept }}</span
           >
         </div>
-        <div class="meta-item">
+        <div v-if="selectedNode.data.createdDate" class="meta-item">
           <span class="meta-label">CREATED DATE</span>
           <span class="meta-value">{{ selectedNode.data.createdDate }}</span>
         </div>
-        <div class="meta-item" v-if="selectedNode.data.head">
-          <span class="meta-label">HEAD OF GROUP</span>
+        <div v-if="selectedNode.data.head" class="meta-item">
+          <span class="meta-label">HEAD OF Unit</span>
           <span class="meta-value head-value">
             <Avatar
               :label="selectedNode.data.head.avatarInitials"
@@ -187,7 +194,7 @@ const saveChanges = () => {
         </div>
 
         <div class="field">
-          <label>HEAD OF GROUP</label>
+          <label>HEAD OF Unit</label>
           <Select v-model="draft.head.name" :options="headOptions" class="w-full" />
         </div>
 
@@ -211,8 +218,8 @@ const saveChanges = () => {
     </template>
 
     <!-- ID в самом низу (показывается и там и там) -->
-    <div class="panel-footer" v-if="selectedNode.data.groupId">
-      {{ selectedNode.data.groupId }} <span v-if="isEditing">(Editing)</span>
+    <div class="panel-footer" v-if="selectedNode.data.groupId || selectedNode.data.code">
+      {{ selectedNode.data.groupId || selectedNode.data.code }} <span v-if="isEditing">(Editing)</span>
     </div>
   </div>
 

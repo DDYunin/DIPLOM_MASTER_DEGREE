@@ -1,24 +1,36 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Tree from 'primevue/tree'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Button from 'primevue/button'
-import { mockOrgTree } from '@/entities/organization'
-import type { OrgTreeNode } from '@/entities/organization'
+import Skeleton from 'primevue/skeleton'
+
+import { useOrgStore, type OrgTreeNode } from '@/entities/organization'
 import { AddOrgUnitModal } from '@/features/add-org-unit'
 
 // ДОБАВИЛИ ПРОПС isEditing
 const props = defineProps<{ isEditing: boolean }>()
 const emit = defineEmits<{ (e: 'select-node', node: OrgTreeNode): void }>()
 
-// Ссылка на модальное окно (чтобы вызвать метод openModal)
+const orgStore = useOrgStore()
 const addModalRef = ref<InstanceType<typeof AddOrgUnitModal> | null>(null)
 
 const searchQuery = ref('')
-const expandedKeys = ref<Record<string, boolean>>({ 'uni-1': true, 'inst-1': true, 'dept-1': true })
+const expandedKeys = ref<Record<string, boolean>>({})
 const selectedKey = ref<Record<string, boolean>>({})
+
+// При монтировании запрашиваем данные из API
+onMounted(async () => {
+  if (orgStore.treeData.length === 0) {
+    await orgStore.loadTree()
+    // По умолчанию раскрываем корень
+    if (orgStore.treeData.length > 0) {
+      expandedKeys.value[orgStore.treeData[0].key] = true
+    }
+  }
+})
 
 // Вычисляем ТЕКУЩИЙ выделенный узел
 const currentNode = computed<OrgTreeNode | null>(() => {
@@ -33,15 +45,49 @@ const currentNode = computed<OrgTreeNode | null>(() => {
       if (node.children && !found) findNode(node.children)
     }
   }
-  findNode(mockOrgTree.value)
+  findNode(orgStore.treeData)
   return found
 })
 
-const filteredTree = computed(() => mockOrgTree.value)
+// РЕКУРСИВНЫЙ ПОИСК ПО ДЕРЕВУ
+const filteredTree = computed(() => {
+  if (!searchQuery.value) return orgStore.treeData
+  const lowerQuery = searchQuery.value.toLowerCase()
+
+  const filterNodes = (nodes: OrgTreeNode[]): OrgTreeNode[] => {
+    return nodes.reduce((acc, node) => {
+      // Ищем совпадение в имени или коде подразделения
+      const isMatch =
+        node.label.toLowerCase().includes(lowerQuery) ||
+        (node.data?.code && node.data.code.toLowerCase().includes(lowerQuery))
+
+      // Ищем в детях
+      const filteredChildren = node.children ? filterNodes(node.children) : []
+
+      // Если совпал сам узел ИЛИ кто-то из его детей — оставляем узел
+      if (isMatch || filteredChildren.length > 0) {
+        acc.push({
+          ...node,
+          children: filteredChildren.length > 0 ? filteredChildren : node.children
+        })
+      }
+      return acc
+    }, [] as OrgTreeNode[])
+  }
+
+  return filterNodes(orgStore.treeData)
+})
 
 const expandAll = () => {
-  expandedKeys.value = { 'uni-1': true, 'inst-1': true, 'dept-1': true }
+  const expand = (nodes: OrgTreeNode[]) => {
+    nodes.forEach((node) => {
+      expandedKeys.value[node.key] = true
+      if (node.children) expand(node.children)
+    })
+  }
+  expand(orgStore.treeData)
 }
+
 const collapseAll = () => {
   expandedKeys.value = {}
 }
@@ -52,25 +98,27 @@ const onNodeSelect = (node: any) => {
   emit('select-node', node)
 }
 
-// Открытие модалки
+// Открытие модалки добавления (Feature)
 const handleOpenAddModal = () => {
   addModalRef.value?.openModal()
 }
 
-// Добавление узла в дерево
-const handleAddNewNode = (newNode: OrgTreeNode) => {
-  if (currentNode.value) {
-    if (!currentNode.value.children) {
-      currentNode.value.children = []
+// Сохранение нового узла
+const handleAddNewNode = async (newNode: OrgTreeNode) => {
+  const parentId = currentNode.value ? currentNode.value.key : null
+
+  try {
+    // Стор сам сделает PUT-запрос
+    await orgStore.addNode(parentId, newNode)
+
+    // После успешного добавления обязательно раскрываем родительскую папку
+    if (parentId) {
+      expandedKeys.value[parentId] = true
+    } else if (orgStore.treeData.length > 0) {
+      expandedKeys.value[orgStore.treeData[0].key] = true
     }
-    // Добавляем к выбранному узлу
-    currentNode.value.children.push(newNode)
-    // Раскрываем родительскую папку, чтобы увидеть результат
-    expandedKeys.value[currentNode.value.key] = true
-  } else {
-    // Если ничего не выделено, добавляем в корень
-    mockOrgTree.value[0].children?.push(newNode)
-    expandedKeys.value[mockOrgTree.value[0].key] = true
+  } catch (error) {
+    // Client сам отработает ошибку
   }
 }
 
@@ -113,6 +161,23 @@ const getIcon = (type: string) => {
           :disabled="isEditing"
         />
       </div>
+    </div>
+
+    <!-- Пока загружается дерево с сервера -->
+    <div
+      v-if="orgStore.isLoading"
+      class="p-4"
+      style="background: white; border-radius: 12px; flex-grow: 1"
+    >
+      <Skeleton width="100%" height="3rem" borderRadius="8px" class="mb-3" />
+      <Skeleton
+        width="80%"
+        height="3rem"
+        borderRadius="8px"
+        class="mb-3"
+        style="margin-left: 1.5rem"
+      />
+      <Skeleton width="90%" height="3rem" borderRadius="8px" style="margin-left: 1.5rem" />
     </div>
 
     <div class="tree-container" :class="{ 'disabled-overlay': isEditing }">
@@ -305,4 +370,5 @@ const getIcon = (type: string) => {
   opacity: 0.6;
   pointer-events: none;
 } /* Визуально блокируем дерево */
+.mb-3 { margin-bottom: 1rem; }
 </style>

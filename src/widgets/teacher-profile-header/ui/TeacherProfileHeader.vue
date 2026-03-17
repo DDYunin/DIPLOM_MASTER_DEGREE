@@ -18,7 +18,7 @@ const getInitials = (name: string) =>
     <div class="info-section">
       <!-- Зеленоватый аватар как на макете -->
       <Avatar
-        :label="getInitials(profile.name)"
+        :label="getInitials(profile?.fullName)"
         size="xlarge"
         shape="circle"
         class="custom-avatar"

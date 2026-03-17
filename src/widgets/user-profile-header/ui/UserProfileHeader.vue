@@ -19,7 +19,7 @@ const getInitials = (name: string) =>
   <div class="profile-header-card">
     <div class="info-section">
       <Avatar
-        :label="getInitials(profile.name)"
+        :label="getInitials(profile.fullName)"
         size="xlarge"
         shape="circle"
         class="custom-avatar"

@@ -8,7 +8,7 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
 
   try {
     // 1. Имитация задержки реальной сети
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // ==============================================================
     // 🛑 MOCK-ПЕРЕХВАТЧИК (Удалить, когда появится реальный бэкенд)
@@ -43,6 +43,24 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
           return dbCache.users[index] as T
         }
         throw new Error('User not found')
+      }
+    }
+    // --- БЛОК /organization ---
+    if (endpoint.startsWith('/organization/tree')) {
+      // Запрашиваем дерево
+      if (method === 'GET') {
+        if (!dbCache.orgTree) {
+          const res = await fetch('/mock-data/organization.json');
+          if (!res.ok) throw new Error(`Failed to load mock data`);
+          dbCache.orgTree = await res.json();
+        }
+        return dbCache.orgTree as T;
+      }
+      
+      // Имитация сохранения всего дерева
+      if (method === 'PUT' && options.body) {
+        dbCache.orgTree = JSON.parse(options.body as string);
+        return dbCache.orgTree as T;
       }
     }
     // ==============================================================

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 import DataTable from 'primevue/datatable'
@@ -8,33 +8,37 @@ import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 
 // Импортируем мок-данные сущности
-import { mockUsers, type User } from '@/entities/user'
+import { useUserStore, type User } from '@/entities/user'
 
 // Импортируем фичи
 import { SearchUser } from '@/features/search-user'
 import { FilterUsersByRole } from '@/features/filter-users-by-role'
 
 const router = useRouter()
+const userStore = useUserStore();
 
 // Локальное состояние для фичей
 const searchQuery = ref('')
 const selectedRole = ref('All Users')
 
-// Вычисляемое свойство для локальной фильтрации
+// Загружаем данные при монтировании таблицы
+onMounted(() => {
+  if (userStore.users.length === 0) {
+    userStore.loadUsers();
+  }
+});
+
+// Реактивно фильтруем данные из СТОРА
 const filteredUsers = computed(() => {
-  return mockUsers.value.filter((user) => {
-    // 1. Фильтр по роли
-    const matchRole = selectedRole.value === 'All Users' || user.role === selectedRole.value
-
-    // 2. Фильтр по поиску (имя или email)
-    const searchLower = searchQuery.value.toLowerCase()
-    const matchSearch =
-      user.name.toLowerCase().includes(searchLower) ||
-      user.email.toLowerCase().includes(searchLower)
-
-    return matchRole && matchSearch
-  })
-})
+  return userStore.users.filter(user => {
+    const matchRole = selectedRole.value === 'All Users' || user.role === selectedRole.value;
+    const searchLower = searchQuery.value.toLowerCase();
+    const matchSearch = user.fullName.toLowerCase().includes(searchLower) || 
+                        user.email.toLowerCase().includes(searchLower);
+    
+    return matchRole && matchSearch;
+  });
+});
 
 // Обработчик клика по строке
 const onRowClick = (event: { data: User }) => {
@@ -70,14 +74,15 @@ const getStatusClass = (status: string) => `status-${status.toLowerCase()}`
       <SearchUser v-model="searchQuery" />
     </div>
 
+    <!-- TODO: показывается лоадер + текст No users found. Нужно поправить -->
     <!-- Таблица (клиентская фильтрация и пагинация) -->
     <!-- :value передаем вычисляемое свойство filteredUsers -->
     <DataTable
       :value="filteredUsers"
+      :loading="userStore.isLoading"
       paginator
       :rows="5"
       dataKey="id"
-      class="custom-table"
       @row-click="onRowClick"
       :rowClass="getRowClass"
     >

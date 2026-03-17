@@ -1,12 +1,45 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { mockStudentProfile } from '@/entities/user'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import Button from 'primevue/button'
+import Skeleton from 'primevue/skeleton'
+
+import { useUserStore, type User } from '@/entities/user'
+import { useNotifications } from '@/shared/model'
+
 import { UserProfileHeader } from '@/widgets/user-profile-header'
 import { UserAccountInfo } from '@/widgets/user-account-info'
 import { UserSecurityAccess } from '@/widgets/user-security-access'
 
-// В реальном проекте здесь был бы запрос к API: fetchStudent(route.params.id)
-const profile = ref(mockStudentProfile)
+const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
+const notifications = useNotifications()
+
+const profileDraft = ref<User | null>(null)
+
+onMounted(async () => {
+  const userId = route.params.id as string
+
+  if (userStore.users.length === 0) {
+    await userStore.loadUsers()
+  }
+
+  const studentData = userStore.getUserById(userId)
+  if (studentData) {
+    profileDraft.value = { ...studentData }
+  } else {
+    notifications.showToast('error', 'Not Found', 'Student not found.')
+    router.push('/admin/users')
+  }
+})
+
+const handleSaveChanges = async () => {
+  if (!profileDraft.value) return
+  // Стор отправит патч на API, а клиент API перехватит ошибки
+  await userStore.updateUser(profileDraft.value.id, profileDraft.value)
+  notifications.showToast('success', 'Success', 'Student profile updated successfully.')
+}
 </script>
 
 <template>
@@ -17,18 +50,26 @@ const profile = ref(mockStudentProfile)
       <span class="separator">/</span>
       <span class="crumb">Students</span>
       <span class="separator">/</span>
-      <span class="crumb active">{{ profile.name }}</span>
+      <span class="crumb active">{{ profileDraft?.name || 'Loading...' }}</span>
     </div>
 
     <!-- Ограничиваем максимальную ширину контента, чтобы поля ввода не были бесконечными -->
     <div class="profile-container">
-      <!-- Шапка профиля -->
-      <UserProfileHeader :profile="profile" />
-
-      <!-- Основной контент (Теперь это просто вертикальный список виджетов) -->
-      <div class="content-column">
-        <UserAccountInfo :profile="profile" />
+      <div v-if="userStore.isLoading || !profileDraft" class="flex flex-col gap-4">
+        <Skeleton width="100%" height="150px" borderRadius="12px" />
+        <Skeleton width="100%" height="300px" borderRadius="12px" />
+      </div>
+      <div v-else class="content-column">
+        <UserProfileHeader :profile="profileDraft" />
+        <UserAccountInfo :profile="profileDraft" />
         <UserSecurityAccess />
+        <div
+          class="form-actions"
+          style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem"
+        >
+          <Button label="Cancel" outlined @click="router.back()" />
+          <Button label="Save Changes" icon="pi pi-check" @click="handleSaveChanges" />
+        </div>
       </div>
     </div>
   </div>

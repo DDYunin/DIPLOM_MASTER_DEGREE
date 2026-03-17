@@ -3,7 +3,12 @@ import { ref } from 'vue'
 import Button from 'primevue/button'
 import { OrgTreeBuilder } from '@/widgets/org-tree-builder'
 import { OrgUnitDetails } from '@/widgets/org-unit-details'
+import { useOrgStore } from '@/entities/organization'
+import { useNotifications } from '@/shared/model/useNotifications'
 import type { OrgTreeNode } from '@/entities/organization'
+
+const orgStore = useOrgStore()
+const notifications = useNotifications()
 
 const selectedNode = ref<OrgTreeNode | null>(null)
 const isEditing = ref(false) // Глобальное состояние редактирования
@@ -13,16 +18,26 @@ const handleNodeSelect = (node: OrgTreeNode) => {
   isEditing.value = false // Сбрасываем режим редактирования при смене узла
 }
 
-const handleSaveDetails = (updatedNode: OrgTreeNode) => {
-  // В реальном приложении здесь будет API вызов.
-  // Для мока мы просто обновляем selectedNode. Дерево (если оно завязано на реактивность) тоже обновится.
-  selectedNode.value = updatedNode
-
-  // Примечание: Чтобы обновить именно mockOrgTree, нужно найти узел по ID и заменить его.
-  // Для простоты UI-демонстрации обновление selectedNode достаточно.
-
-  console.log('Saved to server:', updatedNode)
-}
+// Обработчик сохранения изменений из правой панели (Деталей)
+const handleSaveDetails = async (updatedNode: OrgTreeNode) => {
+  try {
+    // 1. Отправляем в стор. Стор сам обновит локальное дерево и отправит PUT-запрос
+    await orgStore.updateNode(updatedNode.key, updatedNode);
+    
+    // 2. Обновляем локально выбранный узел, чтобы правая панель сразу показала новые данные
+    selectedNode.value = updatedNode; 
+    
+    // 3. Выходим из режима редактирования
+    isEditing.value = false;
+    
+    // 4. Показываем красивый Toast
+    notifications.showToast('success', 'Hierarchy Updated', `${updatedNode.label} has been updated successfully.`);
+  } catch (error) {
+    // Если произошла сетевая ошибка, наш apiClient сам покажет Toast 'error'.
+    // Здесь мы просто не закрываем режим редактирования (остаемся в форме).
+    console.error('Failed to save details:', error);
+  }
+};
 
 const closePanel = () => {
   selectedNode.value = null
@@ -32,7 +47,7 @@ const closePanel = () => {
 
 <template>
   <div class="organization-page">
-	<!-- TODO: лишнее -->
+    <!-- TODO: лишнее -->
     <div class="page-header">
       <h1 class="page-title">Hierarchy Builder</h1>
       <div class="header-actions">
