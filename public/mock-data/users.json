@@ -1,27 +1,142 @@
 [
-  {
-    "id": "1",
-    "fullName": "Sarah Wilson",
-    "email": "sarah.w@eduteach.com",
-    "role": "Teacher",
-    "department": "Mathematics",
-    "status": "Active"
+{
+    "id": "student-1",
+    "fullName": "Marcus Johnson",
+    "email": "marcus.j@university.edu",
+    "role": "Student",
+    "status": "Active",
+    "avatarInitials": "MJ",
+    "lastLogin": "2 hours ago",
+    "twoFactorEnabled": true,
+    "identifier": "STU-2023-8492",
+    "department": "Computer Science",
+    "subDepartment": "Engineering",
+    "cohort": "CS-2024",
+    "notes": "Excellent academic performance."
   },
   {
-    "id": "2",
-    "fullName": "James Rodriguez",
-    "email": "j.rodriguez@student.edu",
-    "role": "Student",
+    "id": "teacher-1",
+    "fullName": "Eleanor Rigby",
+    "email": "e.rigby@university.edu",
+    "role": "Teacher",
+    "status": "Active",
+    "avatarInitials": "ER",
+    "lastLogin": "1 hour ago",
+    "twoFactorEnabled": false,
+    "identifier": "FAC-2023-884",
     "department": "Computer Science",
-    "cohort": "CS-2024",
-    "status": "Active"
+    "subDepartment": "Faculty",
+    "groups": ["Faculty Member", "Curriculum Editor"],
+    "permissions": { "publishGrades": true, "manageUsers": false },
+    "courses":[
+      { "code": "CS-101", "name": "Intro to Computer Science", "semester": "Fall 2023", "status": "Active" }
+    ]
   },
   {
     "id": "admin-1",
     "fullName": "Thomas Anderson",
     "email": "admin@university.edu",
     "role": "Super Admin",
-    "phone": "+1 (555) 019-2834",
-    "status": "Active"
+    "status": "Active",
+    "avatarInitials": "TA",
+    "lastLogin": "Just now",
+    "twoFactorEnabled": true,
+    "phone": "+1 (555) 019-2834"
+  },
+  {
+    "id": "student-2",
+    "fullName": "Emily Chen",
+    "email": "emily.chen@student.edu",
+    "role": "Student",
+    "status": "Offline",
+    "avatarInitials": "EC",
+    "lastLogin": "1 day ago",
+    "twoFactorEnabled": false,
+    "identifier": "STU-2025-1029",
+    "department": "Information Technology",
+    "cohort": "IT-2025"
+  },
+  {
+    "id": "mod-1",
+    "fullName": "Alice Wong",
+    "email": "a.wong@university.edu",
+    "role": "Moderator",
+    "status": "Active",
+    "avatarInitials": "AW",
+    "lastLogin": "5 mins ago",
+    "twoFactorEnabled": true,
+    "department": "Student Affairs",
+    "phone": "+1 (555) 987-6543"
+  },
+  {
+    "id": "student-3",
+    "fullName": "Michael Brown",
+    "email": "mike.b@student.edu",
+    "role": "Student",
+    "status": "Blocked",
+    "avatarInitials": "MB",
+    "lastLogin": "2 weeks ago",
+    "twoFactorEnabled": false,
+    "identifier": "STU-2022-5531",
+    "department": "Physics",
+    "cohort": "PHY-2022",
+    "notes": "Account suspended due to policy violation."
+  },
+  {
+    "id": "teacher-2",
+    "fullName": "James Rodriguez",
+    "email": "j.rodriguez@university.edu",
+    "role": "Teacher",
+    "status": "Active",
+    "avatarInitials": "JR",
+    "lastLogin": "3 hours ago",
+    "twoFactorEnabled": true,
+    "identifier": "FAC-2018-092",
+    "department": "Mathematics",
+    "groups": ["Faculty Member"],
+    "permissions": { "publishGrades": true, "manageUsers": false },
+    "courses":[
+      { "code": "MATH-301", "name": "Advanced Calculus", "semester": "Spring 2024", "status": "Upcoming" }
+    ]
+  },
+  {
+    "id": "student-4",
+    "fullName": "Sarah Wilson",
+    "email": "sarah.w@student.edu",
+    "role": "Student",
+    "status": "Active",
+    "avatarInitials": "SW",
+    "lastLogin": "10 mins ago",
+    "twoFactorEnabled": true,
+    "identifier": "STU-2024-9921",
+    "department": "Biology",
+    "cohort": "BIO-2024"
+  },
+  {
+    "id": "student-5",
+    "fullName": "David Lee",
+    "email": "david.lee@student.edu",
+    "role": "Student",
+    "status": "Inactive",
+    "avatarInitials": "DL",
+    "lastLogin": "6 months ago",
+    "twoFactorEnabled": false,
+    "identifier": "STU-2023-1102",
+    "department": "Arts",
+    "cohort": "ART-2023"
+  },
+  {
+    "id": "teacher-3",
+    "fullName": "Robert King",
+    "email": "r.king@university.edu",
+    "role": "Teacher",
+    "status": "Offline",
+    "avatarInitials": "RK",
+    "lastLogin": "2 days ago",
+    "twoFactorEnabled": true,
+    "identifier": "FAC-2010-005",
+    "department": "History",
+    "groups": ["Department Head"],
+    "permissions": { "publishGrades": true, "manageUsers": true }
   }
 ]

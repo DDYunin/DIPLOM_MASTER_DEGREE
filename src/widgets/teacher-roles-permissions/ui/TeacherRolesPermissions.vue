@@ -16,7 +16,6 @@ const groups = ref([...props.profile.groups])
 
 // Обработка события @add из нашего модального окна
 const handleAddGroups = (newGroups: string[]) => {
-  debugger
   // Чтобы не добавлять дубликаты, отфильтруем те группы, которые уже есть у преподавателя
   const uniqueNewGroups = newGroups.filter((group) => !groups.value.includes(group))
 

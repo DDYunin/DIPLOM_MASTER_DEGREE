@@ -7,9 +7,9 @@ import Skeleton from 'primevue/skeleton'
 import { useUserStore, type User } from '@/entities/user'
 import { useNotifications } from '@/shared/model'
 
-import { UserProfileHeader } from '@/widgets/user-profile-header'
-import { UserAccountInfo } from '@/widgets/user-account-info'
 import { UserSecurityAccess } from '@/widgets/user-security-access'
+
+import { ProfileInfoCard } from '@/widgets/profile-info-card'
 
 const route = useRoute()
 const router = useRouter()
@@ -44,29 +44,26 @@ const handleSaveChanges = async () => {
 
 <template>
   <div class="profile-page">
-    <!-- Breadcrumbs (Хлебные крошки) -->
     <div class="breadcrumbs">
-      <RouterLink class="crumb" :to="{ name: 'admin-users' }">Users</RouterLink>
-      <span class="separator">/</span>
-      <span class="crumb">Students</span>
-      <span class="separator">/</span>
-      <span class="crumb active">{{ profileDraft?.name || 'Loading...' }}</span>
+      <span class="crumb">Users</span> <span class="separator">/</span> 
+      <span class="crumb">Students</span> <span class="separator">/</span> 
+      <!-- ИСПОЛЬЗУЕМ fullName -->
+      <span class="crumb active">{{ profileDraft?.fullName || 'Loading...' }}</span>
     </div>
 
-    <!-- Ограничиваем максимальную ширину контента, чтобы поля ввода не были бесконечными -->
     <div class="profile-container">
       <div v-if="userStore.isLoading || !profileDraft" class="flex flex-col gap-4">
-        <Skeleton width="100%" height="150px" borderRadius="12px" />
+        <Skeleton width="100%" height="150px" borderRadius="12px" class="mb-4" />
         <Skeleton width="100%" height="300px" borderRadius="12px" />
       </div>
+
       <div v-else class="content-column">
-        <UserProfileHeader :profile="profileDraft" />
-        <UserAccountInfo :profile="profileDraft" />
+        <!-- ИСПОЛЬЗУЕМ УНИВЕРСАЛЬНУЮ АНКЕТУ -->
+        <ProfileInfoCard v-model="profileDraft" />
+        
         <UserSecurityAccess />
-        <div
-          class="form-actions"
-          style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem"
-        >
+
+        <div class="form-actions">
           <Button label="Cancel" outlined @click="router.back()" />
           <Button label="Save Changes" icon="pi pi-check" @click="handleSaveChanges" />
         </div>
@@ -76,38 +73,12 @@ const handleSaveChanges = async () => {
 </template>
 
 <style scoped>
-.profile-page {
-  padding-bottom: 2rem;
-}
-
-/* Breadcrumbs */
-.breadcrumbs {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.875rem;
-}
-.crumb {
-  color: #64748b;
-}
-.crumb.active {
-  color: #0f172a;
-  font-weight: 500;
-}
-.separator {
-  color: #cbd5e1;
-}
-
-/* Центрируем и ограничиваем ширину, так как пропала правая колонка */
-.profile-container {
-  max-width: 900px; /* Идеальная ширина для форм и настроек */
-}
-
-/* Располагаем виджеты друг под другом с отступом */
-.content-column {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
+.profile-page { padding-bottom: 2rem; }
+.breadcrumbs { font-size: 0.875rem; color: var(--text-color-secondary); margin-bottom: 1.5rem; }
+.separator { margin: 0 0.5rem; color: var(--surface-border); }
+.crumb.active { color: var(--text-color); font-weight: 500; }
+.profile-container { max-width: 900px; }
+.content-column { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
+.mb-4 { margin-bottom: 1rem; }
 </style>

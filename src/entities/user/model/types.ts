@@ -2,25 +2,6 @@
 // 1. Может быть стоит поделить на конкретные роли пользователей, но думаю это можно потом, расширить интерфейс пользователя и указать конкретные значения для полей
 // 2. Роль модератора не нужна
 
-export interface User {
-  id: string
-  name: string
-  email: string
-  avatar: string
-  role: 'Admin' | 'Teacher' | 'Student' | 'Moderator'
-  department: string
-  subDepartment: string
-  status: 'Active' | 'Offline' | 'Blocked'
-}
-
-export interface StudentProfile extends User {
-  studentId: string
-  lastLogin: string
-  username: string
-  cohort: string
-  notes: string
-}
-
 // TODO: вынести в другую сущность, но судя по всему нужно будет вынести на уровень shared,
 // Так как нельзя допускать пересечения сущностей на одном уровне
 // Или же есть второй вариант, чтобы сделать интерфейс-пустышку, так как все поля навряд ли тут понадобятся
@@ -32,14 +13,42 @@ export interface Course {
   status: 'Active' | 'Upcoming' | 'Completed'
 }
 
-export interface TeacherProfile extends User {
-  employeeId: string
-  lastLogin: string
-  groups: string[]
-  permissions: {
-    publishGrades: boolean
-    manageUsers: boolean
-  }
-  courses: Course[]
-  twoFactorEnabled: boolean
+export type UserRole = 'Student' | 'Teacher' | 'Super Admin' | 'Moderator';
+export type UserStatus = 'Active' | 'Offline' | 'Blocked' | 'Inactive';
+
+export interface UserPermissions {
+  publishGrades?: boolean;
+  manageUsers?: boolean;
+}
+
+export interface User {
+  // === ОБЩИЕ ПОЛЯ (Базовые для всех) ===
+  id: string;
+  fullName: string;
+  email: string;
+  role: UserRole;
+  status: UserStatus;
+  avatar?: string;
+  avatarInitials?: string;
+  lastLogin?: string;
+
+  // === БЕЗОПАСНОСТЬ ===
+  twoFactorEnabled?: boolean;
+
+  // === СПЕЦИФИЧНЫЕ ПОЛЯ: АДМИН ===
+  phone?: string;
+
+  // === СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ / ПРЕПОДАВАТЕЛЬ ===
+  identifier?: string; // Универсальное поле для Student ID или Employee ID
+  department?: string;
+  subDepartment?: string;
+
+  // === СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ ===
+  cohort?: string;
+  notes?: string;
+
+  // === СПЕЦИФИЧНЫЕ ПОЛЯ: ПРЕПОДАВАТЕЛЬ ===
+  groups?: string[];
+  permissions?: UserPermissions;
+  courses?: Course[];
 }

@@ -7,13 +7,11 @@ import Skeleton from 'primevue/skeleton'
 import { useUserStore, type User } from '@/entities/user'
 import { useNotifications } from '@/shared/model/useNotifications'
 
-
 // Импорт виджетов
-import { TeacherProfileHeader } from '@/widgets/teacher-profile-header'
 import { TeacherRolesPermissions } from '@/widgets/teacher-roles-permissions'
 import { TeacherAssignedCourses } from '@/widgets/teacher-assigned-courses'
 import { TeacherSecurityAccess } from '@/widgets/teacher-security-access'
-import { TeacherAccountInfo } from '@/widgets/teacher-account-Info'
+import { ProfileInfoCard } from '@/widgets/profile-info-card'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,7 +24,6 @@ onMounted(async () => {
   const userId = route.params.id as string
   if (userStore.users.length === 0) await userStore.loadUsers()
 
-  debugger
   const teacherData = userStore.getUserById(userId)
   if (teacherData) {
     profileDraft.value = { ...teacherData }
@@ -46,26 +43,36 @@ const handleSaveChanges = async () => {
 <template>
   <div class="profile-page">
     <div class="breadcrumbs">
-      <RouterLink class="crumb" :to="{ name: 'admin-users' }">Users</RouterLink>
-      <span class="separator">/</span>
-      <span class="crumb">Teachers</span>
-      <span class="separator">/</span>
-      <span class="crumb active">{{ profileDraft?.fullName ?? 'Loading...' }}</span>
+      <span class="crumb">Users</span> <span class="separator">/</span>
+      <span class="crumb">Teachers</span> <span class="separator">/</span>
+      <span class="crumb active">Dr. {{ profileDraft?.fullName || 'Loading...' }}</span>
     </div>
 
-    <!-- Тот самый layout-контейнер (одна колонка, ограничение ширины) -->
+    <div class="page-title-section">
+      <h1 class="page-title">Permissions & Account</h1>
+      <p class="page-desc">
+        Manage profile details, access rights, and security for Dr. {{ profileDraft?.fullName }}.
+      </p>
+    </div>
+
     <div class="profile-container">
       <div v-if="userStore.isLoading || !profileDraft" class="flex flex-col gap-4">
+        <Skeleton width="100%" height="150px" borderRadius="12px" class="mb-4" />
         <Skeleton width="100%" height="300px" borderRadius="12px" />
-        <Skeleton width="100%" height="200px" borderRadius="12px" />
       </div>
 
-      <div class="content-column">
-        <TeacherProfileHeader :profile="profileDraft" />
-        <TeacherAccountInfo :profile="profileDraft" />
-        <TeacherRolesPermissions :profile="profileDraft" />
+      <div v-else class="content-column">
+        <!-- ИСПОЛЬЗУЕМ УНИВЕРСАЛЬНУЮ АНКЕТУ -->
+        <ProfileInfoCard v-model="profileDraft" />
+
+        <TeacherRolesPermissions
+          :profile="profileDraft"
+          @update:groups="profileDraft.groups = $event"
+          @update:permissions="profileDraft.permissions = $event"
+        />
         <TeacherAssignedCourses :profile="profileDraft" />
         <TeacherSecurityAccess :profile="profileDraft" />
+
         <div class="form-actions">
           <Button label="Cancel" outlined @click="router.back()" />
           <Button label="Save Changes" icon="pi pi-check" @click="handleSaveChanges" />
@@ -79,25 +86,19 @@ const handleSaveChanges = async () => {
 .profile-page {
   padding-bottom: 2rem;
 }
-
 .breadcrumbs {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
   font-size: 0.875rem;
-}
-.crumb {
-  color: #64748b;
-}
-.crumb.active {
-  color: #0f172a;
-  font-weight: 500;
+  color: var(--text-color-secondary);
+  margin-bottom: 1.5rem;
 }
 .separator {
-  color: #cbd5e1;
+  margin: 0 0.5rem;
+  color: var(--surface-border);
 }
-
+.crumb.active {
+  color: var(--text-color);
+  font-weight: 500;
+}
 .page-title-section {
   margin-bottom: 2rem;
 }
@@ -105,30 +106,28 @@ const handleSaveChanges = async () => {
   margin: 0 0 0.5rem 0;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
 }
 .page-desc {
   margin: 0;
-  color: #64748b;
+  color: var(--text-color-secondary);
   font-size: 0.875rem;
 }
-
-/* Ограничиваем ширину, чтобы было как у студента */
 .profile-container {
   max-width: 900px;
 }
-
-/* Виджеты идут друг под другом */
 .content-column {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
-
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
 }
 </style>

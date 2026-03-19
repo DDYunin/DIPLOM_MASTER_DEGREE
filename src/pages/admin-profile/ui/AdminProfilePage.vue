@@ -3,13 +3,11 @@ import { ref, onMounted } from 'vue'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 
-import { useUserStore } from '@/entities/user'
+import { useUserStore, type User } from '@/entities/user'
 import { useNotifications } from '@/shared/model/useNotifications'
 
-import { AdminProfileInfo } from '@/widgets/admin-profile-info'
+import { ProfileInfoCard } from '@/widgets/profile-info-card'
 import { AdminSecurityPassword } from '@/widgets/admin-security-password'
-
-import type { User } from '@/entities/user'
 
 const userStore = useUserStore()
 const notifications = useNotifications()
@@ -46,36 +44,33 @@ const handleSaveChanges = async () => {
 
 <template>
   <div class="settings-page">
-    <!-- Главный заголовок страницы -->
     <div class="page-header">
-      <h1 class="page-title">Personal Settings</h1>
+      <h1 class="page-title">System Settings</h1>
     </div>
 
     <div class="profile-container">
       <div class="sub-header">
         <h2 class="sub-title">General Configuration</h2>
-        <p class="sub-desc">Manage your administrative profile.</p>
+        <p class="sub-desc">Manage your administrative profile and monitor system integrity.</p>
       </div>
 
-      <!-- Если данные загружаются, показываем заглушку (Skeleton) -->
       <div v-if="userStore.isLoading || !profileDraft" class="content-column">
         <Skeleton width="100%" height="300px" borderRadius="12px" />
         <Skeleton width="100%" height="200px" borderRadius="12px" />
       </div>
 
-      <!-- Когда данные есть, рендерим форму -->
       <div v-else class="content-column">
-        <AdminProfileInfo v-model="profileDraft" />
-        <AdminSecurityPassword ref="securityRef" />
+        <!-- ИСПОЛЬЗУЕМ УНИВЕРСАЛЬНУЮ АНКЕТУ -->
+        <ProfileInfoCard v-model="profileDraft" />
+
+        <AdminSecurityPassword />
 
         <div class="form-actions">
           <Button label="Cancel" outlined class="btn-cancel" />
-          <!-- Кнопку можно задизейблить или показать лоадер, если стор грузит данные -->
           <Button
             label="Save Changes"
             class="btn-save"
             icon="pi pi-check"
-            :loading="userStore.isLoading"
             @click="handleSaveChanges"
           />
         </div>
@@ -88,7 +83,6 @@ const handleSaveChanges = async () => {
 .settings-page {
   padding-bottom: 2rem;
 }
-
 .page-header {
   margin-bottom: 2rem;
 }
@@ -96,13 +90,11 @@ const handleSaveChanges = async () => {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
 }
-
 .profile-container {
   max-width: 900px;
 }
-
 .sub-header {
   margin-bottom: 1.5rem;
 }
@@ -110,34 +102,22 @@ const handleSaveChanges = async () => {
   margin: 0 0 0.25rem 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-color);
 }
 .sub-desc {
   margin: 0;
-  color: #64748b;
+  color: var(--text-color-secondary);
   font-size: 0.875rem;
 }
-
 .content-column {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
-
-/* Кнопки в самом низу (справа) */
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1rem;
-}
-.btn-cancel {
-  color: #475569;
-  border-color: #cbd5e1;
-  background: white;
-}
-.btn-save {
-  background: #2563eb;
-  border: none;
 }
 </style>
