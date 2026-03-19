@@ -16,15 +16,12 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'update:isEditing', 'save'])
 
-// Локальный черновик для редактирования
 const draft = ref<any>({})
 
-// Справочники для селектов
 const statusOptions = ['Active', 'Inactive', 'Archived']
-const deptOptions = ['Computer Science', 'Electrical Engineering', 'Mathematics']
+const deptOptions = ['Computer Science Dept.', 'Electrical Engineering', 'Mathematics']
 const headOptions = ['Dr. Sarah Smith', 'Prof. John Doe', 'Dr. Emily Chen']
 
-// При входе в режим редактирования клонируем данные узла
 watch(
   () => props.isEditing,
   (newVal) => {
@@ -33,7 +30,7 @@ watch(
         label: props.selectedNode.label,
         ...props.selectedNode.data
       }
-      // Преобразуем строку даты в объект Date для DatePicker
+
       if (draft.value.createdDate) {
         draft.value.createdDateObj = new Date(draft.value.createdDate)
       }
@@ -41,36 +38,31 @@ watch(
   }
 )
 
-const startEditing = () => {
-  emit('update:isEditing', true)
-}
-
-const cancelEditing = () => {
-  emit('update:isEditing', false)
-}
+const startEditing = () => emit('update:isEditing', true)
+const cancelEditing = () => emit('update:isEditing', false)
 
 const saveChanges = () => {
-  // Форматируем обратно дату
-  // if (draft.value.createdDateObj) {
-  //   const d = draft.value.createdDateObj
-  //   draft.value.createdDate = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`
-  // }
   if (draft.value.createdDateObj) {
     const d = draft.value.createdDateObj as Date
     const month = String(d.getMonth() + 1).padStart(2, '0')
     const day = String(d.getDate()).padStart(2, '0')
     draft.value.createdDate = `${month}/${day}/${d.getFullYear()}`
-    delete draft.value.createdDateObj // Убираем временный объект
+    delete draft.value.createdDateObj
   }
 
-  // Отправляем сохраненные данные наверх
   emit('save', {
     ...props.selectedNode,
     label: draft.value.label,
     data: { ...props.selectedNode?.data, ...draft.value }
   })
+}
 
-  emit('update:isEditing', false)
+// Вспомогательная функция, которая возвращает иконку и нужный CSS-класс для фона
+const getIconData = (type?: string) => {
+  if (type === 'university') return { icon: 'pi-building', bgClass: 'bg-info' }
+  if (type === 'institute') return { icon: 'pi-home', bgClass: 'bg-warning' }
+  if (type === 'department') return { icon: 'pi-folder', bgClass: 'bg-info' }
+  return { icon: 'pi-users', bgClass: 'bg-primary' } // Для group
 }
 </script>
 
@@ -78,11 +70,14 @@ const saveChanges = () => {
   <div v-if="selectedNode && selectedNode.data" class="details-panel">
     <!-- ШАПКА -->
     <div class="panel-header">
-      <div class="icon-box bg-blue"><i class="pi pi-users"></i></div>
+      <!-- Иконка генерируется на месте без внешнего компонента -->
+      <div class="icon-box" :class="getIconData(selectedNode.type).bgClass">
+        <i class="pi" :class="getIconData(selectedNode.type).icon"></i>
+      </div>
       <button class="close-btn" @click="$emit('close')"><i class="pi pi-times"></i></button>
     </div>
 
-    <!-- === РЕЖИМ ПРОСМОТРА === -->
+    <!-- РЕЖИМ ПРОСМОТРА -->
     <template v-if="!isEditing">
       <div class="node-title-section">
         <h2 class="node-title">{{ selectedNode.label }}</h2>
@@ -109,16 +104,18 @@ const saveChanges = () => {
       <div class="meta-list">
         <div v-if="selectedNode.data.parentDept" class="meta-item">
           <span class="meta-label">PARENT DEPT</span>
-          <span class="meta-value"
-            ><i class="pi pi-folder text-gray"></i> {{ selectedNode.data.parentDept }}</span
-          >
+          <span class="meta-value">
+            <i class="pi pi-folder text-gray"></i> {{ selectedNode.data.parentDept }}
+          </span>
         </div>
+
         <div v-if="selectedNode.data.createdDate" class="meta-item">
           <span class="meta-label">CREATED DATE</span>
           <span class="meta-value">{{ selectedNode.data.createdDate }}</span>
         </div>
+
         <div v-if="selectedNode.data.head" class="meta-item">
-          <span class="meta-label">HEAD OF Unit</span>
+          <span class="meta-label">HEAD OF UNIT</span>
           <span class="meta-value head-value">
             <Avatar
               :label="selectedNode.data.head.avatarInitials"
@@ -128,7 +125,8 @@ const saveChanges = () => {
             {{ selectedNode.data.head.name }}
           </span>
         </div>
-        <div class="meta-item">
+
+        <div v-if="selectedNode.data.description" class="meta-item">
           <span class="meta-label">DESCRIPTION</span>
           <div class="desc-box">{{ selectedNode.data.description }}</div>
         </div>
@@ -147,20 +145,19 @@ const saveChanges = () => {
       </div>
     </template>
 
-    <!-- === РЕЖИМ РЕДАКТИРОВАНИЯ === -->
+    <!-- РЕЖИМ РЕДАКТИРОВАНИЯ -->
     <template v-else>
       <div class="edit-form">
-        <div class="field">
-          <label>GROUP NAME</label>
+        <div class="form-field">
+          <label>UNIT NAME</label>
           <InputText v-model="draft.label" />
         </div>
 
-        <div class="field">
+        <div class="form-field">
           <label>STATUS</label>
           <Select v-model="draft.status" :options="statusOptions" class="w-full" />
         </div>
 
-        <!-- Статистика остается Read-only в режиме редактирования -->
         <div class="stats-grid mt-4">
           <div class="stat-box">
             <span class="stat-value">{{ selectedNode.data.students || 0 }}</span
@@ -172,18 +169,18 @@ const saveChanges = () => {
           </div>
         </div>
 
-        <div class="field mt-4">
+        <div class="form-field mt-4">
           <label>PARENT DEPT</label>
           <Select v-model="draft.parentDept" :options="deptOptions" class="w-full">
             <template #value="slotProps">
-              <div v-if="slotProps.value" class="flex align-center gap-2">
+              <div v-if="slotProps.value" style="display: flex; align-items: center; gap: 0.5rem">
                 <i class="pi pi-folder text-gray-500"></i> {{ slotProps.value }}
               </div>
             </template>
           </Select>
         </div>
 
-        <div class="field">
+        <div class="form-field">
           <label>CREATED DATE</label>
           <DatePicker
             v-model="draft.createdDateObj"
@@ -193,18 +190,17 @@ const saveChanges = () => {
           />
         </div>
 
-        <div class="field">
-          <label>HEAD OF Unit</label>
+        <div class="form-field">
+          <label>HEAD OF UNIT</label>
           <Select v-model="draft.head.name" :options="headOptions" class="w-full" />
         </div>
 
-        <div class="field">
+        <div class="form-field">
           <label>DESCRIPTION</label>
           <Textarea v-model="draft.description" rows="4" autoResize />
         </div>
       </div>
 
-      <!-- Кнопки сохранения как на макете -->
       <div class="edit-actions-section">
         <span class="actions-title">Save Changes?</span>
         <Button
@@ -217,9 +213,9 @@ const saveChanges = () => {
       </div>
     </template>
 
-    <!-- ID в самом низу (показывается и там и там) -->
     <div class="panel-footer" v-if="selectedNode.data.groupId || selectedNode.data.code">
-      {{ selectedNode.data.groupId || selectedNode.data.code }} <span v-if="isEditing">(Editing)</span>
+      ID: {{ selectedNode.data.groupId || selectedNode.data.code }}
+      <span v-if="isEditing" class="text-editing">(Editing)</span>
     </div>
   </div>
 
@@ -230,13 +226,15 @@ const saveChanges = () => {
 </template>
 
 <style scoped>
-/* Старые стили просмотра */
+/* =====================================
+   ОСНОВНЫЕ СТИЛИ ПАНЕЛИ
+===================================== */
 .details-panel {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: white;
-  border-left: 1px solid #e2e8f0;
+  background: var(--surface-card);
+  border-left: 1px solid var(--surface-border);
   padding: 1.5rem;
   overflow-y: auto;
 }
@@ -246,16 +244,17 @@ const saveChanges = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: white;
-  border-left: 1px solid #e2e8f0;
-  color: #94a3b8;
+  background: var(--surface-card);
+  border-left: 1px solid var(--surface-border);
+  color: var(--text-color-secondary);
 }
 .empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: #cbd5e1;
+  color: var(--surface-border);
 }
 
+/* --- СТИЛИ ДЛЯ ВСТРОЕННОЙ ИКОНКИ --- */
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -270,19 +269,46 @@ const saveChanges = () => {
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
+  flex-shrink: 0;
 }
-.bg-blue {
-  background: #eff6ff;
-  color: #3b82f6;
+/* Цветовые модификаторы на основе токенов PrimeVue */
+.bg-primary {
+  background: var(--p-primary-50);
+  color: var(--p-primary-500);
 }
+.bg-info {
+  background: var(--p-blue-50);
+  color: var(--p-blue-500);
+}
+.bg-warning {
+  background: var(--p-orange-50);
+  color: var(--p-orange-500);
+}
+
+/* Поддержка тёмной темы для фонов иконок */
+:root[class*='my-app-dark'] .bg-primary {
+  background: rgba(var(--p-primary-500), 0.16);
+}
+:root[class*='my-app-dark'] .bg-info {
+  background: rgba(var(--p-blue-500), 0.16);
+}
+:root[class*='my-app-dark'] .bg-warning {
+  background: rgba(var(--p-orange-500), 0.16);
+}
+
 .close-btn {
   background: none;
   border: none;
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: var(--text-color-secondary);
   cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: var(--text-color);
 }
 
+/* РЕЖИМ ПРОСМОТРА */
 .node-title-section {
   margin-bottom: 2rem;
 }
@@ -290,11 +316,11 @@ const saveChanges = () => {
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
 }
 .status-tag {
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--p-green-50);
+  color: var(--p-green-600);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.2rem 0.6rem;
@@ -307,22 +333,23 @@ const saveChanges = () => {
   margin-bottom: 2rem;
 }
 .stat-box {
-  background: #f8fafc;
+  background: var(--surface-ground);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  border: 1px solid var(--surface-border);
 }
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
 }
 .stat-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-color-secondary);
   margin-top: 0.25rem;
 }
 
@@ -340,35 +367,37 @@ const saveChanges = () => {
 .meta-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--text-color-secondary);
   letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 .meta-value {
   font-size: 0.875rem;
-  color: #0f172a;
+  color: var(--text-color);
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 .text-gray {
-  color: #94a3b8;
+  color: var(--text-color-secondary);
 }
 .head-avatar {
   width: 24px;
   height: 24px;
-  background: #fed7aa;
-  color: #9a3412;
+  background: var(--p-orange-100);
+  color: var(--p-orange-700);
   font-size: 0.75rem;
   font-weight: 700;
 }
 .desc-box {
-  background: #f8fafc;
+  background: var(--surface-ground);
   padding: 1rem;
   border-radius: 8px;
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--text-color);
   line-height: 1.5;
+  border: 1px solid var(--surface-border);
 }
 
 .actions-section {
@@ -380,40 +409,34 @@ const saveChanges = () => {
 .actions-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-color);
   margin-bottom: 0.25rem;
 }
 .action-btn {
   width: 100%;
 }
 .btn-primary {
-  background: #3b82f6;
+  background: var(--p-primary-500);
   border: none;
+  color: white;
 }
 
-.panel-footer {
-  margin-top: 1.5rem;
-  text-align: center;
-  font-size: 0.75rem;
-  color: #94a3b8;
-}
-
-/* === СТИЛИ ФОРМЫ РЕДАКТИРОВАНИЯ === */
+/* РЕЖИМ РЕДАКТИРОВАНИЯ */
 .edit-form {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
   flex-grow: 1;
 }
-.field {
+.form-field {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.field label {
+.form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -423,17 +446,8 @@ const saveChanges = () => {
 .mt-4 {
   margin-top: 1rem;
 }
-.flex {
-  display: flex;
-}
-.align-center {
-  align-items: center;
-}
-.gap-2 {
-  gap: 0.5rem;
-}
 .text-gray-500 {
-  color: #64748b;
+  color: var(--text-color-secondary);
 }
 
 .edit-actions-section {
@@ -444,27 +458,37 @@ const saveChanges = () => {
   margin-top: 2rem;
 }
 .btn-success {
-  background: #10b981;
+  background: var(--p-green-500);
   border: none;
   color: white;
-} /* Зеленая кнопка как на макете */
+}
 .btn-success:hover {
-  background: #059669;
+  background: var(--p-green-600);
 }
 .cancel-link {
   background: none;
   border: none;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-color-secondary);
   text-decoration: underline;
   text-underline-offset: 4px;
   cursor: pointer;
 }
 .cancel-link:hover {
-  color: #0f172a;
+  color: var(--text-color);
 }
 
-/* Фикс для DatePicker */
+.panel-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-color-secondary);
+}
+.text-editing {
+  color: var(--p-purple-500);
+  font-weight: 500;
+}
+
 :deep(.p-datepicker) {
   width: 100%;
 }
