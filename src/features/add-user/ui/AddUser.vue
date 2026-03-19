@@ -6,7 +6,6 @@ import InputText from 'primevue/inputtext'
 import Select from 'primevue/select' // В PrimeVue v4 Dropdown переименован в Select
 
 // Импортируем нашу сущность и мок-данные
-import { mockUsers } from '@/entities/user/api/mock'
 import type { User } from '@/entities/user/model/types'
 
 // Состояние модального окна
@@ -53,7 +52,7 @@ const handleSave = () => {
   }
 
   // Добавляем в начало списка моковых данных
-  mockUsers.value.unshift(newUser)
+  // mockUsers.value.unshift(newUser)
 
   // Закрываем модалку
   isVisible.value = false
