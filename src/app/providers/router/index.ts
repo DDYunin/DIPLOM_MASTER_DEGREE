@@ -28,18 +28,24 @@ export const router = createRouter({
         },
         {
           path: 'users',
-          name: 'admin-users',
-          component: UsersPage
-        },
-        {
-          path: 'users/student/:id',
-          name: 'admin-student-profile',
-          component: StudentProfilePage
-        },
-        {
-          path: 'users/teacher/:id',
-          name: 'admin-teacher-profile',
-          component: TeacherProfilePage
+          component: () => import('@/shared/ui').then(m => m.EmptyLayout),
+          children: [
+            {
+              path: '',
+              name: 'admin-users',
+              component: UsersPage
+            },
+            {
+              path: 'student/:id',
+              name: 'admin-student-profile',
+              component: StudentProfilePage
+            },
+            {
+              path: 'teacher/:id',
+              name: 'admin-teacher-profile',
+              component: TeacherProfilePage
+            }
+          ]
         },
         {
           path: 'profile',

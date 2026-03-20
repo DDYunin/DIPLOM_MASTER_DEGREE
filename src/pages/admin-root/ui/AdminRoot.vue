@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import AdminLayout from '@/shared/ui/layouts/AdminLayout.vue'
+import { AdminLayout } from '@/shared/ui'
 import { AdminSidebar } from '@/widgets/admin-sidebar'
 import { AdminHeader } from '@/widgets/admin-header'
 </script>

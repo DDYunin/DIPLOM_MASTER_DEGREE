@@ -2,7 +2,6 @@
 import { UsersTable } from '@/widgets/users-table'
 import { ImportCSV } from '@/features/import-csv'
 import { AddUser } from '@/features/add-user'
-import Button from 'primevue/button'
 </script>
 
 <template>

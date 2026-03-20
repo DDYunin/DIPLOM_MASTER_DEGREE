@@ -16,7 +16,7 @@ const handleLogout = () => {
     <div class="sidebar-top">
       <div class="logo">
         <i class="pi pi-graduation-cap text-blue-600 text-2xl"></i>
-        <span class="logo-text">EduAdmin</span>
+        <span class="logo-text">StudLearn</span>
       </div>
 
       <nav class="nav-menu">
