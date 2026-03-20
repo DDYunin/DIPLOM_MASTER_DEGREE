@@ -24,7 +24,10 @@ app.use(i18n)
 
 app.use(PrimeVue, {
   theme: {
-    preset: Aura
+    preset: Aura,
+    options: {
+      darkModeSelector: '.my-app-dark'
+    }
   }
 })
 app.use(ToastService)

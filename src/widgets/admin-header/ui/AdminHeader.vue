@@ -6,6 +6,7 @@ import InputIcon from 'primevue/inputicon'
 import Button from 'primevue/button'
 
 import { LanguageSwitcher } from '@/features/change-language'
+import { ThemeToggler } from '@/features/toggle-theme';
 
 const { t } = useI18n()
 </script>
@@ -18,6 +19,7 @@ const { t } = useI18n()
         <InputText :placeholder="t('common.search')" class="global-search" />
       </IconField>
       <LanguageSwitcher />
+      <ThemeToggler />
       <Button icon="pi pi-bell" text rounded class="icon-btn" />
       <Button icon="pi pi-question-circle" text rounded class="icon-btn" />
     </div>

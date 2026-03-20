@@ -3,10 +3,12 @@ import { watch } from 'vue'
 import { RouterView } from 'vue-router'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
-import { useNotifications } from '@/shared/model/useNotifications' // Наш стор
+import { useNotifications } from '@/shared/model'
+import { useThemeStore } from '@/shared/model'
 
 const toast = useToast()
 const notifications = useNotifications()
+const themeStore = useThemeStore() // Инициализируем стор темы
 
 // Следим за изменениями переменной message в сторе
 watch(

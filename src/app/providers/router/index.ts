@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { LoginPage } from '@/pages/login'
-import { UsersPage } from '@/pages/users'
+
+// Страницы, относящиеся к админу
 import { AdminRoot } from '@/pages/admin-root'
+import { UsersPage } from '@/pages/users' 
 import { StudentProfilePage } from '@/pages/student-profile'
 import { TeacherProfilePage } from '@/pages/teacher-profile'
 import { AdminProfilePage } from '@/pages/admin-profile'
