@@ -10,8 +10,8 @@ import { useNotifications } from '@/shared/model/useNotifications'
 // Импорт виджетов
 import { TeacherRolesPermissions } from '@/widgets/teacher-roles-permissions'
 import { TeacherAssignedCourses } from '@/widgets/teacher-assigned-courses'
-import { TeacherSecurityAccess } from '@/widgets/teacher-security-access'
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
+import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 
 const route = useRoute()
 const router = useRouter()
@@ -71,7 +71,7 @@ const handleSaveChanges = async () => {
           @update:permissions="profileDraft.permissions = $event"
         />
         <TeacherAssignedCourses :profile="profileDraft" />
-        <TeacherSecurityAccess :profile="profileDraft" />
+        <SecuritySettingsCard v-model="profileDraft" />
 
         <div class="form-actions">
           <Button label="Cancel" outlined @click="router.back()" />

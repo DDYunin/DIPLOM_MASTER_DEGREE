@@ -194,7 +194,7 @@ const deptOptions = [
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-color-secondary);
+  color: var(--text-color-secondary, #64748b);
   transition: all 0.2s;
 }
 .camera-btn:hover {
@@ -217,7 +217,7 @@ const deptOptions = [
 .form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-color-secondary);
+  color: var(--text-color-secondary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

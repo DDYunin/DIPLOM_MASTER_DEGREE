@@ -7,7 +7,7 @@ import { useUserStore, type User } from '@/entities/user'
 import { useNotifications } from '@/shared/model/useNotifications'
 
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
-import { AdminSecurityPassword } from '@/widgets/admin-security-password'
+import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 
 const userStore = useUserStore()
 const notifications = useNotifications()
@@ -63,7 +63,7 @@ const handleSaveChanges = async () => {
         <!-- ИСПОЛЬЗУЕМ УНИВЕРСАЛЬНУЮ АНКЕТУ -->
         <ProfileInfoCard v-model="profileDraft" />
 
-        <AdminSecurityPassword />
+        <SecuritySettingsCard v-model="profileDraft" mode="self" />
 
         <div class="form-actions">
           <Button label="Cancel" outlined class="btn-cancel" />

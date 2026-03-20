@@ -7,7 +7,7 @@ import Skeleton from 'primevue/skeleton'
 import { useUserStore, type User } from '@/entities/user'
 import { useNotifications } from '@/shared/model'
 
-import { UserSecurityAccess } from '@/widgets/user-security-access'
+import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
 
@@ -45,8 +45,8 @@ const handleSaveChanges = async () => {
 <template>
   <div class="profile-page">
     <div class="breadcrumbs">
-      <span class="crumb">Users</span> <span class="separator">/</span> 
-      <span class="crumb">Students</span> <span class="separator">/</span> 
+      <span class="crumb">Users</span> <span class="separator">/</span>
+      <span class="crumb">Students</span> <span class="separator">/</span>
       <!-- ИСПОЛЬЗУЕМ fullName -->
       <span class="crumb active">{{ profileDraft?.fullName || 'Loading...' }}</span>
     </div>
@@ -60,8 +60,8 @@ const handleSaveChanges = async () => {
       <div v-else class="content-column">
         <!-- ИСПОЛЬЗУЕМ УНИВЕРСАЛЬНУЮ АНКЕТУ -->
         <ProfileInfoCard v-model="profileDraft" />
-        
-        <UserSecurityAccess />
+
+        <SecuritySettingsCard v-model="profileDraft" />
 
         <div class="form-actions">
           <Button label="Cancel" outlined @click="router.back()" />
@@ -73,12 +73,37 @@ const handleSaveChanges = async () => {
 </template>
 
 <style scoped>
-.profile-page { padding-bottom: 2rem; }
-.breadcrumbs { font-size: 0.875rem; color: var(--text-color-secondary); margin-bottom: 1.5rem; }
-.separator { margin: 0 0.5rem; color: var(--surface-border); }
-.crumb.active { color: var(--text-color); font-weight: 500; }
-.profile-container { max-width: 900px; }
-.content-column { display: flex; flex-direction: column; gap: 1.5rem; }
-.form-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
-.mb-4 { margin-bottom: 1rem; }
+.profile-page {
+  padding-bottom: 2rem;
+}
+.breadcrumbs {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+  margin-bottom: 1.5rem;
+}
+.separator {
+  margin: 0 0.5rem;
+  color: var(--surface-border);
+}
+.crumb.active {
+  color: var(--text-color);
+  font-weight: 500;
+}
+.profile-container {
+  max-width: 900px;
+}
+.content-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
 </style>
