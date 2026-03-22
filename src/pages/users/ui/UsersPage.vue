@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 import { UsersTable } from '@/widgets/users-table'
 import { ImportCSV } from '@/features/import-csv'
 import { AddUser } from '@/features/add-user'
+
 </script>
 
 <template>
