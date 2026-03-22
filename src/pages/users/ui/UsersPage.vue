@@ -1,18 +1,23 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'vue-i18n'
 
 import { UsersTable } from '@/widgets/users-table'
 import { ImportCSV } from '@/features/import-csv'
 import { AddUser } from '@/features/add-user'
 
+import { useUserStore } from '@/entities/user'
+
+const { t } = useI18n()
+
+const userStore = useUserStore()
 </script>
 
 <template>
   <div class="users-page">
     <div class="page-header">
       <div>
-        <h1 class="page-title">Users</h1>
-        <p class="page-subtitle">Manage access, roles, and status for all university members.</p>
+        <h1 class="page-title">{{ t('adminUsers.title') }}</h1>
+        <p class="page-subtitle">{{ t('adminUsers.subtitle') }}</p>
       </div>
       <div class="page-actions">
         <!-- Интегрированная фича импорта CSV -->
@@ -27,8 +32,8 @@ import { AddUser } from '@/features/add-user'
       <div class="stat-card">
         <div class="stat-top">
           <div>
-            <p class="stat-title">Total Users</p>
-            <h3 class="stat-value">6</h3>
+            <p class="stat-title">{{ t('adminUsers.statUsers') }}</p>
+            <h3 class="stat-value">{{ userStore.users.length }}</h3>
           </div>
           <div class="stat-icon bg-blue-100 text-blue-600"><i class="pi pi-users"></i></div>
         </div>

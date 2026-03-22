@@ -18,6 +18,11 @@
     "generalConfig": "General Configuration",
     "generalDesc": "Manage your administrative profile and monitor system integrity."
   },
+  "adminUsers": {
+    "title": "Users",
+    "subtitle": "Manage access, roles, and status for all university members",
+    "statUsers": "Total Users"
+  },
   "primevue": {
     "emptyMessage": "No available options",
     "emptyFilterMessage": "No results found",

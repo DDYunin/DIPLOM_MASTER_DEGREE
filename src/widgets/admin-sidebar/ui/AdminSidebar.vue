@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
-const { t } = useI18n();
+const { t } = useI18n()
 
 const handleLogout = () => {
   // Очистка сессии (Pinia, localStorage) будет здесь
