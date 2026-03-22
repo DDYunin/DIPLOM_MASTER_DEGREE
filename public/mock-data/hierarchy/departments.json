@@ -1,0 +1,6 @@
+[
+  { "id": 101, "name": "Computer Science Dept.", "facultyId": 1 },
+  { "id": 102, "name": "Electrical Engineering", "facultyId": 1 },
+  { "id": 103, "name": "Graphic Design", "facultyId": 2 },
+  { "id": 104, "name": "Management", "facultyId": 3 }
+]

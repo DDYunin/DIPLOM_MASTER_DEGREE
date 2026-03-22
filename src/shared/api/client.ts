@@ -10,6 +10,12 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
     // 1. Имитация задержки реальной сети
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
+    // Парсим URL, чтобы отделить путь от параметров (?facultyId=...)
+    // Используем dummy-base 'http://mock', так как endpoint у нас относительный
+    const urlObj = new URL(endpoint, 'http://mock')
+    const path = urlObj.pathname
+    const searchParams = urlObj.searchParams
+
     // ==============================================================
     // 🛑 MOCK-ПЕРЕХВАТЧИК (Удалить, когда появится реальный бэкенд)
     // ==============================================================
@@ -45,22 +51,94 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
         throw new Error('User not found')
       }
     }
-    // --- БЛОК /organization ---
-    if (endpoint.startsWith('/organization/tree')) {
-      // Запрашиваем дерево
-      if (method === 'GET') {
-        if (!dbCache.orgTree) {
-          const res = await fetch('/mock-data/organization.json');
-          if (!res.ok) throw new Error(`Failed to load mock data`);
-          dbCache.orgTree = await res.json();
+    // --- БЛОК HIERARCHY (НОВАЯ РЕЛЯЦИОННАЯ ЛОГИКА) ---
+    if (path.startsWith('/hierarchy')) {
+      // Вспомогательная функция для загрузки нужной таблицы в кэш
+      const loadTable = async (tableName: string, fileName: string) => {
+        if (!dbCache[tableName]) {
+          const res = await fetch(`/mock-data/hierarchy/${fileName}`)
+          if (!res.ok) throw new Error(`Failed to load ${fileName}`)
+          dbCache[tableName] = await res.json()
         }
-        return dbCache.orgTree as T;
       }
-      
-      // Имитация сохранения всего дерева
-      if (method === 'PUT' && options.body) {
-        dbCache.orgTree = JSON.parse(options.body as string);
-        return dbCache.orgTree as T;
+
+      if (method === 'GET') {
+        // 1. Факультеты (Корень)
+        if (path === '/hierarchy/faculties') {
+          await loadTable('faculties', 'faculties.json')
+          return dbCache.faculties as T
+        }
+
+        // 2. Кафедры (С фильтром по facultyId)
+        if (path === '/hierarchy/departments') {
+          await loadTable('departments', 'departments.json')
+          const facultyId = Number(searchParams.get('facultyId'))
+          return dbCache.departments.filter((d: any) => d.facultyId === facultyId) as T
+        }
+
+        // 3. Направления (С фильтром по facultyId)
+        if (path === '/hierarchy/fields-of-study') {
+          await loadTable('fieldsOfStudy', 'fields-of-study.json')
+          const facultyId = Number(searchParams.get('facultyId'))
+          return dbCache.fieldsOfStudy.filter((f: any) => f.facultyId === facultyId) as T
+        }
+
+        // 4. Группы (С фильтром по fieldOfStudyId)
+        if (path === '/hierarchy/student-groups') {
+          await loadTable('studentGroups', 'student-groups.json')
+          const fieldOfStudyId = Number(searchParams.get('fieldOfStudyId'))
+          return dbCache.studentGroups.filter((g: any) => g.fieldOfStudyId === fieldOfStudyId) as T
+        }
+      }
+
+      // Имитация сохранения нового узла (POST)
+      // Чтобы дерево не падало, когда мы добавляем через модалку AddOrgUnitModal
+      if (method === 'POST' && options.body) {
+        const newItem = JSON.parse(options.body as string)
+        newItem.id = Date.now() // Генерируем фейковый ID базы данных
+
+        if (path === '/hierarchy/faculties') {
+          dbCache.faculties = dbCache.faculties || []
+          dbCache.faculties.push(newItem)
+          return newItem as T
+        }
+        if (path === '/hierarchy/departments') {
+          dbCache.departments = dbCache.departments || []
+          dbCache.departments.push(newItem)
+          return newItem as T
+        }
+        if (path === '/hierarchy/fields-of-study') {
+          dbCache.fieldsOfStudy = dbCache.fieldsOfStudy || []
+          dbCache.fieldsOfStudy.push(newItem)
+          return newItem as T
+        }
+        if (path === '/hierarchy/student-groups') {
+          dbCache.studentGroups = dbCache.studentGroups || []
+          dbCache.studentGroups.push(newItem)
+          return newItem as T
+        }
+      }
+
+      // Имитация обновления существующего узла (PATCH)
+      if (method === 'PATCH' && options.body) {
+        // Достаем ID из конца URL (например, /hierarchy/faculties/1 -> 1)
+        const id = Number(path.split('/').pop())
+        const updates = JSON.parse(options.body as string)
+
+        let targetTable: any[] = []
+        if (path.includes('/faculties/')) targetTable = dbCache.faculties
+        if (path.includes('/departments/')) targetTable = dbCache.departments
+        if (path.includes('/fields-of-study/')) targetTable = dbCache.fieldsOfStudy
+        if (path.includes('/student-groups/')) targetTable = dbCache.studentGroups
+
+        if (targetTable) {
+          const index = targetTable.findIndex((item: any) => item.id === id)
+          if (index > -1) {
+            targetTable[index] = { ...targetTable[index], ...updates }
+            return targetTable[index] as T // Возвращаем обновленный объект
+          }
+        }
+        throw new Error('Item not found in mock DB')
       }
     }
     // ==============================================================

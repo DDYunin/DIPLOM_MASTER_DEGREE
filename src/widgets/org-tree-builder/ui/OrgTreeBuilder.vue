@@ -1,43 +1,38 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import Tree from 'primevue/tree'
-import InputText from 'primevue/inputtext'
-import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
-import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
+import Button from 'primevue/button'
 
-import { useOrgStore, type OrgTreeNode } from '@/entities/organization'
+import { useOrgStore, type OrgTreeNode, type TreeHierarchyType } from '@/entities/organization'
 import { AddOrgUnitModal } from '@/features/add-org-unit'
 
-// ДОБАВИЛИ ПРОПС isEditing
 const props = defineProps<{ isEditing: boolean }>()
-const emit = defineEmits<{ (e: 'select-node', node: OrgTreeNode): void }>()
+
+const emit = defineEmits<{
+  (e: 'select-node', node: OrgTreeNode): void
+  (e: 'tab-change', tab: TreeHierarchyType): void
+}>()
 
 const orgStore = useOrgStore()
 const addModalRef = ref<InstanceType<typeof AddOrgUnitModal> | null>(null)
 
-const searchQuery = ref('')
+// --- СОСТОЯНИЕ ДЕРЕВА И ВКЛАДОК ---
+const activeTab = ref<TreeHierarchyType>('academic')
 const expandedKeys = ref<Record<string, boolean>>({})
 const selectedKey = ref<Record<string, boolean>>({})
 
-// При монтировании запрашиваем данные из API
-onMounted(async () => {
-  if (orgStore.treeData.length === 0) {
-    await orgStore.loadTree()
-    // По умолчанию раскрываем корень
-    if (orgStore.treeData.length > 0) {
-      expandedKeys.value[orgStore.treeData[0].key] = true
-    }
-  }
+// --- ВЫЧИСЛЯЕМЫЕ СВОЙСТВА ---
+// Определяем, какое дерево сейчас показывать
+const currentTreeData = computed(() => {
+  return activeTab.value === 'academic' ? orgStore.academicTree : orgStore.administrativeTree
 })
 
-// Вычисляем ТЕКУЩИЙ выделенный узел
+// Находим полный объект выделенного узла для передачи в модалку добавления
 const currentNode = computed<OrgTreeNode | null>(() => {
   const key = Object.keys(selectedKey.value)[0]
   if (!key) return null
 
-  // Простая рекурсивная функция поиска узла по ключу
   let found: OrgTreeNode | null = null
   const findNode = (nodes: OrgTreeNode[]) => {
     for (const node of nodes) {
@@ -45,88 +40,76 @@ const currentNode = computed<OrgTreeNode | null>(() => {
       if (node.children && !found) findNode(node.children)
     }
   }
-  findNode(orgStore.treeData)
+  findNode(currentTreeData.value)
   return found
 })
 
-// РЕКУРСИВНЫЙ ПОИСК ПО ДЕРЕВУ
-const filteredTree = computed(() => {
-  if (!searchQuery.value) return orgStore.treeData
-  const lowerQuery = searchQuery.value.toLowerCase()
-
-  const filterNodes = (nodes: OrgTreeNode[]): OrgTreeNode[] => {
-    return nodes.reduce((acc, node) => {
-      // Ищем совпадение в имени или коде подразделения
-      const isMatch =
-        node.label.toLowerCase().includes(lowerQuery) ||
-        (node.data?.code && node.data.code.toLowerCase().includes(lowerQuery))
-
-      // Ищем в детях
-      const filteredChildren = node.children ? filterNodes(node.children) : []
-
-      // Если совпал сам узел ИЛИ кто-то из его детей — оставляем узел
-      if (isMatch || filteredChildren.length > 0) {
-        acc.push({
-          ...node,
-          children: filteredChildren.length > 0 ? filteredChildren : node.children
-        })
-      }
-      return acc
-    }, [] as OrgTreeNode[])
+// --- МЕТОДЫ ЖИЗНЕННОГО ЦИКЛА И ЗАГРУЗКИ ---
+const loadTreeData = async (tab: TreeHierarchyType) => {
+  const tree = tab === 'academic' ? orgStore.academicTree : orgStore.administrativeTree
+  // Если корень дерева еще не загружен — грузим
+  if (tree.length === 0) {
+    await orgStore.loadRootNodes(tab)
   }
+}
 
-  return filterNodes(orgStore.treeData)
+onMounted(async () => {
+  await loadTreeData(activeTab.value)
 })
 
-const expandAll = () => {
-  const expand = (nodes: OrgTreeNode[]) => {
-    nodes.forEach((node) => {
-      expandedKeys.value[node.key] = true
-      if (node.children) expand(node.children)
-    })
-  }
-  expand(orgStore.treeData)
+// --- ОБРАБОТЧИКИ СОБЫТИЙ ---
+const handleTabChange = async (tab: TreeHierarchyType) => {
+  if (props.isEditing) return // Блокируем смену вкладок при редактировании
+
+  activeTab.value = tab
+  selectedKey.value = {}
+  expandedKeys.value = {} // Сворачиваем всё при смене вкладки
+
+  emit('select-node', null as any) // Очищаем правую панель
+  emit('tab-change', tab)
+
+  await loadTreeData(tab)
 }
 
-const collapseAll = () => {
-  expandedKeys.value = {}
-}
-
-const onNodeSelect = (node: any) => {
-  // Блокируем смену узла, если идет редактирование
+// Событие PrimeVue: Клик по узлу
+const onNodeSelect = (eventOrNode: any) => {
   if (props.isEditing) return
-  emit('select-node', node)
+
+  // Универсальный перехват (на случай разных версий PrimeVue)
+  const targetNode = eventOrNode.node || eventOrNode
+
+  emit('select-node', targetNode)
 }
 
-// Открытие модалки добавления (Feature)
-const handleOpenAddModal = () => {
-  addModalRef.value?.openModal()
+// Событие PrimeVue: Клик по стрелочке (Lazy Loading)
+const onNodeExpand = async (eventOrNode: any) => {
+  const targetNode = eventOrNode.node || eventOrNode
+
+  // Вызываем экшен стора, передавая правильный узел
+  await orgStore.loadChildren(targetNode, activeTab.value)
 }
 
-// Сохранение нового узла
+// Событие Фичи: Сохранение нового узла
 const handleAddNewNode = async (newNode: OrgTreeNode) => {
   const parentId = currentNode.value ? currentNode.value.key : null
 
   try {
-    // Стор сам сделает PUT-запрос
-    await orgStore.addNode(parentId, newNode)
-
-    // После успешного добавления обязательно раскрываем родительскую папку
+    await orgStore.addNode(activeTab.value, parentId, newNode)
+    // Принудительно раскрываем родительскую папку после добавления элемента
     if (parentId) {
       expandedKeys.value[parentId] = true
-    } else if (orgStore.treeData.length > 0) {
-      expandedKeys.value[orgStore.treeData[0].key] = true
     }
   } catch (error) {
-    // Client сам отработает ошибку
+    console.error('Failed to add node', error)
   }
 }
 
+// --- УТИЛИТЫ ---
 const getIcon = (type: string) => {
   const icons: Record<string, string> = {
-    university: 'pi pi-building text-blue-500',
-    institute: 'pi pi-home text-orange-500',
-    department: 'pi pi-folder text-blue-400',
+    faculty: 'pi pi-building text-blue-500',
+    fieldOfStudy: 'pi pi-compass text-purple-500',
+    department: 'pi pi-folder text-orange-500',
     group: 'pi pi-users text-gray-500'
   }
   return icons[type] || 'pi pi-circle'
@@ -135,67 +118,70 @@ const getIcon = (type: string) => {
 
 <template>
   <div class="tree-builder">
+    <!-- ВКЛАДКИ -->
+    <div class="tabs-container">
+      <button
+        class="tab-btn"
+        :class="{ active: activeTab === 'academic' }"
+        @click="handleTabChange('academic')"
+      >
+        <i class="pi pi-book"></i> Academic Structure
+      </button>
+      <button
+        class="tab-btn"
+        :class="{ active: activeTab === 'administrative' }"
+        @click="handleTabChange('administrative')"
+      >
+        <i class="pi pi-sitemap"></i> Administrative Structure
+      </button>
+    </div>
+
+    <!-- ТУЛБАР (Информационный) -->
     <div class="toolbar">
-      <IconField iconPosition="left" class="search-field">
-        <InputIcon class="pi pi-search" />
-        <InputText
-          v-model="searchQuery"
-          placeholder="Search departments..."
-          class="w-full"
-          :disabled="isEditing"
-        />
-      </IconField>
+      <span class="toolbar-info">
+        <i class="pi pi-info-circle"></i> Select a unit to view details or add new ones.
+      </span>
       <div class="toolbar-actions">
+        <!-- Кнопка обновления дерева (полезно при ленивой загрузке) -->
         <Button
-          label="Expand All"
-          outlined
-          class="tool-btn"
-          @click="expandAll"
+          icon="pi pi-refresh"
+          text
+          rounded
+          size="small"
+          @click="loadTreeData(activeTab)"
           :disabled="isEditing"
-        />
-        <Button
-          label="Collapse All"
-          outlined
-          class="tool-btn"
-          @click="collapseAll"
-          :disabled="isEditing"
+          title="Refresh Tree"
         />
       </div>
     </div>
 
-    <!-- Пока загружается дерево с сервера -->
-    <div
-      v-if="orgStore.isLoading"
-      class="p-4"
-      style="background: white; border-radius: 12px; flex-grow: 1"
-    >
+    <!-- SKELETON (Загрузка корня) -->
+    <div v-if="orgStore.isLoading" class="skeleton-container">
       <Skeleton width="100%" height="3rem" borderRadius="8px" class="mb-3" />
-      <Skeleton
-        width="80%"
-        height="3rem"
-        borderRadius="8px"
-        class="mb-3"
-        style="margin-left: 1.5rem"
-      />
-      <Skeleton width="90%" height="3rem" borderRadius="8px" style="margin-left: 1.5rem" />
+      <Skeleton width="100%" height="3rem" borderRadius="8px" class="mb-3" />
+      <Skeleton width="100%" height="3rem" borderRadius="8px" />
     </div>
 
-    <div class="tree-container" :class="{ 'disabled-overlay': isEditing }">
+    <!-- ДЕРЕВО (С включенным Lazy Loading) -->
+    <div v-else class="tree-container" :class="{ 'disabled-overlay': isEditing }">
       <Tree
-        :value="filteredTree"
+        :value="currentTreeData"
         selectionMode="single"
+        loadingMode="icon"
         v-model:selectionKeys="selectedKey"
         v-model:expandedKeys="expandedKeys"
-        @nodeSelect="onNodeSelect"
+        @node-select="onNodeSelect"
+        @node-expand="onNodeExpand"
         class="custom-tree"
       >
+        <!-- Кастомный рендер карточки узла -->
         <template #default="slotProps">
           <div class="node-card" :class="{ 'is-selected': selectedKey[slotProps.node.key] }">
             <i :class="[getIcon(slotProps.node.type), 'node-icon']"></i>
             <div class="node-content">
               <span class="node-label">
                 {{ slotProps.node.label }}
-                <!-- ДИНАМИЧЕСКАЯ ПОДПИСЬ -->
+                <!-- Надпись (Selected) или (Editing) -->
                 <span
                   v-if="selectedKey[slotProps.node.key]"
                   :class="['selected-text', isEditing ? 'text-editing' : 'text-selected']"
@@ -203,29 +189,41 @@ const getIcon = (type: string) => {
                   ({{ isEditing ? 'Editing' : 'Selected' }})
                 </span>
               </span>
-              <span v-if="slotProps.node.type === 'university'" class="node-sub"
-                >Root Organization</span
-              >
-              <span v-if="slotProps.node.data?.code" class="node-sub"
-                >Code: {{ slotProps.node.data.code }}</span
-              >
+
+              <!-- Подпись типа узла и кода/шортнейма -->
+              <span class="node-sub">
+                <span class="text-capitalize">{{
+                  slotProps.node.type === 'fieldOfStudy' ? 'Field of Study' : slotProps.node.type
+                }}</span>
+                <template v-if="slotProps.node.data?.shortName || slotProps.node.data?.code">
+                  • {{ slotProps.node.data.shortName || slotProps.node.data.code }}
+                </template>
+              </span>
             </div>
           </div>
         </template>
       </Tree>
-      <!-- ОБНОВЛЕННАЯ КНОПКА -->
-      <button class="add-institute-btn" :disabled="isEditing" @click="handleOpenAddModal">
+
+      <!-- Кнопка вызова модалки добавления -->
+      <button class="add-unit-btn" :disabled="isEditing" @click="addModalRef?.openModal()">
         <i class="pi pi-plus-circle"></i>
-        {{ currentNode ? 'Add Child Unit' : 'Add Institute' }}
+        {{ currentNode ? 'Add Child Unit' : 'Add Root Organization' }}
       </button>
     </div>
-    <!-- ПОДКЛЮЧЕННАЯ ФИЧА -->
-    <AddOrgUnitModal ref="addModalRef" :parentNode="currentNode" @add="handleAddNewNode" />
+
+    <!-- ФИЧА: Модальное окно добавления -->
+    <!-- Передаем hierarchyType, чтобы фича понимала логику добавляемых типов -->
+    <AddOrgUnitModal
+      ref="addModalRef"
+      :parentNode="currentNode"
+      :hierarchyType="activeTab"
+      @add="handleAddNewNode"
+    />
   </div>
 </template>
 
 <style scoped>
-/* Старые стили остаются... */
+/* ОСНОВНОЙ ЛЕЙАУТ */
 .tree-builder {
   padding: 1.5rem;
   display: flex;
@@ -233,41 +231,73 @@ const getIcon = (type: string) => {
   height: 100%;
   overflow: hidden;
 }
+
+/* ВКЛАДКИ */
+.tabs-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--surface-border, #e2e8f0);
+  padding-bottom: 0.5rem;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color-secondary, #64748b);
+  cursor: pointer;
+  padding: 0.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn:hover {
+  color: var(--text-color, #0f172a);
+}
+.tab-btn.active {
+  color: var(--p-primary-500);
+  border-bottom: 2px solid var(--p-primary-500);
+}
+
+/* ТУЛБАР */
 .toolbar {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0 0.5rem;
 }
-.search-field {
-  flex-grow: 1;
-  max-width: 300px;
-}
-.w-full {
-  width: 100%;
-  border-radius: 8px;
-}
-.toolbar-actions {
+.toolbar-info {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary, #64748b);
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
-.tool-btn {
-  color: #475569;
-  border-color: #cbd5e1;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+
+/* КОНТЕЙНЕРЫ ДЕРЕВА */
+.skeleton-container {
+  background: var(--surface-card, #ffffff);
+  border-radius: 12px;
+  padding: 1.5rem;
+  flex-grow: 1;
+  border: 1px solid var(--surface-border, #e2e8f0);
 }
 .tree-container {
   flex-grow: 1;
   overflow-y: auto;
-  background: white;
+  background: var(--surface-card, #ffffff);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--surface-border, #e2e8f0);
   position: relative;
 }
 
+/* ПЕРЕОПРЕДЕЛЕНИЕ СТИЛЕЙ PRIMEVUE TREE */
 .custom-tree {
   border: none;
   padding: 0;
@@ -281,46 +311,56 @@ const getIcon = (type: string) => {
 }
 :deep(.p-treenode-children) {
   padding-left: 1.5rem;
-  border-left: 1px dashed #cbd5e1;
+  border-left: 1px dashed var(--surface-border, #e2e8f0);
   margin-left: 1rem;
 }
 :deep(.p-tree-node-label) {
   width: 100%;
 }
 
+/* КАРТОЧКА УЗЛА */
 .node-card {
   display: flex;
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--surface-border, #e2e8f0);
   border-radius: 8px;
-  background: white;
+  background: var(--surface-card, #ffffff);
   transition: all 0.2s;
 }
 .node-card:hover {
-  border-color: #cbd5e1;
-  background: #f8fafc;
+  border-color: var(--surface-border, #e2e8f0);
+  background: var(--surface-hover, #d6d4d4);
 }
 .node-card.is-selected {
-  background: #eff6ff;
-  border-color: #bfdbfe;
+  background: var(--p-blue-50);
+  border-color: var(--p-blue-200);
 }
+
+/* Поддержка темной темы для выделения */
+:root[class*='my-app-dark'] .node-card.is-selected {
+  background: rgba(var(--p-blue-500), 0.16);
+  border-color: var(--p-blue-700);
+}
+
+/* ТЕКСТА И ИКОНКИ УЗЛА */
 .node-icon {
   font-size: 1.25rem;
 }
 .text-blue-500 {
-  color: #3b82f6;
+  color: var(--p-blue-500);
 }
 .text-orange-500 {
-  color: #f97316;
+  color: var(--p-orange-500);
 }
-.text-blue-400 {
-  color: #60a5fa;
+.text-purple-500 {
+  color: var(--p-purple-500);
 }
 .text-gray-500 {
-  color: #64748b;
+  color: var(--text-color-secondary, #64748b);
 }
+
 .node-content {
   display: flex;
   flex-direction: column;
@@ -328,21 +368,44 @@ const getIcon = (type: string) => {
 }
 .node-label {
   font-weight: 500;
-  color: #0f172a;
+  color: var(--text-color, #0f172a);
   font-size: 0.9rem;
 }
 .node-sub {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-color-secondary, #64748b);
 }
-.add-institute-btn {
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+/* СОСТОЯНИЯ И КНОПКИ */
+.text-selected {
+  color: var(--p-blue-500);
+  font-weight: 400;
+  margin-left: 0.25rem;
+}
+.text-editing {
+  color: var(--p-purple-500);
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+.disabled-overlay {
+  opacity: 0.6;
+  pointer-events: none;
+}
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.add-unit-btn {
   width: 100%;
   padding: 1rem;
   margin-top: 1rem;
   background: transparent;
-  border: 1px dashed #cbd5e1;
+  border: 1px dashed var(--surface-border, #e2e8f0);
   border-radius: 8px;
-  color: #64748b;
+  color: var(--text-color-secondary, #64748b);
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -351,24 +414,9 @@ const getIcon = (type: string) => {
   gap: 0.5rem;
   transition: all 0.2s;
 }
-.add-institute-btn:hover:not(:disabled) {
-  background: #f8fafc;
-  border-color: #94a3b8;
-  color: #0f172a;
+.add-unit-btn:hover:not(:disabled) {
+  background: var(--surface-hover, #d6d4d4);
+  border-color: var(--text-color-secondary, #64748b);
+  color: var(--text-color, #0f172a);
 }
-
-/* НОВЫЕ СТИЛИ ДЛЯ РЕЖИМА РЕДАКТИРОВАНИЯ */
-.text-selected {
-  color: #3b82f6;
-  font-weight: 400;
-}
-.text-editing {
-  color: #8b5cf6;
-  font-weight: 500;
-} /* Фиолетовый оттенок для Editing */
-.disabled-overlay {
-  opacity: 0.6;
-  pointer-events: none;
-} /* Визуально блокируем дерево */
-.mb-3 { margin-bottom: 1rem; }
 </style>

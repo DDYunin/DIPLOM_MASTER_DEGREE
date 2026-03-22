@@ -1,0 +1,5 @@
+[
+  { "id": 1, "name": "Institute of Engineering", "shortName": "ENG" },
+  { "id": 2, "name": "Institute of Arts & Design", "shortName": "ART" },
+  { "id": 3, "name": "Business School", "shortName": "BUS" }
+]

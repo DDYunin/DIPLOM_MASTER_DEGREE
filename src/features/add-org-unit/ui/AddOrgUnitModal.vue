@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
-import type { OrgTreeNode, OrgUnitType } from '@/entities/organization/model/types'
+import type { OrgTreeNode, OrgUnitType } from '@/entities/organization'
+import type { TreeHierarchyType } from '@/entities/organization'
 
 const props = defineProps<{
   parentNode: OrgTreeNode | null
+  hierarchyType: TreeHierarchyType // <-- Новый пропс
 }>()
 
 const emit = defineEmits<{
@@ -29,29 +31,33 @@ const headOptions = ['Dr. Sarah Smith', 'Prof. John Doe', 'Dr. Emily Chen']
 
 // Логика определения типа добавляемого узла
 const childType = computed<OrgUnitType>(() => {
-  if (!props.parentNode) return 'institute'
-  if (props.parentNode.type === 'university') return 'institute'
-  if (props.parentNode.type === 'institute') return 'department'
-  return 'group' // Если department, то добавляем group
+  if (!props.parentNode || props.parentNode.type === 'university') return 'institute'
+
+  if (props.hierarchyType === 'academic') {
+    if (props.parentNode.type === 'institute') return 'fieldOfStudy'
+    if (props.parentNode.type === 'fieldOfStudy') return 'group'
+  } else {
+    if (props.parentNode.type === 'institute') return 'department'
+  }
+  return 'group'
 })
 
 // Динамические тексты интерфейса
 const labels = computed(() => {
-  const cType = childType.value.charAt(0).toUpperCase() + childType.value.slice(1)
-  const pType = props.parentNode
-    ? props.parentNode.type.charAt(0).toUpperCase() + props.parentNode.type.slice(1)
-    : 'Organization'
+  // Форматируем CamelCase (fieldOfStudy -> Field Of Study)
+  const formatType = (type: string) =>
+    type === 'fieldOfStudy' ? 'Field of Study' : type.charAt(0).toUpperCase() + type.slice(1)
+  const cType = formatType(childType.value)
+  const pType = props.parentNode ? formatType(props.parentNode.type) : 'Organization'
 
   return {
     modalTitle: `Add New ${cType}`,
     parentLabel: `Parent ${pType}`,
     nameLabel: `${cType} Name`,
     codeLabel: `${cType} Code`,
-    headLabel: `Head of ${cType}`,
     btnLabel: `Create ${cType}`
   }
 })
-
 // Иконка родителя (для disabled поля)
 const parentIcon = computed(() => {
   if (!props.parentNode) return 'pi-building'

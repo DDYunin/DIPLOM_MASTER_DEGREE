@@ -1,0 +1,6 @@
+[
+  { "id": 301, "name": "Web Development", "facultyId": 1, "fieldOfStudyId": 201 },
+  { "id": 302, "name": "AI Research Group", "facultyId": 1, "fieldOfStudyId": 201 },
+  { "id": 303, "name": "High Voltage Lab", "facultyId": 1, "fieldOfStudyId": 202 },
+  { "id": 304, "name": "Digital Painting", "facultyId": 2, "fieldOfStudyId": 203 }
+]

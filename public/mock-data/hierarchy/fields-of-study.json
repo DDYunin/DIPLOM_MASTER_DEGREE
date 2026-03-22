@@ -1,0 +1,5 @@
+[
+  { "id": 201, "code": "SE-09", "name": "Software Engineering", "facultyId": 1 },
+  { "id": 202, "code": "EE-01", "name": "Power Systems", "facultyId": 1 },
+  { "id": 203, "code": "FA-05", "name": "Fine Arts", "facultyId": 2 }
+]

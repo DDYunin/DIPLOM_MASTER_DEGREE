@@ -1,4 +1,4 @@
-import type { OrgTreeNode, OrgUnitType } from './model/types'
+import type { OrgTreeNode, OrgUnitType, TreeHierarchyType  } from './model/types'
 import { useOrgStore } from './model/store'
 
-export { type OrgTreeNode, type OrgUnitType, useOrgStore }
+export { type OrgTreeNode, type OrgUnitType, type TreeHierarchyType, useOrgStore }

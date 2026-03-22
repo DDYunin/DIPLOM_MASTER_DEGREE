@@ -1,25 +1,43 @@
-export type OrgUnitType = 'university' | 'institute' | 'department' | 'group'
-
-export interface OrgUnitData {
-  code?: string
-  status?: string
-  students?: number
-  teachers?: number
-  parentDept?: string
-  createdDate?: string
-  head?: {
-    name: string
-    avatarInitials: string
-  }
-  description?: string
-  groupId?: string
+// Факультеты
+export interface FacultyDTO {
+  id: number
+  name: string
+  shortName: string
 }
 
-// Формат, требуемый компонентом Tree из PrimeVue
+// Кафедры
+export interface DepartmentDTO {
+  id: number
+  name: string
+  facultyId: number
+}
+
+// Направления подготовки
+export interface FieldOfStudyDTO {
+  id: number
+  code: string
+  name: string
+  facultyId: number
+}
+
+// Группы студентов
+export interface StudentGroupDTO {
+  id: number
+  name: string
+  facultyId: number
+  fieldOfStudyId: number
+}
+
+export type OrgUnitType = 'faculty' | 'department' | 'fieldOfStudy' | 'group'
+
 export interface OrgTreeNode {
   key: string
   label: string
-  type: OrgUnitType // Используем type для определения иконки и стиля
-  data?: OrgUnitData
+  type: OrgUnitType
+  leaf: boolean // Обязательное поле для Lazy Loading (если true — стрелочки "развернуть" не будет)
+  loading?: boolean // Показывает спиннер при загрузке детей
+  data?: any // Сюда будем складывать оригинальный DTO
   children?: OrgTreeNode[]
 }
+
+export type TreeHierarchyType = 'academic' | 'administrative'

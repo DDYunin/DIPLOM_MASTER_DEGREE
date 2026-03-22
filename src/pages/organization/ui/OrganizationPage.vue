@@ -22,22 +22,26 @@ const handleNodeSelect = (node: OrgTreeNode) => {
 const handleSaveDetails = async (updatedNode: OrgTreeNode) => {
   try {
     // 1. Отправляем в стор. Стор сам обновит локальное дерево и отправит PUT-запрос
-    await orgStore.updateNode(updatedNode.key, updatedNode);
-    
+    await orgStore.updateNode(updatedNode.key, updatedNode)
+
     // 2. Обновляем локально выбранный узел, чтобы правая панель сразу показала новые данные
-    selectedNode.value = updatedNode; 
-    
+    selectedNode.value = updatedNode
+
     // 3. Выходим из режима редактирования
-    isEditing.value = false;
-    
+    isEditing.value = false
+
     // 4. Показываем красивый Toast
-    notifications.showToast('success', 'Hierarchy Updated', `${updatedNode.label} has been updated successfully.`);
+    notifications.showToast(
+      'success',
+      'Hierarchy Updated',
+      `${updatedNode.label} has been updated successfully.`
+    )
   } catch (error) {
     // Если произошла сетевая ошибка, наш apiClient сам покажет Toast 'error'.
     // Здесь мы просто не закрываем режим редактирования (остаемся в форме).
-    console.error('Failed to save details:', error);
+    console.error('Failed to save details:', error)
   }
-};
+}
 
 const closePanel = () => {
   selectedNode.value = null
@@ -49,12 +53,9 @@ const closePanel = () => {
   <div class="organization-page">
     <!-- TODO: лишнее -->
     <div class="page-header">
-      <h1 class="page-title">Hierarchy Builder</h1>
-      <div class="header-actions">
-        <button class="icon-btn"><i class="pi pi-moon"></i></button>
-        <button class="icon-btn"><i class="pi pi-bell"></i><span class="badge"></span></button>
-        <!-- Кнопка изменена на View Logs по новому макету -->
-        <Button label="View Logs" icon="pi pi-history" outlined class="btn-logs" />
+      <div>
+        <h1 class="page-title">Hierarchy</h1>
+        <p class="page-subtitle"></p>
       </div>
     </div>
 
@@ -80,29 +81,24 @@ const closePanel = () => {
 .organization-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 72px);
+  height: calc(100vh - 100px);
   overflow: hidden;
-  margin: -2rem;
 }
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #e2e8f0;
-  background: white;
-  flex-shrink: 0;
+  align-items: flex-start;
+  margin-bottom: 2rem;
 }
 .page-title {
-  margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: #0f172a;
+  margin: 0 0 0.5rem 0;
 }
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.page-subtitle {
+  color: #64748b;
+  margin: 0;
 }
 .icon-btn {
   background: none;
