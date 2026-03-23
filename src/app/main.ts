@@ -9,6 +9,7 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
 import 'primeicons/primeicons.css'
 import ToastService from 'primevue/toastservice'
+import ConfirmationService from 'primevue/confirmationservice'
 
 // ИМПОРТИРУЕМ I18N
 import { i18n } from '@/shared/config/i18n'
@@ -31,5 +32,6 @@ app.use(PrimeVue, {
   }
 })
 app.use(ToastService)
+app.use(ConfirmationService)
 
 app.mount('#app')

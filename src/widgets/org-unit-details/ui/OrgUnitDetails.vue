@@ -4,6 +4,7 @@ import { ref, watch } from 'vue'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import { useConfirm } from 'primevue/useconfirm'
 
 import type { OrgTreeNode } from '@/entities/organization'
 
@@ -12,7 +13,9 @@ const props = defineProps<{
   isEditing: boolean
 }>()
 
-const emit = defineEmits(['close', 'update:isEditing', 'save'])
+const emit = defineEmits(['close', 'update:isEditing', 'save', 'delete'])
+
+const confirm = useConfirm() // Инициализация
 
 // Локальный черновик (только те поля, которые поддерживает наш бэкенд)
 const draft = ref({
@@ -47,6 +50,31 @@ const saveChanges = () => {
       ...props.selectedNode?.data,
       shortName: draft.value.shortName,
       code: draft.value.code
+    }
+  })
+}
+
+const confirmDelete = () => {
+  if (!props.selectedNode) {
+    return
+  }
+
+  confirm.require({
+    header: 'Delete Confirmation',
+    message: `Are you sure you want to delete "${props.selectedNode.label}"? All nested units will also be removed.`,
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancel',
+      severity: 'secondary',
+      outlined: true
+    },
+    acceptProps: {
+      label: 'Delete',
+      severity: 'danger'
+    },
+    accept: () => {
+      // Отправляем событие наверх в страницу
+      emit('delete', props.selectedNode)
     }
   })
 }
@@ -149,11 +177,20 @@ const formatType = (type?: string) => {
           class="action-btn"
           @click="startEditing"
         />
+        <!-- TODO: мне кажется лишней -->
         <Button
           v-if="selectedNode.type === 'group'"
           label="Assign Students"
           icon="pi pi-user-plus"
           class="action-btn btn-primary"
+        />
+        <Button
+          label="Delete Unit"
+          icon="pi pi-trash"
+          severity="danger"
+          outlined
+          class="action-btn mt-2"
+          @click="confirmDelete"
         />
       </div>
     </template>

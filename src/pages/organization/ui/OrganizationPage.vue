@@ -51,6 +51,26 @@ const handleSaveDetails = async (updatedNode: OrgTreeNode) => {
   }
 }
 
+const handleDeleteDetails = async (nodeToDelete: OrgTreeNode) => {
+  try {
+    // Вызываем удаление из стора (передаем вкладку, ID и тип узла)
+    await orgStore.deleteNode(activeTab.value, nodeToDelete.key, nodeToDelete.type)
+
+    // Очищаем правую панель, так как узла больше нет
+    selectedNode.value = null
+    isEditing.value = false
+
+    // Уведомление об успехе
+    notifications.showToast(
+      'success',
+      'Deleted',
+      `${nodeToDelete.label} has been deleted successfully.`
+    )
+  } catch (error) {
+    console.error('Failed to delete node:', error)
+  }
+}
+
 const closePanel = () => {
   selectedNode.value = null
   isEditing.value = false
@@ -81,6 +101,7 @@ const closePanel = () => {
           :selectedNode="selectedNode"
           v-model:isEditing="isEditing"
           @save="handleSaveDetails"
+          @delete="handleDeleteDetails"
           @close="closePanel"
         />
       </div>

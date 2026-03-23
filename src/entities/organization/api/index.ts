@@ -2,6 +2,7 @@ import { api } from '@/shared/api'
 import type { FacultyDTO, DepartmentDTO, FieldOfStudyDTO, StudentGroupDTO } from '../model/types'
 
 // === GET (Ленивая загрузка) ===
+
 // Получить список факультетов
 export const fetchFaculties = () => api<FacultyDTO[]>('/hierarchy/faculties')
 
@@ -17,7 +18,10 @@ export const fetchFieldsOfStudy = (facultyId: number) =>
 export const fetchStudentGroups = (fieldOfStudyId: number) =>
   api<StudentGroupDTO[]>(`/hierarchy/student-groups?fieldOfStudyId=${fieldOfStudyId}`)
 
+
+
 // === POST (Создание новых узлов) ===
+
 export const createFaculty = (data: Partial<FacultyDTO>) => 
   api<FacultyDTO>('/hierarchy/faculties', { method: 'POST', body: JSON.stringify(data) });
 
@@ -30,7 +34,10 @@ export const createFieldOfStudy = (data: Partial<FieldOfStudyDTO>) =>
 export const createStudentGroup = (data: Partial<StudentGroupDTO>) => 
   api<StudentGroupDTO>('/hierarchy/student-groups', { method: 'POST', body: JSON.stringify(data) });
 
+
+
 // === PATCH (Обновление существующих узлов) ===
+
 export const updateFaculty = (id: number, data: Partial<FacultyDTO>) => 
   api<FacultyDTO>(`/hierarchy/faculties/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
 
@@ -42,3 +49,18 @@ export const updateFieldOfStudy = (id: number, data: Partial<FieldOfStudyDTO>) =
 
 export const updateStudentGroup = (id: number, data: Partial<StudentGroupDTO>) => 
   api<StudentGroupDTO>(`/hierarchy/student-groups/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+
+
+
+// === DELETE (Удаление узлов) ===
+export const deleteFaculty = (id: number) => 
+  api(`/hierarchy/faculties/${id}`, { method: 'DELETE' });
+
+export const deleteDepartment = (id: number) => 
+  api(`/hierarchy/departments/${id}`, { method: 'DELETE' });
+
+export const deleteFieldOfStudy = (id: number) => 
+  api(`/hierarchy/fields-of-study/${id}`, { method: 'DELETE' });
+
+export const deleteStudentGroup = (id: number) => 
+  api(`/hierarchy/student-groups/${id}`, { method: 'DELETE' });

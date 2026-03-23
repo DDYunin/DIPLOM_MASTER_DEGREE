@@ -140,6 +140,33 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
         }
         throw new Error('Item not found in mock DB')
       }
+
+      if (method === 'DELETE') {
+        const id = Number(path.split('/').pop())
+
+        let targetTable: any[] | null = null
+        if (path.includes('/faculties/')) {
+          targetTable = dbCache.faculties
+        }
+        if (path.includes('/departments/')) {
+          targetTable = dbCache.departments
+        }
+        if (path.includes('/fields-of-study/')) {
+          targetTable = dbCache.fieldsOfStudy
+        }
+        if (path.includes('/student-groups/')) {
+          targetTable = dbCache.studentGroups
+        }
+
+        if (targetTable) {
+          const index = targetTable.findIndex((item: any) => item.id === id)
+          if (index > -1) {
+            targetTable.splice(index, 1) // Удаляем из кэша
+            return { success: true } as T
+          }
+        }
+        throw new Error('Item not found for deletion')
+      }
     }
     // ==============================================================
 

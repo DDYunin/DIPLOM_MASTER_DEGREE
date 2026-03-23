@@ -3,6 +3,8 @@ import { watch } from 'vue'
 import { RouterView } from 'vue-router'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
+import ConfirmDialog from 'primevue/confirmdialog'
+
 import { useNotifications } from '@/shared/model'
 import { useThemeStore } from '@/shared/model'
 
@@ -24,6 +26,7 @@ watch(
 <template>
   <div class="app">
     <Toast position="bottom-right" />
+    <ConfirmDialog />
     <RouterView />
   </div>
 </template>

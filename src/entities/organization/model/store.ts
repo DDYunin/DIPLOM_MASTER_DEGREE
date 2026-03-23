@@ -145,7 +145,7 @@ export const useOrgStore = defineStore('organization', () => {
     if (updatedNode.type === 'faculty') {
       await orgApi.updateFaculty(dbId, {
         name: updatedNode.label,
-        shortName: updatedNode.data?.shortName 
+        shortName: updatedNode.data?.shortName
       })
     } else if (updatedNode.type === 'department') {
       await orgApi.updateDepartment(dbId, { name: updatedNode.label })
@@ -174,6 +174,48 @@ export const useOrgStore = defineStore('organization', () => {
     replaceNode(targetTree.value)
   }
 
+  const deleteNode = async (treeType: TreeHierarchyType, id: string, nodeType: string) => {
+    const dbId = Number(id.split('-')[1])
+
+    // 1. Отправляем DELETE-запрос на бэкенд
+    if (nodeType === 'faculty') {
+      await orgApi.deleteFaculty(dbId)
+    } else if (nodeType === 'department') {
+      await orgApi.deleteDepartment(dbId)
+    } else if (nodeType === 'fieldOfStudy') {
+      await orgApi.deleteFieldOfStudy(dbId)
+    } else if (nodeType === 'group') {
+      await orgApi.deleteStudentGroup(dbId)
+    }
+
+    // 2. Рекурсивно находим и удаляем узел из локального дерева
+    const targetTree = getTreeByType(treeType)
+
+    const removeRecursively = (nodes: OrgTreeNode[]): boolean => {
+      const index = nodes.findIndex((n) => n.key === id)
+
+      // Если нашли узел на текущем уровне — удаляем
+      if (index !== -1) {
+        nodes.splice(index, 1)
+        return true
+      }
+
+      // Иначе ищем в детях
+      for (const node of nodes) {
+        if (node.children && removeRecursively(node.children)) {
+          // Если после удаления ребенка массив детей стал пустым — убираем стрелочку
+          if (node.children.length === 0) {
+            node.leaf = true
+          }
+          return true
+        }
+      }
+      return false
+    }
+
+    removeRecursively(targetTree.value)
+  }
+
   return {
     academicTree,
     administrativeTree,
@@ -181,6 +223,7 @@ export const useOrgStore = defineStore('organization', () => {
     loadChildren,
     loadRootNodes,
     addNode,
-    updateNode
+    updateNode,
+    deleteNode
   }
 })
