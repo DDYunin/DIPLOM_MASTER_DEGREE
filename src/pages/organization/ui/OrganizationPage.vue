@@ -83,7 +83,7 @@ const closePanel = () => {
     <div class="page-header">
       <div>
         <h1 class="page-title">Hierarchy</h1>
-        <p class="page-subtitle"></p>
+        <p class="page-subtitle">Manage the organizational structure of the university, including groups, departments, and institutes</p>
       </div>
     </div>
 
@@ -122,14 +122,19 @@ const closePanel = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
   flex-shrink: 0;
+  margin-bottom: 2rem;
 }
 .page-title {
-  margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.75rem;
+  margin: 0 0 0.5rem 0;
   font-weight: 700;
   color: var(--text-color, #0f172a);
+}
+
+.page-subtitle {
+  color: #64748b;
+  margin: 0;
 }
 
 .builder-layout {
