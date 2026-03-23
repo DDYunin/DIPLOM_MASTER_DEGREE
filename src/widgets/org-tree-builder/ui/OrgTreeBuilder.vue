@@ -6,6 +6,7 @@ import Button from 'primevue/button'
 
 import { useOrgStore, type OrgTreeNode, type TreeHierarchyType } from '@/entities/organization'
 import { AddOrgUnitModal } from '@/features/add-org-unit'
+import { useNotifications } from '@/shared/model/useNotifications'
 
 const props = defineProps<{ isEditing: boolean }>()
 
@@ -15,6 +16,7 @@ const emit = defineEmits<{
 }>()
 
 const orgStore = useOrgStore()
+const notifications = useNotifications()
 const addModalRef = ref<InstanceType<typeof AddOrgUnitModal> | null>(null)
 
 // --- СОСТОЯНИЕ ДЕРЕВА И ВКЛАДОК ---
@@ -99,6 +101,12 @@ const handleAddNewNode = async (newNode: OrgTreeNode) => {
     if (parentId) {
       expandedKeys.value[parentId] = true
     }
+
+    notifications.showToast(
+      'success',
+      'Hierarchy Updated',
+      `${newNode.label} has been updated successfully.`
+    )
   } catch (error) {
     console.error('Failed to add node', error)
   }
@@ -177,7 +185,7 @@ const getIcon = (type: string) => {
         <!-- Кастомный рендер карточки узла -->
         <template #default="slotProps">
           <div class="node-card" :class="{ 'is-selected': selectedKey[slotProps.node.key] }">
-            <i :class="[getIcon(slotProps.node.type), 'node-icon']"></i>
+            <i :class="[getIcon(slotProps.node.type ?? ''), 'node-icon']"></i>
             <div class="node-content">
               <span class="node-label">
                 {{ slotProps.node.label }}
@@ -207,7 +215,7 @@ const getIcon = (type: string) => {
       <!-- Кнопка вызова модалки добавления -->
       <button class="add-unit-btn" :disabled="isEditing" @click="addModalRef?.openModal()">
         <i class="pi pi-plus-circle"></i>
-        {{ currentNode ? 'Add Child Unit' : 'Add Root Organization' }}
+        {{ 'Add Unit' }}
       </button>
     </div>
 
@@ -225,7 +233,7 @@ const getIcon = (type: string) => {
 <style scoped>
 /* ОСНОВНОЙ ЛЕЙАУТ */
 .tree-builder {
-  padding: 1.5rem;
+  padding-right: 1.5rem;
   display: flex;
   flex-direction: column;
   height: 100%;

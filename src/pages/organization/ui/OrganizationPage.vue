@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Button from 'primevue/button'
+
 import { OrgTreeBuilder } from '@/widgets/org-tree-builder'
 import { OrgUnitDetails } from '@/widgets/org-unit-details'
-import { useOrgStore } from '@/entities/organization'
-import { useNotifications } from '@/shared/model/useNotifications'
+
+import { useOrgStore, type TreeHierarchyType } from '@/entities/organization'
+import { useNotifications } from '@/shared/model'
 import type { OrgTreeNode } from '@/entities/organization'
 
 const orgStore = useOrgStore()
@@ -13,21 +14,28 @@ const notifications = useNotifications()
 const selectedNode = ref<OrgTreeNode | null>(null)
 const isEditing = ref(false) // Глобальное состояние редактирования
 
+const activeTab = ref<TreeHierarchyType>('academic')
+
+// Обработчик смены вкладки из левой панели
+const handleTabChange = (tab: TreeHierarchyType) => {
+  activeTab.value = tab
+  // Сбрасываем выбранный узел при переходе на другую вкладку
+  selectedNode.value = null
+  isEditing.value = false
+}
+
 const handleNodeSelect = (node: OrgTreeNode) => {
   selectedNode.value = node
-  isEditing.value = false // Сбрасываем режим редактирования при смене узла
+  // Сбрасываем режим редактирования при смене узла
+  isEditing.value = false
 }
 
 // Обработчик сохранения изменений из правой панели (Деталей)
 const handleSaveDetails = async (updatedNode: OrgTreeNode) => {
   try {
-    // 1. Отправляем в стор. Стор сам обновит локальное дерево и отправит PUT-запрос
-    await orgStore.updateNode(updatedNode.key, updatedNode)
+    await orgStore.updateNode(activeTab.value, updatedNode.key, updatedNode)
 
-    // 2. Обновляем локально выбранный узел, чтобы правая панель сразу показала новые данные
     selectedNode.value = updatedNode
-
-    // 3. Выходим из режима редактирования
     isEditing.value = false
 
     // 4. Показываем красивый Toast
@@ -61,7 +69,11 @@ const closePanel = () => {
 
     <div class="builder-layout">
       <div class="left-panel">
-        <OrgTreeBuilder :isEditing="isEditing" @select-node="handleNodeSelect" />
+        <OrgTreeBuilder
+          :isEditing="isEditing"
+          @select-node="handleNodeSelect"
+          @tab-change="handleTabChange"
+        />
       </div>
 
       <div class="right-panel">
@@ -84,50 +96,28 @@ const closePanel = () => {
   height: calc(100vh - 100px);
   overflow: hidden;
 }
+
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  flex-shrink: 0;
 }
 .page-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 0.5rem 0;
-}
-.page-subtitle {
-  color: #64748b;
   margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-color, #0f172a);
 }
-.icon-btn {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  color: #64748b;
-  cursor: pointer;
-  position: relative;
-}
-.badge {
-  position: absolute;
-  top: 0;
-  right: -2px;
-  width: 8px;
-  height: 8px;
-  background: #ef4444;
-  border-radius: 50%;
-}
-.btn-logs {
-  color: #475569;
-  border-color: #cbd5e1;
-} /* Стиль кнопки логов */
 
 .builder-layout {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
-  background: #f8fafc;
+  background: var(--surface-ground, #f8fafc);
 }
+
 .left-panel {
   flex-grow: 1;
   overflow: hidden;

@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Select from 'primevue/select'
-import type { OrgTreeNode, OrgUnitType } from '@/entities/organization'
-import type { TreeHierarchyType } from '@/entities/organization'
+
+import type { OrgTreeNode, OrgUnitType, TreeHierarchyType } from '@/entities/organization'
+
+// TODO: добавить переводы
+const { t } = useI18n()
 
 const props = defineProps<{
   parentNode: OrgTreeNode | null
-  hierarchyType: TreeHierarchyType // <-- Новый пропс
+  hierarchyType: TreeHierarchyType
 }>()
 
 const emit = defineEmits<{
@@ -18,85 +22,89 @@ const emit = defineEmits<{
 
 const isVisible = ref(false)
 
-// Форма
 const formData = ref({
   name: '',
-  code: '',
-  status: 'Active',
-  head: ''
+  shortName: '',
+  code: ''
 })
 
-const statusOptions = ['Active', 'Inactive', 'Planning']
-const headOptions = ['Dr. Sarah Smith', 'Prof. John Doe', 'Dr. Emily Chen']
-
-// Логика определения типа добавляемого узла
 const childType = computed<OrgUnitType>(() => {
-  if (!props.parentNode || props.parentNode.type === 'university') return 'institute'
-
-  if (props.hierarchyType === 'academic') {
-    if (props.parentNode.type === 'institute') return 'fieldOfStudy'
-    if (props.parentNode.type === 'fieldOfStudy') return 'group'
-  } else {
-    if (props.parentNode.type === 'institute') return 'department'
+  if (!props.parentNode) {
+    return 'faculty'
   }
+
+  if (props.hierarchyType === 'administrative') {
+    if (props.parentNode.type === 'faculty') {
+      return 'department'
+    }
+  } else {
+    if (props.parentNode.type === 'faculty') {
+      return 'fieldOfStudy'
+    }
+    if (props.parentNode.type === 'fieldOfStudy') {
+      return 'group'
+    }
+  }
+
   return 'group'
 })
 
-// Динамические тексты интерфейса
 const labels = computed(() => {
-  // Форматируем CamelCase (fieldOfStudy -> Field Of Study)
-  const formatType = (type: string) =>
-    type === 'fieldOfStudy' ? 'Field of Study' : type.charAt(0).toUpperCase() + type.slice(1)
-  const cType = formatType(childType.value)
-  const pType = props.parentNode ? formatType(props.parentNode.type) : 'Organization'
+  // Маппинг внутренних типов в красивые названия для UI
+  const typeNames: Record<OrgUnitType, string> = {
+    faculty: 'Faculty / Institute',
+    department: 'Department',
+    fieldOfStudy: 'Field of Study',
+    group: 'Student Group'
+  }
+
+  const cType = typeNames[childType.value]
+  const pType = props.parentNode ? typeNames[props.parentNode.type] : 'Root Organization'
 
   return {
     modalTitle: `Add New ${cType}`,
     parentLabel: `Parent ${pType}`,
     nameLabel: `${cType} Name`,
-    codeLabel: `${cType} Code`,
     btnLabel: `Create ${cType}`
   }
 })
-// Иконка родителя (для disabled поля)
+
 const parentIcon = computed(() => {
-  if (!props.parentNode) return 'pi-building'
+  if (!props.parentNode) {
+    return 'pi-building text-blue-500'
+  }
   const icons: Record<string, string> = {
-    university: 'pi-building text-blue-500',
+    faculty: 'pi-building text-blue-500',
     institute: 'pi-home text-orange-500',
-    department: 'pi-folder text-blue-400'
+    department: 'pi-folder text-blue-400',
+    fieldOfStudy: 'pi-compass text-purple-500'
   }
   return icons[props.parentNode.type] || 'pi-folder'
 })
 
-// Открытие модалки (экспортируем метод для вызова из родителя)
+// Открытие модалки (метод дергается из виджета OrgTreeBuilder)
 const openModal = () => {
-  formData.value = { name: '', code: '', status: 'Active', head: '' }
+  formData.value = { name: '', shortName: '', code: '' } // Сброс формы
   isVisible.value = true
 }
+
 defineExpose({ openModal })
 
 const handleCreate = () => {
-  if (!formData.value.name) return // Простая валидация
+  if (!formData.value.name.trim()) {
+    return
+  }
 
-  // Создаем объект нового узла
   const newNode: OrgTreeNode = {
-    key: `new-${Date.now()}`,
+    key: `temp-${Date.now()}`, // Временный ключ, бэкенд (store) его заменит на настоящий ID
     label: formData.value.name,
     type: childType.value,
+    leaf: childType.value === 'department' || childType.value === 'group', // Кафедры и группы не имеют детей
     data: {
-      code: formData.value.code,
-      status: formData.value.status,
-      head: formData.value.head
-        ? { name: formData.value.head, avatarInitials: formData.value.head.charAt(0) }
-        : undefined,
-      createdDate: new Date().toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
-      })
-    },
-    children: []
+      // Передаем специфичные поля. Стор сам решит, какие из них отправить в DTO
+      shortName: formData.value.shortName,
+      code: formData.value.code
+    }
   }
 
   emit('add', newNode)
@@ -105,14 +113,14 @@ const handleCreate = () => {
 </script>
 
 <template>
-  <Dialog v-model:visible="isVisible" modal :style="{ width: '500px' }" class="add-unit-dialog">
+  <Dialog v-model:visible="isVisible" modal :style="{ width: '450px' }" class="add-unit-dialog">
     <template #header>
       <h2 class="dialog-title">{{ labels.modalTitle }}</h2>
     </template>
 
     <div class="form-layout">
-      <!-- Parent Node (Disabled look) -->
-      <div class="field">
+      <!-- Родительский узел (Read-only) -->
+      <div class="form-field">
         <label>{{ labels.parentLabel }}</label>
         <div class="disabled-input">
           <i class="pi" :class="parentIcon"></i>
@@ -120,29 +128,22 @@ const handleCreate = () => {
         </div>
       </div>
 
-      <!-- Name -->
-      <div class="field">
+      <!-- Общее поле: Имя -->
+      <div class="form-field mt-3">
         <label>{{ labels.nameLabel }}</label>
-        <InputText v-model="formData.name" placeholder="e.g. Civil Engineering" />
+        <InputText v-model="formData.name" placeholder="Enter name..." autofocus />
       </div>
 
-      <!-- Code & Status (2 columns) -->
-      <div class="grid-row">
-        <div class="field w-half">
-          <label>{{ labels.codeLabel }}</label>
-          <InputText v-model="formData.code" placeholder="E.G. CIV-02" />
-        </div>
-        <div class="field w-half">
-          <label>Status</label>
-          <Select v-model="formData.status" :options="statusOptions" />
-        </div>
+      <!-- Специфичное поле: Short Name (Только для Факультетов) -->
+      <div v-if="childType === 'faculty'" class="form-field mt-3">
+        <label>SHORT NAME / ABBREVIATION</label>
+        <InputText v-model="formData.shortName" placeholder="e.g. ENG" />
       </div>
 
-      <!-- Head of Department -->
-      <div class="field">
-        <label>{{ labels.headLabel }}</label>
-        <Select v-model="formData.head" :options="headOptions" placeholder="Select a user..." />
-        <span class="hint-text">Optional. Can be assigned later.</span>
+      <!-- Специфичное поле: Code (Только для Направлений) -->
+      <div v-if="childType === 'fieldOfStudy'" class="form-field mt-3">
+        <label>PROGRAM CODE</label>
+        <InputText v-model="formData.code" placeholder="e.g. SE-09" />
       </div>
     </div>
 
@@ -160,54 +161,44 @@ const handleCreate = () => {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color, #0f172a);
 }
 
 .form-layout {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
   margin-top: 0.5rem;
 }
-.field {
+.form-field {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.field label {
+.form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-color-secondary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-/* Имитация выключенного инпута с иконкой, как на макете */
+.mt-3 {
+  margin-top: 1rem;
+}
+
+/* Имитация заблокированного инпута с иконкой */
 .disabled-input {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-ground, #f8fafc);
+  border: 1px solid var(--surface-border, #e2e8f0);
   border-radius: 8px;
   padding: 0.75rem 1rem;
-  color: #475569;
+  color: var(--text-color-secondary, #475569);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: not-allowed;
-}
-
-.grid-row {
-  display: flex;
-  gap: 1rem;
-}
-.w-half {
-  flex: 1;
-}
-.hint-text {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  margin-top: 0.25rem;
 }
 
 .footer-actions {
@@ -215,20 +206,20 @@ const handleCreate = () => {
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--surface-border, #f1f5f9);
   width: 100%;
 }
 .cancel-btn {
-  color: #475569;
+  color: var(--text-color-secondary, #475569);
 }
 .submit-btn {
-  background: #3b82f6;
+  background: var(--p-primary-500);
   border: none;
+  color: white;
 }
 
 /* Фикс ширины для PrimeVue */
-:deep(.p-inputtext),
-:deep(.p-select) {
+:deep(.p-inputtext) {
   width: 100%;
 }
 </style>

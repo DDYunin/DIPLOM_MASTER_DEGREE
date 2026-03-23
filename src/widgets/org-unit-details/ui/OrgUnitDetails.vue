@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+
 import Tag from 'primevue/tag'
-import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Select from 'primevue/select'
-import DatePicker from 'primevue/datepicker'
-import Textarea from 'primevue/textarea'
+
 import type { OrgTreeNode } from '@/entities/organization'
 
 const props = defineProps<{
@@ -16,23 +14,22 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'update:isEditing', 'save'])
 
-const draft = ref<any>({})
+// Локальный черновик (только те поля, которые поддерживает наш бэкенд)
+const draft = ref({
+  label: '',
+  shortName: '',
+  code: ''
+})
 
-const statusOptions = ['Active', 'Inactive', 'Archived']
-const deptOptions = ['Computer Science Dept.', 'Electrical Engineering', 'Mathematics']
-const headOptions = ['Dr. Sarah Smith', 'Prof. John Doe', 'Dr. Emily Chen']
-
+// Заполняем черновик при входе в режим редактирования
 watch(
   () => props.isEditing,
   (newVal) => {
     if (newVal && props.selectedNode) {
       draft.value = {
         label: props.selectedNode.label,
-        ...props.selectedNode.data
-      }
-
-      if (draft.value.createdDate) {
-        draft.value.createdDateObj = new Date(draft.value.createdDate)
+        shortName: props.selectedNode.data?.shortName || '',
+        code: props.selectedNode.data?.code || ''
       }
     }
   }
@@ -42,27 +39,53 @@ const startEditing = () => emit('update:isEditing', true)
 const cancelEditing = () => emit('update:isEditing', false)
 
 const saveChanges = () => {
-  if (draft.value.createdDateObj) {
-    const d = draft.value.createdDateObj as Date
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
-    draft.value.createdDate = `${month}/${day}/${d.getFullYear()}`
-    delete draft.value.createdDateObj
-  }
-
+  // Отправляем обновленный узел
   emit('save', {
     ...props.selectedNode,
     label: draft.value.label,
-    data: { ...props.selectedNode?.data, ...draft.value }
+    data: {
+      ...props.selectedNode?.data,
+      shortName: draft.value.shortName,
+      code: draft.value.code
+    }
   })
 }
 
-// Вспомогательная функция, которая возвращает иконку и нужный CSS-класс для фона
+// Утилиты для UI
 const getIconData = (type?: string) => {
-  if (type === 'university') return { icon: 'pi-building', bgClass: 'bg-info' }
-  if (type === 'institute') return { icon: 'pi-home', bgClass: 'bg-warning' }
-  if (type === 'department') return { icon: 'pi-folder', bgClass: 'bg-info' }
-  return { icon: 'pi-users', bgClass: 'bg-primary' } // Для group
+  if (type === 'faculty') {
+    return {
+      icon: 'pi-building',
+      bgClass: 'bg-info'
+    }
+  }
+  if (type === 'department') {
+    return {
+      icon: 'pi-folder',
+      bgClass: 'bg-warning'
+    }
+  }
+  if (type === 'fieldOfStudy') {
+    return {
+      icon: 'pi-compass',
+      bgClass: 'bg-purple'
+    }
+  }
+  // Student group
+  return {
+    icon: 'pi-users',
+    bgClass: 'bg-primary'
+  }
+}
+
+const formatType = (type?: string) => {
+  if (!type) {
+    return ''
+  }
+  if (type === 'fieldOfStudy') {
+    return 'Field of Study'
+  }
+  return type.charAt(0).toUpperCase() + type.slice(1)
 }
 </script>
 
@@ -70,65 +93,50 @@ const getIconData = (type?: string) => {
   <div v-if="selectedNode && selectedNode.data" class="details-panel">
     <!-- ШАПКА -->
     <div class="panel-header">
-      <!-- Иконка генерируется на месте без внешнего компонента -->
       <div class="icon-box" :class="getIconData(selectedNode.type).bgClass">
         <i class="pi" :class="getIconData(selectedNode.type).icon"></i>
       </div>
       <button class="close-btn" @click="$emit('close')"><i class="pi pi-times"></i></button>
     </div>
 
-    <!-- РЕЖИМ ПРОСМОТРА -->
+    <!-- ========================================== -->
+    <!-- РЕЖИМ ПРОСМОТРА (View Mode)                -->
+    <!-- ========================================== -->
     <template v-if="!isEditing">
       <div class="node-title-section">
         <h2 class="node-title">{{ selectedNode.label }}</h2>
-        <Tag
-          v-if="selectedNode.data.status"
-          severity="success"
-          :value="selectedNode.data.status"
-          rounded
-          class="status-tag"
-        />
+        <!-- Выводим тип узла вместо фейкового статуса -->
+        <Tag severity="info" :value="formatType(selectedNode.type)" rounded class="type-tag" />
       </div>
 
+      <!-- Статистика (Пока заглушки 0, ждем агрегации от бэкенда) -->
       <div class="stats-grid">
         <div class="stat-box">
-          <span class="stat-value">{{ selectedNode.data.students || 0 }}</span>
+          <span class="stat-value">0</span>
           <span class="stat-label">Students</span>
         </div>
         <div class="stat-box">
-          <span class="stat-value">{{ selectedNode.data.teachers || 0 }}</span>
+          <span class="stat-value">0</span>
           <span class="stat-label">Teachers</span>
         </div>
       </div>
 
+      <!-- Метаданные (Только то, что реально есть в БД) -->
       <div class="meta-list">
-        <div v-if="selectedNode.data.parentDept" class="meta-item">
-          <span class="meta-label">PARENT DEPT</span>
-          <span class="meta-value">
-            <i class="pi pi-folder text-gray"></i> {{ selectedNode.data.parentDept }}
-          </span>
+        <!-- Настоящий ID из базы данных (Очень полезно для админов) -->
+        <div class="meta-item">
+          <span class="meta-label">DATABASE ID</span>
+          <span class="meta-value font-mono">#{{ selectedNode.data.originalId }}</span>
         </div>
 
-        <div v-if="selectedNode.data.createdDate" class="meta-item">
-          <span class="meta-label">CREATED DATE</span>
-          <span class="meta-value">{{ selectedNode.data.createdDate }}</span>
+        <div v-if="selectedNode.data.shortName" class="meta-item">
+          <span class="meta-label">SHORT NAME</span>
+          <span class="meta-value">{{ selectedNode.data.shortName }}</span>
         </div>
 
-        <div v-if="selectedNode.data.head" class="meta-item">
-          <span class="meta-label">HEAD OF UNIT</span>
-          <span class="meta-value head-value">
-            <Avatar
-              :label="selectedNode.data.head.avatarInitials"
-              shape="circle"
-              class="head-avatar"
-            />
-            {{ selectedNode.data.head.name }}
-          </span>
-        </div>
-
-        <div v-if="selectedNode.data.description" class="meta-item">
-          <span class="meta-label">DESCRIPTION</span>
-          <div class="desc-box">{{ selectedNode.data.description }}</div>
+        <div v-if="selectedNode.data.code" class="meta-item">
+          <span class="meta-label">PROGRAM CODE</span>
+          <span class="meta-value">{{ selectedNode.data.code }}</span>
         </div>
       </div>
 
@@ -141,63 +149,36 @@ const getIconData = (type?: string) => {
           class="action-btn"
           @click="startEditing"
         />
-        <Button label="Assign Members" icon="pi pi-user-plus" class="action-btn btn-primary" />
+        <Button
+          v-if="selectedNode.type === 'group'"
+          label="Assign Students"
+          icon="pi pi-user-plus"
+          class="action-btn btn-primary"
+        />
       </div>
     </template>
 
-    <!-- РЕЖИМ РЕДАКТИРОВАНИЯ -->
+    <!-- ========================================== -->
+    <!-- РЕЖИМ РЕДАКТИРОВАНИЯ (Edit Mode)           -->
+    <!-- ========================================== -->
     <template v-else>
       <div class="edit-form">
+        <!-- Общее поле -->
         <div class="form-field">
-          <label>UNIT NAME</label>
-          <InputText v-model="draft.label" />
+          <label>{{ formatType(selectedNode.type).toUpperCase() }} NAME</label>
+          <InputText v-model="draft.label" autofocus />
         </div>
 
-        <div class="form-field">
-          <label>STATUS</label>
-          <Select v-model="draft.status" :options="statusOptions" class="w-full" />
+        <!-- Поле только для факультета -->
+        <div v-if="selectedNode.type === 'faculty'" class="form-field mt-3">
+          <label>SHORT NAME</label>
+          <InputText v-model="draft.shortName" placeholder="e.g. ENG" />
         </div>
 
-        <div class="stats-grid mt-4">
-          <div class="stat-box">
-            <span class="stat-value">{{ selectedNode.data.students || 0 }}</span
-            ><span class="stat-label">Students</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-value">{{ selectedNode.data.teachers || 0 }}</span
-            ><span class="stat-label">Teachers</span>
-          </div>
-        </div>
-
-        <div class="form-field mt-4">
-          <label>PARENT DEPT</label>
-          <Select v-model="draft.parentDept" :options="deptOptions" class="w-full">
-            <template #value="slotProps">
-              <div v-if="slotProps.value" style="display: flex; align-items: center; gap: 0.5rem">
-                <i class="pi pi-folder text-gray-500"></i> {{ slotProps.value }}
-              </div>
-            </template>
-          </Select>
-        </div>
-
-        <div class="form-field">
-          <label>CREATED DATE</label>
-          <DatePicker
-            v-model="draft.createdDateObj"
-            dateFormat="mm/dd/yy"
-            showIcon
-            class="w-full"
-          />
-        </div>
-
-        <div class="form-field">
-          <label>HEAD OF UNIT</label>
-          <Select v-model="draft.head.name" :options="headOptions" class="w-full" />
-        </div>
-
-        <div class="form-field">
-          <label>DESCRIPTION</label>
-          <Textarea v-model="draft.description" rows="4" autoResize />
+        <!-- Поле только для направления -->
+        <div v-if="selectedNode.type === 'fieldOfStudy'" class="form-field mt-3">
+          <label>PROGRAM CODE</label>
+          <InputText v-model="draft.code" placeholder="e.g. SE-09" />
         </div>
       </div>
 
@@ -212,11 +193,6 @@ const getIconData = (type?: string) => {
         <button class="cancel-link" @click="cancelEditing">Cancel</button>
       </div>
     </template>
-
-    <div class="panel-footer" v-if="selectedNode.data.groupId || selectedNode.data.code">
-      ID: {{ selectedNode.data.groupId || selectedNode.data.code }}
-      <span v-if="isEditing" class="text-editing">(Editing)</span>
-    </div>
   </div>
 
   <div v-else class="empty-panel">
@@ -226,15 +202,13 @@ const getIconData = (type?: string) => {
 </template>
 
 <style scoped>
-/* =====================================
-   ОСНОВНЫЕ СТИЛИ ПАНЕЛИ
-===================================== */
+/* ОСНОВНЫЕ СТИЛИ */
 .details-panel {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--surface-card);
-  border-left: 1px solid var(--surface-border);
+  background: var(--surface-card, #ffffff);
+  border-left: 1px solid var(--surface-border, #e2e8f0);
   padding: 1.5rem;
   overflow-y: auto;
 }
@@ -244,17 +218,17 @@ const getIconData = (type?: string) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--surface-card);
-  border-left: 1px solid var(--surface-border);
-  color: var(--text-color-secondary);
+  background: var(--surface-card, #ffffff);
+  border-left: 1px solid var(--surface-border, #e2e8f0);
+  color: var(--text-color-secondary, #64748b);
 }
 .empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: var(--surface-border);
+  color: var(--surface-border, #e2e8f0);
 }
 
-/* --- СТИЛИ ДЛЯ ВСТРОЕННОЙ ИКОНКИ --- */
+/* ИКОНКА ШАПКИ */
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -271,7 +245,7 @@ const getIconData = (type?: string) => {
   font-size: 1.25rem;
   flex-shrink: 0;
 }
-/* Цветовые модификаторы на основе токенов PrimeVue */
+
 .bg-primary {
   background: var(--p-primary-50);
   color: var(--p-primary-500);
@@ -284,8 +258,11 @@ const getIconData = (type?: string) => {
   background: var(--p-orange-50);
   color: var(--p-orange-500);
 }
+.bg-purple {
+  background: var(--p-purple-50);
+  color: var(--p-purple-500);
+}
 
-/* Поддержка тёмной темы для фонов иконок */
 :root[class*='my-app-dark'] .bg-primary {
   background: rgba(var(--p-primary-500), 0.16);
 }
@@ -295,17 +272,20 @@ const getIconData = (type?: string) => {
 :root[class*='my-app-dark'] .bg-warning {
   background: rgba(var(--p-orange-500), 0.16);
 }
+:root[class*='my-app-dark'] .bg-purple {
+  background: rgba(var(--p-purple-500), 0.16);
+}
 
 .close-btn {
   background: none;
   border: none;
   font-size: 1.25rem;
-  color: var(--text-color-secondary);
+  color: var(--text-color-secondary, #64748b);
   cursor: pointer;
   transition: color 0.2s;
 }
 .close-btn:hover {
-  color: var(--text-color);
+  color: var(--text-color, #0f172a);
 }
 
 /* РЕЖИМ ПРОСМОТРА */
@@ -316,14 +296,7 @@ const getIconData = (type?: string) => {
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-color);
-}
-.status-tag {
-  background: var(--p-green-50);
-  color: var(--p-green-600);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.6rem;
+  color: var(--text-color, #0f172a);
 }
 
 .stats-grid {
@@ -333,23 +306,23 @@ const getIconData = (type?: string) => {
   margin-bottom: 2rem;
 }
 .stat-box {
-  background: var(--surface-ground);
+  background: var(--surface-ground, #f8fafc);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--surface-border);
+  border: 1px solid var(--surface-border, #e2e8f0);
 }
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-color);
+  color: var(--text-color, #0f172a);
 }
 .stat-label {
   font-size: 0.75rem;
-  color: var(--text-color-secondary);
+  color: var(--text-color-secondary, #64748b);
   margin-top: 0.25rem;
 }
 
@@ -367,37 +340,21 @@ const getIconData = (type?: string) => {
 .meta-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-color-secondary);
+  color: var(--text-color-secondary, #64748b);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 .meta-value {
   font-size: 0.875rem;
-  color: var(--text-color);
+  color: var(--text-color, #0f172a);
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.text-gray {
-  color: var(--text-color-secondary);
-}
-.head-avatar {
-  width: 24px;
-  height: 24px;
-  background: var(--p-orange-100);
-  color: var(--p-orange-700);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-.desc-box {
-  background: var(--surface-ground);
-  padding: 1rem;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  color: var(--text-color);
-  line-height: 1.5;
-  border: 1px solid var(--surface-border);
+.font-mono {
+  font-family: monospace;
+  color: var(--p-primary-500);
 }
 
 .actions-section {
@@ -409,7 +366,7 @@ const getIconData = (type?: string) => {
 .actions-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--text-color, #0f172a);
   margin-bottom: 0.25rem;
 }
 .action-btn {
@@ -425,7 +382,6 @@ const getIconData = (type?: string) => {
 .edit-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
   flex-grow: 1;
 }
 .form-field {
@@ -436,18 +392,11 @@ const getIconData = (type?: string) => {
 .form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-color-secondary);
-  text-transform: uppercase;
+  color: var(--text-color-secondary, #64748b);
   letter-spacing: 0.05em;
 }
-.w-full {
-  width: 100%;
-}
-.mt-4 {
+.mt-3 {
   margin-top: 1rem;
-}
-.text-gray-500 {
-  color: var(--text-color-secondary);
 }
 
 .edit-actions-section {
@@ -469,27 +418,16 @@ const getIconData = (type?: string) => {
   background: none;
   border: none;
   font-size: 0.875rem;
-  color: var(--text-color-secondary);
+  color: var(--text-color-secondary, #64748b);
   text-decoration: underline;
   text-underline-offset: 4px;
   cursor: pointer;
 }
 .cancel-link:hover {
-  color: var(--text-color);
+  color: var(--text-color, #0f172a);
 }
 
-.panel-footer {
-  margin-top: 1.5rem;
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--text-color-secondary);
-}
-.text-editing {
-  color: var(--p-purple-500);
-  font-weight: 500;
-}
-
-:deep(.p-datepicker) {
+:deep(.p-inputtext) {
   width: 100%;
 }
 </style>

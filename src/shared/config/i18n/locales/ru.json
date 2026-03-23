@@ -23,6 +23,12 @@
     "subtitle": "Управляйте доступом, ролями и статусом всех членов университета",
     "statUsers": "Всего пользователей"
   },
+  "adminOrgUnitModal": {
+    "faculty": "Факультет / Институт",
+    "department": "Кафедра",
+    "fieldOfStudy": "Направление обучения",
+    "group": "Группа"
+  },
   "primevue": {
     "emptyMessage": "Нет доступных опций",
     "emptyFilterMessage": "Ничего не найдено",

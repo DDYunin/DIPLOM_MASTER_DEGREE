@@ -1,14 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type {
-  OrgTreeNode,
-  FacultyDTO,
-  DepartmentDTO,
-  FieldOfStudyDTO,
-  StudentGroupDTO,
-  TreeHierarchyType
-} from './types'
+import type { OrgTreeNode, TreeHierarchyType } from './types'
 import * as orgApi from '../api'
+import {
+  mapFacultyToNode,
+  mapDepartmentToNode,
+  mapFieldOfStudyToNode,
+  mapStudentGroupToNode
+} from '../lib/mappers'
 
 export const useOrgStore = defineStore('organization', () => {
   const academicTree = ref<OrgTreeNode[]>([])
@@ -24,15 +23,7 @@ export const useOrgStore = defineStore('organization', () => {
     isLoading.value = true
     try {
       const faculties = await orgApi.fetchFaculties()
-      const nodes: OrgTreeNode[] = faculties.map((f: FacultyDTO) => ({
-        key: `faculty-${f.id}`,
-        label: f.name,
-        type: 'faculty',
-        leaf: false, // Факультет всегда можно развернуть
-        data: { originalId: f.id, shortName: f.shortName }
-      }))
-
-      getTreeByType(treeType).value = nodes
+      getTreeByType(treeType).value = faculties.map(mapFacultyToNode)
     } finally {
       isLoading.value = false
     }
@@ -41,110 +32,104 @@ export const useOrgStore = defineStore('organization', () => {
   // 2. Ленивая загрузка дочерних элементов (Lazy Loading)
   const loadChildren = async (node: OrgTreeNode, treeType: TreeHierarchyType) => {
     // Если дети уже загружены, не делаем запрос повторно
-    if (node.children && node.children.length > 0) return
+    if (!node || !node.data || !node.data.originalId) {
+      return
+    }
+    if (node.children && node.children.length > 0) {
+      return
+    }
 
-    node.loading = true // Включаем спиннер на конкретном узле
-    node.children = [] // Инициализируем массив
+    node.loading = true
+    const parentId = node.data.originalId
+    let newChildren: OrgTreeNode[] = []
 
     try {
-      const parentId = node.data.originalId
-
-      if (treeType === 'administrative') {
-        // АДМИНИСТРАТИВНАЯ ВЕТКА: Факультет -> Кафедры
-        if (node.type === 'faculty') {
-          const depts = await orgApi.fetchDepartments(parentId)
-          node.children = depts.map((d: DepartmentDTO) => ({
-            key: `dept-${d.id}`,
-            label: d.name,
-            type: 'department',
-            leaf: true, // Кафедра — конечный узел
-            data: { originalId: d.id, parentId: d.facultyId }
-          }))
-        }
+      if (treeType === 'administrative' && node.type === 'faculty') {
+        const depts = await orgApi.fetchDepartments(parentId)
+        newChildren = depts.map(mapDepartmentToNode)
       } else if (treeType === 'academic') {
-        // АКАДЕМИЧЕСКАЯ ВЕТКА: Факультет -> Направления -> Группы
         if (node.type === 'faculty') {
           const fields = await orgApi.fetchFieldsOfStudy(parentId)
-          node.children = fields.map((f: FieldOfStudyDTO) => ({
-            key: `field-${f.id}`,
-            label: f.name,
-            type: 'fieldOfStudy',
-            leaf: false, // Направление можно развернуть (там группы)
-            data: { originalId: f.id, code: f.code }
-          }))
+          newChildren = fields.map(mapFieldOfStudyToNode)
         } else if (node.type === 'fieldOfStudy') {
           const groups = await orgApi.fetchStudentGroups(parentId)
-          node.children = groups.map((g: StudentGroupDTO) => ({
-            key: `group-${g.id}`,
-            label: g.name,
-            type: 'group',
-            leaf: true, // Группа — конечный узел
-            data: { originalId: g.id }
-          }))
+          newChildren = groups.map(mapStudentGroupToNode)
         }
+      }
+      // Присваиваем загруженных детей узлу
+      node.children = newChildren
+
+      // Если бэкенд ничего не вернул, убираем стрелочку "развернуть"
+      if (newChildren.length === 0) {
+        node.leaf = true
       }
     } catch (e) {
       console.error('Failed to load children', e)
+      // В случае ошибки оставляем пустой массив, чтобы не сломать UI
+      node.children = []
+      node.leaf = true // Убираем стрелочку, раз загрузить не удалось
     } finally {
       node.loading = false // Выключаем спиннер
     }
   }
-
-  // Вспомогательная функция: вытаскиваем числовой ID из ключа (например, "faculty-1" -> 1)
-  const extractId = (key: string): number => Number(key.split('-')[1])
 
   const addNode = async (
     treeType: TreeHierarchyType,
     parentId: string | null,
     newNode: OrgTreeNode
   ) => {
-    let createdDto: any
-    const parentDbId = parentId ? extractId(parentId) : null
+    let serverNode: OrgTreeNode | null = null
+    const parentDbId = parentId ? Number(parentId.split('-')[1]) : null
 
     // 1. Отправляем запрос на бэкенд в зависимости от типа нового узла
+    // 1. Отправляем DTO на бэкенд и СРАЗУ мапим ответ в OrgTreeNode
     if (newNode.type === 'faculty') {
-      createdDto = await orgApi.createFaculty({
+      const dto = await orgApi.createFaculty({
         name: newNode.label,
-        shortName: newNode.data?.code || ''
+        shortName: newNode.data?.shortName || ''
       })
+      serverNode = mapFacultyToNode(dto)
     } else if (newNode.type === 'department' && parentDbId) {
-      createdDto = await orgApi.createDepartment({ name: newNode.label, facultyId: parentDbId })
+      const dto = await orgApi.createDepartment({ name: newNode.label, facultyId: parentDbId })
+      serverNode = mapDepartmentToNode(dto)
     } else if (newNode.type === 'fieldOfStudy' && parentDbId) {
-      createdDto = await orgApi.createFieldOfStudy({
+      const dto = await orgApi.createFieldOfStudy({
         name: newNode.label,
         code: newNode.data?.code || '',
         facultyId: parentDbId
       })
+      serverNode = mapFieldOfStudyToNode(dto)
     } else if (newNode.type === 'group' && parentDbId) {
-      createdDto = await orgApi.createStudentGroup({
+      const dto = await orgApi.createStudentGroup({
         name: newNode.label,
         fieldOfStudyId: parentDbId
       })
+      serverNode = mapStudentGroupToNode(dto)
     }
 
-    // 2. Формируем правильный OrgTreeNode из ответа бэкенда
-    const serverNode: OrgTreeNode = {
-      key: `${newNode.type}-${createdDto.id}`, // Используем настоящий ID от БД!
-      label: createdDto.name,
-      type: newNode.type,
-      leaf: newNode.type === 'department' || newNode.type === 'group', // Конечные узлы
-      data: { originalId: createdDto.id, ...newNode.data }
+    if (!serverNode) {
+      return
     }
 
-    // 3. Вставляем новый узел в наше локальное дерево (UI обновится реактивно)
+    // 2. Вставляем готовый и отформатированный узел в локальное дерево
     const targetTree = getTreeByType(treeType)
 
     if (!parentId) {
       targetTree.value.push(serverNode)
     } else {
       const insertToParent = (nodes: OrgTreeNode[]): boolean => {
-        for (const node of nodes) {
-          if (node.key === parentId) {
-            if (!node.children) node.children = []
-            node.children.push(serverNode)
+        for (const n of nodes) {
+          if (n.key === parentId) {
+            if (!n.children) {
+              n.children = []
+            }
+            n.children.push(serverNode!)
+            n.leaf = false // У родителя появились дети, значит он больше не "лист"
             return true
           }
-          if (node.children && insertToParent(node.children)) return true
+          if (n.children && insertToParent(n.children)) {
+            return true
+          }
         }
         return false
       }
@@ -154,13 +139,13 @@ export const useOrgStore = defineStore('organization', () => {
 
   // ОБНОВЛЕНИЕ УЗЛА
   const updateNode = async (treeType: TreeHierarchyType, id: string, updatedNode: OrgTreeNode) => {
-    const dbId = extractId(id)
+    const dbId = Number(id.split('-')[1])
 
-    // 1. Отправляем PATCH-запрос
+    // Отправляем PATCH-запросы на основе типа
     if (updatedNode.type === 'faculty') {
       await orgApi.updateFaculty(dbId, {
         name: updatedNode.label,
-        shortName: updatedNode.data?.code
+        shortName: updatedNode.data?.shortName 
       })
     } else if (updatedNode.type === 'department') {
       await orgApi.updateDepartment(dbId, { name: updatedNode.label })
@@ -173,7 +158,7 @@ export const useOrgStore = defineStore('organization', () => {
       await orgApi.updateStudentGroup(dbId, { name: updatedNode.label })
     }
 
-    // 2. Рекурсивно находим и обновляем узел в локальном дереве
+    // Рекурсивно находим и обновляем узел в UI-дереве
     const targetTree = getTreeByType(treeType)
     const replaceNode = (nodes: OrgTreeNode[]): boolean => {
       for (let i = 0; i < nodes.length; i++) {
@@ -189,5 +174,13 @@ export const useOrgStore = defineStore('organization', () => {
     replaceNode(targetTree.value)
   }
 
-  return { academicTree, administrativeTree, isLoading, loadChildren, loadRootNodes, addNode, updateNode }
+  return {
+    academicTree,
+    administrativeTree,
+    isLoading,
+    loadChildren,
+    loadRootNodes,
+    addNode,
+    updateNode
+  }
 })

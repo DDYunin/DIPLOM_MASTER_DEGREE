@@ -23,6 +23,12 @@
     "subtitle": "Manage access, roles, and status for all university members",
     "statUsers": "Total Users"
   },
+  "adminOrgUnitModal": {
+    "faculty": "Faculty / Institute",
+    "department": "Department",
+    "fieldOfStudy": "Field of Study",
+    "group": "Student Group"
+  },
   "primevue": {
     "emptyMessage": "No available options",
     "emptyFilterMessage": "No results found",
