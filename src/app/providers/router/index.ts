@@ -3,11 +3,16 @@ import { LoginPage } from '@/pages/login'
 
 // Страницы, относящиеся к админу
 import { AdminRoot } from '@/pages/admin-root'
-import { UsersPage } from '@/pages/users' 
+import { UsersPage } from '@/pages/users'
 import { StudentProfilePage } from '@/pages/student-profile'
 import { TeacherProfilePage } from '@/pages/teacher-profile'
 import { AdminProfilePage } from '@/pages/admin-profile'
 import { OrganizationPage } from '@/pages/organization'
+
+// Страницы, относящиеся к преподавателю
+import { TeacherRoot } from '@/pages/teacher-root'
+import { TeacherCoursesPage } from '@/pages/teacher-courses'
+import { TeacherAddCoursePage } from '@/pages/teacher-add-course'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,7 +33,7 @@ export const router = createRouter({
         },
         {
           path: 'users',
-          component: () => import('@/shared/ui').then(m => m.EmptyLayout),
+          component: () => import('@/shared/ui').then((m) => m.EmptyLayout),
           children: [
             {
               path: '',
@@ -56,6 +61,27 @@ export const router = createRouter({
           path: 'organization',
           name: 'admin-organization',
           component: OrganizationPage
+        }
+      ]
+    },
+    {
+      path: '/teacher',
+      component: TeacherRoot,
+      children: [
+        {
+          path: '',
+          redirect: { name: 'teacher-courses' }
+        },
+        {
+          path: 'courses',
+          name: 'teacher-courses',
+          component: TeacherCoursesPage
+        },
+        // НОВЫЙ РОУТ ДЛЯ СОЗДАНИЯ КУРСА
+        {
+          path: 'courses/new',
+          name: 'teacher-add-course',
+          component: TeacherAddCoursePage
         }
       ]
     }

@@ -1,5 +1,5 @@
 [
-{
+  {
     "id": "student-1",
     "fullName": "Marcus Johnson",
     "email": "marcus.j@university.edu",
@@ -28,8 +28,13 @@
     "subDepartment": "Faculty",
     "groups": ["Faculty Member", "Curriculum Editor"],
     "permissions": { "publishGrades": true, "manageUsers": false },
-    "courses":[
-      { "code": "CS-101", "name": "Intro to Computer Science", "semester": "Fall 2023", "status": "Active" }
+    "courses": [
+      {
+        "code": "CS-101",
+        "name": "Intro to Computer Science",
+        "semester": "Fall 2023",
+        "status": "Active"
+      }
     ]
   },
   {
@@ -95,8 +100,13 @@
     "department": "Mathematics",
     "groups": ["Faculty Member"],
     "permissions": { "publishGrades": true, "manageUsers": false },
-    "courses":[
-      { "code": "MATH-301", "name": "Advanced Calculus", "semester": "Spring 2024", "status": "Upcoming" }
+    "courses": [
+      {
+        "code": "MATH-301",
+        "name": "Advanced Calculus",
+        "semester": "Spring 2024",
+        "status": "Upcoming"
+      }
     ]
   },
   {

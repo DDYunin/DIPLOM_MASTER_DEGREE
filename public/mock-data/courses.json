@@ -1,0 +1,101 @@
+[
+  {
+    "id": "course-1",
+    "code": "MATH-101",
+    "title": "Advanced Calculus",
+    "description": "Fundamental theorems of calculus, limits, continuity, and derivatives...",
+    "status": "Active",
+    "term": "Fall 2023",
+    "studentsCount": 45,
+    "nextDueLabel": "Midterm",
+    "nextDueDate": "Oct 24"
+  },
+  {
+    "id": "course-2",
+    "code": "CS-204",
+    "title": "Data Structures",
+    "description": "In-depth analysis of algorithms, complexity, and data organization...",
+    "status": "Active",
+    "term": "Fall 2023",
+    "studentsCount": 62,
+    "nextDueLabel": "Lab 3",
+    "nextDueDate": "Oct 20"
+  },
+  {
+    "id": "course-3",
+    "code": "CHEM-301",
+    "title": "Organic Chemistry",
+    "description": "Study of the structure, properties, composition, reactions, and...",
+    "status": "Draft",
+    "term": "Spring 2024",
+    "studentsCount": 0,
+    "nextDueLabel": "Status",
+    "nextDueDate": "Unpublished"
+  },
+  {
+    "id": "course-4",
+    "code": "MATH-101",
+    "title": "Advanced Calculus",
+    "description": "Fundamental theorems of calculus, limits, continuity, and derivatives...",
+    "status": "Active",
+    "term": "Fall 2023",
+    "studentsCount": 45,
+    "nextDueLabel": "Midterm",
+    "nextDueDate": "Oct 24"
+  },
+  {
+    "id": "course-5",
+    "code": "CS-204",
+    "title": "Data Structures",
+    "description": "In-depth analysis of algorithms, complexity, and data organization...",
+    "status": "Active",
+    "term": "Fall 2023",
+    "studentsCount": 62,
+    "nextDueLabel": "Lab 3",
+    "nextDueDate": "Oct 20"
+  },
+  {
+    "id": "course-6",
+    "code": "CHEM-301",
+    "title": "Organic Chemistry",
+    "description": "Study of the structure, properties, composition, reactions, and...",
+    "status": "Draft",
+    "term": "Spring 2024",
+    "studentsCount": 0,
+    "nextDueLabel": "Status",
+    "nextDueDate": "Unpublished"
+  },
+  {
+    "id": "course-7",
+    "code": "MATH-101",
+    "title": "Advanced Calculus",
+    "description": "Fundamental theorems of calculus, limits, continuity, and derivatives...",
+    "status": "Active",
+    "term": "Fall 2023",
+    "studentsCount": 45,
+    "nextDueLabel": "Midterm",
+    "nextDueDate": "Oct 24"
+  },
+  {
+    "id": "course-8",
+    "code": "CS-204",
+    "title": "Data Structures",
+    "description": "In-depth analysis of algorithms, complexity, and data organization...",
+    "status": "Active",
+    "term": "Fall 2023",
+    "studentsCount": 62,
+    "nextDueLabel": "Lab 3",
+    "nextDueDate": "Oct 20"
+  },
+  {
+    "id": "course-9",
+    "code": "CHEM-301",
+    "title": "Organic Chemistry",
+    "description": "Study of the structure, properties, composition, reactions, and...",
+    "status": "Draft",
+    "term": "Spring 2024",
+    "studentsCount": 0,
+    "nextDueLabel": "Status",
+    "nextDueDate": "Unpublished"
+  }
+]
