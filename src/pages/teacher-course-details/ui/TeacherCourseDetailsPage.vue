@@ -77,11 +77,14 @@ const getStatusSeverity = (status: string) => {
         <i class="pi pi-file-edit"></i> Content
       </router-link>
       <router-link
-        :to="{ name: 'course-students' }"
+        :to="{ name: 'course-participants' }"
         class="tab-link"
         active-class="tab-link--active"
       >
-        <i class="pi pi-users"></i> Students
+        <i class="pi pi-users"></i> Participants
+      </router-link>
+      <router-link :to="{ name: 'course-grades' }" class="tab-link" active-class="tab-link--active">
+        <i class="pi pi-chart-bar"></i> Grades
       </router-link>
     </nav>
 

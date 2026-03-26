@@ -17,7 +17,8 @@ import {
   TeacherCourseDetailsPage,
   CourseMainInfoTab,
   CourseContentTab,
-  CourseStudentsTab
+  CourseParticipantsTab,
+  CourseGradesTab
 } from '@/pages/teacher-course-details'
 
 export const router = createRouter({
@@ -112,9 +113,14 @@ export const router = createRouter({
                   component: CourseContentTab
                 },
                 {
-                  path: 'students',
-                  name: 'course-students',
-                  component: CourseStudentsTab
+                  path: 'participants',
+                  name: 'course-participants',
+                  component: CourseParticipantsTab
+                },
+                {
+                  path: 'grades',
+                  name: 'course-grades',
+                  component: CourseGradesTab
                 }
               ]
             }
