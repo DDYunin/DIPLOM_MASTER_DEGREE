@@ -44,6 +44,10 @@ const filteredCourses = computed(() => {
 const goToAddCourse = () => {
   router.push({ name: 'teacher-add-course' })
 }
+
+const goToCourseDetails = (courseId: string) => {
+  router.push({ name: 'course-main-info', params: { id: courseId } })
+}
 </script>
 
 <template>
@@ -116,12 +120,12 @@ const goToAddCourse = () => {
 
       <div v-else-if="filteredCourses.length === 0" class="empty-state">No courses found.</div>
 
-      <CourseCard 
-        v-for="course in filteredCourses" 
+      <CourseCard
+        v-for="course in filteredCourses"
         :key="course.id"
         :course="course"
+        @manage="goToCourseDetails"
       />
-      
     </section>
   </div>
 </template>

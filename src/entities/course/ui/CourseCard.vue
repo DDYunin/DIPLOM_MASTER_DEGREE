@@ -7,6 +7,10 @@ defineProps<{
   course: Course
 }>()
 
+const emit = defineEmits<{
+  (e: 'manage', courseId: string): void
+}>()
+
 const getStatusSeverity = (status: string) => {
   if (status === 'Active') {
     return 'success'
@@ -61,6 +65,7 @@ const getStatusSeverity = (status: string) => {
         "
         outlined
         size="small"
+        @click="emit('manage', course.id)"
       />
     </div>
   </div>

@@ -13,6 +13,12 @@ import { OrganizationPage } from '@/pages/organization'
 import { TeacherRoot } from '@/pages/teacher-root'
 import { TeacherCoursesPage } from '@/pages/teacher-courses'
 import { TeacherAddCoursePage } from '@/pages/teacher-add-course'
+import {
+  TeacherCourseDetailsPage,
+  CourseMainInfoTab,
+  CourseContentTab,
+  CourseStudentsTab
+} from '@/pages/teacher-course-details'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,14 +80,45 @@ export const router = createRouter({
         },
         {
           path: 'courses',
-          name: 'teacher-courses',
-          component: TeacherCoursesPage
-        },
-        // НОВЫЙ РОУТ ДЛЯ СОЗДАНИЯ КУРСА
-        {
-          path: 'courses/new',
-          name: 'teacher-add-course',
-          component: TeacherAddCoursePage
+          component: () => import('@/shared/ui').then((m) => m.EmptyLayout),
+          children: [
+            {
+              path: '',
+              name: 'teacher-courses',
+              component: TeacherCoursesPage
+            },
+            {
+              path: 'new',
+              name: 'teacher-add-course',
+              component: TeacherAddCoursePage
+            },
+            {
+              path: ':id',
+              name: 'teacher-course-details',
+              component: TeacherCourseDetailsPage,
+              children: [
+                {
+                  path: '',
+                  redirect: { name: 'course-main-info' } // По умолчанию кидаем на первую вкладку
+                },
+                {
+                  path: 'info',
+                  name: 'course-main-info',
+                  component: CourseMainInfoTab
+                },
+                {
+                  path: 'content',
+                  name: 'course-content',
+                  component: CourseContentTab
+                },
+                {
+                  path: 'students',
+                  name: 'course-students',
+                  component: CourseStudentsTab
+                }
+              ]
+            }
+          ]
         }
       ]
     }
