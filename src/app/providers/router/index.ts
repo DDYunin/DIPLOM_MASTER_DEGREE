@@ -20,6 +20,7 @@ import {
   CourseParticipantsTab,
   CourseGradesTab
 } from '@/pages/teacher-course-details'
+import { TeacherQuestionBanksPage } from '@/pages/teacher-question-banks'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -125,6 +126,11 @@ export const router = createRouter({
               ]
             }
           ]
+        },
+        {
+          path: 'question-banks',
+          name: 'teacher-question-banks',
+          component: TeacherQuestionBanksPage
         }
       ]
     }
