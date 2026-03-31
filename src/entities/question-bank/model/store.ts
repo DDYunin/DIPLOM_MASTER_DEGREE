@@ -135,7 +135,22 @@ export const useQuestionBankStore = defineStore('question-bank', () => {
     selectedBankId.value = null
   }
 
+  // Экшен внутри useQuestionBankStore
+  const createBank = (data: { title: string; description: string }) => {
+    const newBank: QuestionBank = {
+      id: `bank-${Date.now()}`,
+      title: data.title,
+      description: data.description || 'No description provided',
+      questionsCount: 0,
+      lastUpdated: 'Just now',
+      questions: []
+    }
+
+    banks.value.unshift(newBank)
+    selectBank(newBank.id)
+  }
+
   const totalBanks = computed(() => banks.value.length)
 
-  return { banks, selectedBankId, selectedBank, totalBanks, selectBank, clearSelection }
+  return { banks, selectedBankId, selectedBank, totalBanks, selectBank, clearSelection, createBank }
 })

@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useQuestionBankStore, type QuestionType, type Difficulty } from '@/entities/question-bank'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 
 const bankStore = useQuestionBankStore()
+const router = useRouter()
+
+const emit = defineEmits<{
+  (e: 'create-bank'): void
+}>()
 
 // Хелперы для стилизации бейджей
 const getTypeStyles = (type: QuestionType) => {
@@ -25,6 +31,15 @@ const getDifficultyStyles = (diff: Difficulty) => {
       return { bg: 'var(--p-yellow-100)', color: 'var(--p-yellow-700)', label: 'MEDIUM' }
     case 'hard':
       return { bg: 'var(--p-red-100)', color: 'var(--p-red-700)', label: 'HARD' }
+  }
+}
+
+const goToAllQuestions = () => {
+  if (bankStore.selectedBankId) {
+    router.push({ 
+      name: 'teacher-bank-questions', 
+      params: { bankId: bankStore.selectedBankId } 
+    })
   }
 }
 </script>
@@ -75,7 +90,7 @@ const getDifficultyStyles = (diff: Difficulty) => {
           and manage questions, or create a new one to start<br />
           building your assessment.
         </p>
-        <Button label="Create New Bank" icon="pi pi-plus" />
+        <Button label="Create New Bank" icon="pi pi-plus" @click="emit('create-bank')" />
       </div>
 
       <!-- SELECTED STATE (Редактор банка) -->
@@ -170,7 +185,7 @@ const getDifficultyStyles = (diff: Difficulty) => {
           </div>
 
           <div class="load-more">
-            <Button label="Load more questions..." text />
+            <Button label="Show all questions" text @click="goToAllQuestions" />
           </div>
         </section>
       </div>

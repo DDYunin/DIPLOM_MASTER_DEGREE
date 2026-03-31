@@ -1,4 +1,4 @@
-export type QuestionType = 'multiple-choice' | 'true-false' | 'short-answer'
+export type QuestionType = 'multiple-choice' | 'true-false' | 'short-answer' 
 export type Difficulty = 'easy' | 'medium' | 'hard'
 
 export interface Question {

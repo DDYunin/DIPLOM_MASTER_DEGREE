@@ -1,6 +1,34 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import Button from 'primevue/button'
+
 import { QuestionBanksManager } from '@/widgets/question-banks-manager'
+import { ImportQuestionBankModal } from '@/features/import-question-bank'
+import { CreateQuestionBankModal } from '@/features/create-question-bank'
+import { useQuestionBankStore } from '@/entities/question-bank'
+import { useNotifications } from '@/shared/model'
+
+const bankStore = useQuestionBankStore()
+const notifications = useNotifications()
+
+const isImportModalVisible = ref(false)
+const isCreateModalVisible = ref(false)
+
+const handleImportSuccess = () => {
+  // Здесь можно показать Toast "Успешно импортировано"
+  console.log('Bank successfully imported!')
+}
+
+// 2. ОБРАБОТЧИК СОЗДАНИЯ
+const handleCreateBank = (data: { title: string; description: string }) => {
+  // Вызываем твой готовый метод из стора
+  debugger
+  bankStore.createBank(data)
+
+  // При желании здесь можно вызвать Toast "Bank created successfully"
+  notifications.showToast('success', 'Bank list updated', `Bank created successfully`)
+}
 </script>
 
 <template>
@@ -13,15 +41,29 @@ import { QuestionBanksManager } from '@/widgets/question-banks-manager'
       </div>
 
       <div class="header-actions">
-        <Button label="Import" icon="pi pi-upload" severity="secondary" outlined />
-        <Button label="Create New Bank" icon="pi pi-plus" />
+        <Button
+          label="Import"
+          icon="pi pi-upload"
+          severity="secondary"
+          outlined
+          @click="isImportModalVisible = true"
+        />
+        <Button label="Create New Bank" icon="pi pi-plus" @click="isCreateModalVisible = true" />
       </div>
     </header>
 
     <!-- CONTENT WIDGET -->
     <div class="page-content">
-      <QuestionBanksManager />
+      <QuestionBanksManager @create-bank="isCreateModalVisible = true" />
     </div>
+
+    <!-- Внедряем компонент фичи в корень страницы -->
+    <ImportQuestionBankModal
+      v-model:visible="isImportModalVisible"
+      @success="handleImportSuccess"
+    />
+
+    <CreateQuestionBankModal v-model:visible="isCreateModalVisible" @create="handleCreateBank" />
   </div>
 </template>
 
