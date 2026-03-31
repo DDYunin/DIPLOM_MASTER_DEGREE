@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import { BankQuestionsTable } from '@/widgets/bank-questions-table'
 import { QuestionEditorModal } from '@/features/question-editor'
-import type { Question } from '@/entities/question-bank'
+import { type Question, useQuestionBankStore } from '@/entities/question-bank'
 
 const route = useRoute()
 const router = useRouter()
-// В реальности берем из стора: const bank = bankStore.getBankById(route.params.bankId)
+const bankStore = useQuestionBankStore()
+
+const bankId = computed(() => route.params.bankId as string)
+
+const currentBank = computed(() => bankStore.selectedBank)
 
 // Мок-данные строго по макету
 const mockQuestions: (Question & { hasImage?: boolean })[] = [
@@ -59,10 +63,30 @@ const goBack = () => {
   router.push({ name: 'teacher-question-banks' })
 }
 
+// onMounted(async () => {
+//   // Если зашли по прямой ссылке, грузим банки
+//   if (bankStore.banks.length === 0) {
+//     await bankStore.loadBanks()
+//   }
+//   bankStore.selectBank(bankId.value)
+// })
+
 const isEditorVisible = ref(false)
+const selectedQuestion = ref<any>(null)
+
+const openCreateModal = () => {
+  selectedQuestion.value = null // Новый вопрос
+  isEditorVisible.value = true
+}
+
+const openEditModal = (question: any) => {
+  selectedQuestion.value = question // Редактирование
+  isEditorVisible.value = true
+}
 
 const handleSaveQuestion = (questionData: any) => {
   console.log('Saved question:', questionData)
+  // await bankStore.addOrUpdateQuestion(bankId.value, questionData)
   // В реальности мы бы отправили данные в стор или на бэкенд
   // mockQuestions.unshift(newQuestion)
 }
@@ -74,32 +98,32 @@ const handleSaveQuestion = (questionData: any) => {
     <nav class="breadcrumbs">
       <a href="#" class="crumb" @click.prevent="goBack">Question Banks</a>
       <span class="separator">/</span>
-      <span class="crumb active">Algebra Basics</span>
+      <span class="crumb active" v-if="currentBank">{{ currentBank.title }}</span>
     </nav>
 
     <!-- Шапка страницы -->
-    <header class="page-header">
+    <header class="page-header" v-if="currentBank">
       <div class="header-info">
-        <h1 class="page-title">Manage Questions: Algebra Basics</h1>
+        <h1 class="page-title">Manage Questions: {{ currentBank.title }}</h1>
         <p class="page-subtitle">
-          Curate and edit the assessment items for this specific module. You have 142 active
-          questions.
+          {{ currentBank.description }} You have {{ currentBank.questionsCount }} active questions.
         </p>
       </div>
 
       <div class="header-actions">
-        <Button label="Add New Question" icon="pi pi-plus" @click="isEditorVisible = true" />
+        <Button label="Add New Question" icon="pi pi-plus" @click="openCreateModal" />
       </div>
     </header>
 
     <!-- Виджет Таблицы -->
-    <div class="page-content">
-      <BankQuestionsTable :questions="mockQuestions" />
+    <div class="page-content" v-if="currentBank">
+      <BankQuestionsTable :questions="mockQuestions" @edit="openEditModal" />
     </div>
 
     <QuestionEditorModal
       v-model:visible="isEditorVisible"
-      bankName="Algebra 101 Question Bank"
+      :bankName="currentBank?.title"
+      :initialData="selectedQuestion"
       @save="handleSaveQuestion"
     />
   </div>

@@ -13,6 +13,10 @@ const props = defineProps<{
   questions: Question[]
 }>()
 
+const emit = defineEmits<{
+  (e: 'edit', question: Question): void
+}>()
+
 const selectedQuestions = ref<Question[]>([])
 const searchQuery = ref('')
 const selectedType = ref()
@@ -174,8 +178,15 @@ const filteredQuestions = computed(() => {
 
         <!-- Действия -->
         <Column header="ACTIONS" style="width: 10%; text-align: right">
-          <template #body>
-            <!-- Оставляем пустым по макету, но можно добавить кнопку Edit -->
+          <template #body="{ data }">
+            <Button
+              icon="pi pi-pencil"
+              text
+              rounded
+              severity="secondary"
+              aria-label="Edit Question"
+              @click="emit('edit', data)"
+            />
           </template>
         </Column>
       </DataTable>

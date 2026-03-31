@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import Dialog from 'primevue/dialog'
 import Select from 'primevue/select'
 import InputText from 'primevue/inputtext'
@@ -12,6 +12,7 @@ const visible = defineModel<boolean>('visible', { default: false })
 
 const props = defineProps<{
   bankName?: string
+  initialData?: any // Данные вопроса, если это редактирование
 }>()
 
 const emit = defineEmits<{
@@ -37,6 +38,7 @@ const type = ref('single')
 const points = ref('5')
 const difficulty = ref('medium')
 const prompt = ref('')
+const questionId = ref<string | null>(null) // Храним ID, чтобы знать: Update или Create
 
 // Для Multiple Choice
 const options = ref([
@@ -59,6 +61,29 @@ const essaySettings = ref({
   fileTypes: '.pdf, .docx'
 })
 
+// Функция сброса/инициализации формы
+const initForm = () => {
+  if (props.initialData) {
+    questionId.value = props.initialData.id
+    type.value = props.initialData.type === 'multiple-choice' ? 'single' : props.initialData.type
+    points.value = String(props.initialData.points || '5')
+    difficulty.value = props.initialData.difficulty
+    prompt.value = props.initialData.text
+  } else {
+    // Сброс на дефолт при создании нового
+    questionId.value = null
+    type.value = 'single'
+    points.value = '5'
+    difficulty.value = 'medium'
+    prompt.value = ''
+  }
+}
+
+// При открытии модалки обновляем поля
+watch(visible, (newVal) => {
+  if (newVal) initForm()
+})
+
 // --- ЛОГИКА ОПЦИЙ ---
 const addOption = () => {
   options.value.push({ id: Date.now(), text: '', isCorrect: false })
@@ -76,12 +101,13 @@ const setSingleCorrectOption = (id: number) => {
 
 // --- СОХРАНЕНИЕ И ЗАКРЫТИЕ ---
 const handleSave = () => {
-  // В реальности здесь мы собираем данные в зависимости от type.value
   emit('save', {
-    type: type.value,
-    prompt: prompt.value,
-    points: points.value,
-    difficulty: difficulty.value
+    id: questionId.value, // Если null — стор поймет, что это новый вопрос
+    type: type.value === 'single' ? 'multiple-choice' : type.value,
+    text: prompt.value,
+    points: Number(points.value),
+    difficulty: difficulty.value,
+    answerText: 'Correct Answer: configured in editor' // Заглушка
   })
   visible.value = false
 }
