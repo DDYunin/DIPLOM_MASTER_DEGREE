@@ -29,6 +29,12 @@
     "fieldOfStudy": "Направление обучения",
     "group": "Группа"
   },
+  "teacherSidebar": {
+    "courses": "Курсы",
+    "questionBanks": "Банки вопросов",
+    "profile": "Мой профиль",
+    "logout": "Выйти"
+  },
   "primevue": {
     "emptyMessage": "Нет доступных опций",
     "emptyFilterMessage": "Ничего не найдено",

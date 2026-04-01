@@ -29,6 +29,12 @@
     "fieldOfStudy": "Field of Study",
     "group": "Student Group"
   },
+  "teacherSidebar": {
+    "courses": "Courses",
+    "questionBanks": "Question banks",
+    "profile": "Profile",
+    "logout": "Log Out"
+  },
   "primevue": {
     "emptyMessage": "No available options",
     "emptyFilterMessage": "No results found",

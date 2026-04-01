@@ -1,4 +1,4 @@
-import { useNotifications } from '@/shared/model/useNotifications'
+import { useNotifications } from '@/shared/model'
 
 // In-memory кэш для сохранения мутаций (POST/PATCH) во время работы SPA
 const dbCache: Record<string, any> = {}
@@ -169,6 +169,120 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
       }
     }
     // ==============================================================
+
+    // ==============================================================
+    // 🛑 БЛОК TEACHER COURSES (MOCK)
+    // ==============================================================
+    if (path.startsWith('/teacher/courses')) {
+      // GET: Получение списка курсов
+      if (method === 'GET') {
+        if (!dbCache.courses) {
+          const res = await fetch('/mock-data/courses.json')
+          if (!res.ok) {
+            throw new Error(`Failed to load mock data: ${res.status}`)
+          }
+          dbCache.courses = await res.json()
+        }
+        return dbCache.courses as T
+      }
+
+      // POST: Создание нового курса
+      if (method === 'POST' && options.body) {
+        const newCourse = JSON.parse(options.body as string)
+        newCourse.id = `course-${Date.now()}` // Фейковый ID
+        dbCache.courses = dbCache.courses || []
+        // Добавляем в начало списка
+        dbCache.courses.unshift(newCourse)
+        return newCourse as T
+      }
+
+      // PATCH: Обновление курса (например, перевод из Draft в Active)
+      if (method === 'PATCH' && options.body) {
+        const id = path.split('/').pop() // Достаем ID из /teacher/courses/course-1
+        const updates = JSON.parse(options.body as string)
+
+        if (dbCache.courses) {
+          const index = dbCache.courses.findIndex((c: any) => c.id === id)
+          if (index > -1) {
+            dbCache.courses[index] = { ...dbCache.courses[index], ...updates }
+            return dbCache.courses[index] as T
+          }
+        }
+        throw new Error('Course not found in mock DB')
+      }
+
+      // DELETE: Удаление курса (на будущее)
+      if (method === 'DELETE') {
+        const id = path.split('/').pop()
+        if (dbCache.courses) {
+          const index = dbCache.courses.findIndex((c: any) => c.id === id)
+          if (index > -1) {
+            dbCache.courses.splice(index, 1)
+            return { success: true } as T
+          }
+        }
+        throw new Error('Course not found for deletion')
+      }
+    }
+
+    // ==============================================================
+    // 🛑 БЛОК QUESTION BANKS (MOCK)
+    // ==============================================================
+    if (path.startsWith('/teacher/question-banks')) {
+      if (method === 'GET') {
+        if (!dbCache.questionBanks) {
+          const res = await fetch('/mock-data/question-banks.json')
+          if (!res.ok) {
+            throw new Error(`Failed to load mock data: ${res.status}`)
+          }
+          dbCache.questionBanks = await res.json()
+        }
+        return dbCache.questionBanks as T
+      }
+
+      // POST: Создание нового банка
+      if (method === 'POST' && path === '/teacher/question-banks' && options.body) {
+        const newBank = JSON.parse(options.body as string)
+        newBank.id = `bank-${Date.now()}`
+        newBank.questions = []
+        newBank.questionsCount = 0
+        dbCache.questionBanks = dbCache.questionBanks || []
+        dbCache.questionBanks.unshift(newBank)
+        return newBank as T
+      }
+
+      // PATCH: Обновление банка или добавление/редактирование вопроса
+      if (method === 'PATCH' && options.body) {
+        const urlParts = path.split('/')
+        const bankId = urlParts[3] // /teacher/question-banks/:bankId
+        const updates = JSON.parse(options.body as string)
+
+        const bankIndex = dbCache.questionBanks.findIndex((b: any) => b.id === bankId)
+        if (bankIndex > -1) {
+          const bank = dbCache.questionBanks[bankIndex]
+          
+          // Если прилетел объект с вопросом (создание или апдейт)
+          if (updates.question) {
+            const qData = updates.question
+            if (qData.id) {
+              // Редактирование вопроса
+              const qIndex = bank.questions.findIndex((q: any) => q.id === qData.id)
+              if (qIndex > -1) bank.questions[qIndex] = { ...bank.questions[qIndex], ...qData }
+            } else {
+              // Создание нового вопроса
+              qData.id = `q-${Date.now()}`
+              bank.questions.push(qData)
+              bank.questionsCount = bank.questions.length
+            }
+          } else {
+            // Обновление самого банка (например title)
+            dbCache.questionBanks[bankIndex] = { ...bank, ...updates }
+          }
+          return dbCache.questionBanks[bankIndex] as T
+        }
+        throw new Error('Bank not found')
+      }
+    }
 
     // ✅ БЛОК ДЛЯ РЕАЛЬНОГО БЭКЕНДА (Сейчас закомментирован)
     /*
