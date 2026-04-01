@@ -81,7 +81,9 @@ const initForm = () => {
 
 // При открытии модалки обновляем поля
 watch(visible, (newVal) => {
-  if (newVal) initForm()
+  if (newVal) {
+    initForm()
+  }
 })
 
 // --- ЛОГИКА ОПЦИЙ ---

@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import { BankQuestionsTable } from '@/widgets/bank-questions-table'
 import { QuestionEditorModal } from '@/features/question-editor'
-import { type Question, useQuestionBankStore } from '@/entities/question-bank'
+import { useQuestionBankStore } from '@/entities/question-bank'
 
 const route = useRoute()
 const router = useRouter()
@@ -14,62 +14,13 @@ const bankId = computed(() => route.params.bankId as string)
 
 const currentBank = computed(() => bankStore.selectedBank)
 
-// Мок-данные строго по макету
-const mockQuestions: (Question & { hasImage?: boolean })[] = [
-  {
-    id: '1',
-    type: 'multiple-choice',
-    difficulty: 'easy',
-    text: 'Solve for <code class="math-inline">x</code> in the equation: <code class="math-inline">2x + 4 = 12</code>. Select the correct integer value from the options below.',
-    answerText: '',
-    order: 1
-  },
-  {
-    id: '2',
-    type: 'essay',
-    difficulty: 'hard',
-    text: 'Explain the fundamental difference between linear and exponential growth patterns in real-world scenarios.',
-    answerText: '',
-    order: 2
-  },
-  {
-    id: '3',
-    type: 'true-false',
-    difficulty: 'medium',
-    text: 'True or False: The slope of a vertical line is zero.',
-    answerText: '',
-    order: 3
-  },
-  {
-    id: '4',
-    type: 'multiple-choice',
-    difficulty: 'easy',
-    text: 'Based on the graph shown in Figure A, identify the y-intercept.',
-    answerText: '',
-    order: 4,
-    hasImage: true
-  },
-  {
-    id: '5',
-    type: 'short-answer',
-    difficulty: 'medium',
-    text: 'Simplify the following algebraic expression: 3(x + 2) - 4x.',
-    answerText: '',
-    order: 5
+onMounted(async () => {
+  // Если зашли по прямой ссылке, грузим банки
+  if (bankStore.banks.length === 0) {
+    await bankStore.loadBanks()
   }
-]
-
-const goBack = () => {
-  router.push({ name: 'teacher-question-banks' })
-}
-
-// onMounted(async () => {
-//   // Если зашли по прямой ссылке, грузим банки
-//   if (bankStore.banks.length === 0) {
-//     await bankStore.loadBanks()
-//   }
-//   bankStore.selectBank(bankId.value)
-// })
+  bankStore.selectBank(bankId.value)
+})
 
 const isEditorVisible = ref(false)
 const selectedQuestion = ref<any>(null)
@@ -84,24 +35,24 @@ const openEditModal = (question: any) => {
   isEditorVisible.value = true
 }
 
-const handleSaveQuestion = (questionData: any) => {
-  console.log('Saved question:', questionData)
-  // await bankStore.addOrUpdateQuestion(bankId.value, questionData)
-  // В реальности мы бы отправили данные в стор или на бэкенд
-  // mockQuestions.unshift(newQuestion)
+const handleSaveQuestion = async (questionData: any) => {
+  // Отправляем PATCH запрос через стор
+  await bankStore.addOrUpdateQuestion(bankId.value, questionData)
+}
+
+const goBack = () => {
+  router.push({ name: 'teacher-question-banks' })
 }
 </script>
 
 <template>
   <div class="bank-questions-page">
-    <!-- Хлебные крошки (Breadcrumbs) -->
     <nav class="breadcrumbs">
       <a href="#" class="crumb" @click.prevent="goBack">Question Banks</a>
       <span class="separator">/</span>
       <span class="crumb active" v-if="currentBank">{{ currentBank.title }}</span>
     </nav>
 
-    <!-- Шапка страницы -->
     <header class="page-header" v-if="currentBank">
       <div class="header-info">
         <h1 class="page-title">Manage Questions: {{ currentBank.title }}</h1>
@@ -109,17 +60,18 @@ const handleSaveQuestion = (questionData: any) => {
           {{ currentBank.description }} You have {{ currentBank.questionsCount }} active questions.
         </p>
       </div>
-
       <div class="header-actions">
         <Button label="Add New Question" icon="pi pi-plus" @click="openCreateModal" />
       </div>
     </header>
 
-    <!-- Виджет Таблицы -->
+    <!-- Выводим таблицу, если банк загрузился -->
     <div class="page-content" v-if="currentBank">
-      <BankQuestionsTable :questions="mockQuestions" @edit="openEditModal" />
+      <!-- Ловим событие 'edit' из таблицы -->
+      <BankQuestionsTable :questions="currentBank.questions" @edit="openEditModal" />
     </div>
 
+    <!-- Модалка редактора -->
     <QuestionEditorModal
       v-model:visible="isEditorVisible"
       :bankName="currentBank?.title"

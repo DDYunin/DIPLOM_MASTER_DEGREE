@@ -1,0 +1,65 @@
+[
+  {
+    "id": "bank-1",
+    "title": "Algebra Basics",
+    "description": "Curate and edit the assessment items for this specific module.",
+    "questionsCount": 5,
+    "lastUpdated": "Oct 24",
+    "questions": [
+      {
+        "id": "q-1",
+        "type": "multiple-choice",
+        "difficulty": "easy",
+        "text": "Solve for <code class=\"math-inline\">x</code> in the equation: <code class=\"math-inline\">2x + 4 = 12</code>.",
+        "answerText": "Correct Answer: x = 4",
+        "points": 5,
+        "order": 1
+      },
+      {
+        "id": "q-2",
+        "type": "essay",
+        "difficulty": "hard",
+        "text": "Explain the fundamental difference between linear and exponential growth patterns.",
+        "answerText": "Keywords: constant rate, compounding",
+        "points": 10,
+        "order": 2
+      },
+      {
+        "id": "q-3",
+        "type": "true-false",
+        "difficulty": "medium",
+        "text": "True or False: The slope of a vertical line is zero.",
+        "answerText": "Correct Answer: False",
+        "points": 2,
+        "order": 3
+      },
+      {
+        "id": "q-4",
+        "type": "multiple-choice",
+        "difficulty": "easy",
+        "text": "Based on the graph shown in Figure A, identify the y-intercept.",
+        "answerText": "Correct Answer: (0, 5)",
+        "points": 5,
+        "order": 4,
+        "hasImage": true
+      },
+      {
+        "id": "q-5",
+        "type": "short-answer",
+        "difficulty": "medium",
+        "text": "Simplify the following algebraic expression: 3(x + 2) - 4x.",
+        "answerText": "Correct Answer: -x + 6",
+        "points": 5,
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": "bank-2",
+    "title": "Biology Basics",
+    "description": "Intro to cell structure and function",
+    "questionsCount": 0,
+    "lastUpdated": "Oct 20",
+    "questions": []
+  }
+]

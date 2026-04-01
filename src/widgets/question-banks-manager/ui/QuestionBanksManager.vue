@@ -20,6 +20,8 @@ const getTypeStyles = (type: QuestionType) => {
       return { bg: 'var(--p-blue-100)', color: 'var(--p-blue-700)', label: 'TRUE / FALSE' }
     case 'short-answer':
       return { bg: 'var(--p-orange-100)', color: 'var(--p-orange-700)', label: 'SHORT ANSWER' }
+    case 'essay':
+      return { bg: 'var(--p-orange-100)', color: 'var(--p-orange-700)', label: 'ESSAY' }
   }
 }
 
@@ -36,9 +38,9 @@ const getDifficultyStyles = (diff: Difficulty) => {
 
 const goToAllQuestions = () => {
   if (bankStore.selectedBankId) {
-    router.push({ 
-      name: 'teacher-bank-questions', 
-      params: { bankId: bankStore.selectedBankId } 
+    router.push({
+      name: 'teacher-bank-questions',
+      params: { bankId: bankStore.selectedBankId }
     })
   }
 }

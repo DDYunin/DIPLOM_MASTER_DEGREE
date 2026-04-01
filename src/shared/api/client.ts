@@ -225,6 +225,65 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
       }
     }
 
+    // ==============================================================
+    // 🛑 БЛОК QUESTION BANKS (MOCK)
+    // ==============================================================
+    if (path.startsWith('/teacher/question-banks')) {
+      if (method === 'GET') {
+        if (!dbCache.questionBanks) {
+          const res = await fetch('/mock-data/question-banks.json')
+          if (!res.ok) {
+            throw new Error(`Failed to load mock data: ${res.status}`)
+          }
+          dbCache.questionBanks = await res.json()
+        }
+        return dbCache.questionBanks as T
+      }
+
+      // POST: Создание нового банка
+      if (method === 'POST' && path === '/teacher/question-banks' && options.body) {
+        const newBank = JSON.parse(options.body as string)
+        newBank.id = `bank-${Date.now()}`
+        newBank.questions = []
+        newBank.questionsCount = 0
+        dbCache.questionBanks = dbCache.questionBanks || []
+        dbCache.questionBanks.unshift(newBank)
+        return newBank as T
+      }
+
+      // PATCH: Обновление банка или добавление/редактирование вопроса
+      if (method === 'PATCH' && options.body) {
+        const urlParts = path.split('/')
+        const bankId = urlParts[3] // /teacher/question-banks/:bankId
+        const updates = JSON.parse(options.body as string)
+
+        const bankIndex = dbCache.questionBanks.findIndex((b: any) => b.id === bankId)
+        if (bankIndex > -1) {
+          const bank = dbCache.questionBanks[bankIndex]
+          
+          // Если прилетел объект с вопросом (создание или апдейт)
+          if (updates.question) {
+            const qData = updates.question
+            if (qData.id) {
+              // Редактирование вопроса
+              const qIndex = bank.questions.findIndex((q: any) => q.id === qData.id)
+              if (qIndex > -1) bank.questions[qIndex] = { ...bank.questions[qIndex], ...qData }
+            } else {
+              // Создание нового вопроса
+              qData.id = `q-${Date.now()}`
+              bank.questions.push(qData)
+              bank.questionsCount = bank.questions.length
+            }
+          } else {
+            // Обновление самого банка (например title)
+            dbCache.questionBanks[bankIndex] = { ...bank, ...updates }
+          }
+          return dbCache.questionBanks[bankIndex] as T
+        }
+        throw new Error('Bank not found')
+      }
+    }
+
     // ✅ БЛОК ДЛЯ РЕАЛЬНОГО БЭКЕНДА (Сейчас закомментирован)
     /*
     const baseUrl = 'https://api.university.com/v1';

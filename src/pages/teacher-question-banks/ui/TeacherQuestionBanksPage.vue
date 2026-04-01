@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 import Button from 'primevue/button'
 
@@ -29,6 +29,15 @@ const handleCreateBank = (data: { title: string; description: string }) => {
   // При желании здесь можно вызвать Toast "Bank created successfully"
   notifications.showToast('success', 'Bank list updated', `Bank created successfully`)
 }
+
+onMounted(async () => {
+  // Загружаем банки с "бэкенда", если они еще не загружены
+  if (bankStore.banks.length === 0) {
+    await bankStore.loadBanks()
+  }
+  // Сбрасываем выделение банка, чтобы справа показывался стартовый экран (Empty State)
+  bankStore.clearSelection()
+})
 </script>
 
 <template>

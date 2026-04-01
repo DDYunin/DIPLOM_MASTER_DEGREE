@@ -22,6 +22,7 @@ import {
 } from '@/pages/teacher-course-details'
 import { TeacherQuestionBanksPage } from '@/pages/teacher-question-banks'
 import { TeacherBankQuestionsPage } from '@/pages/teacher-bank-questions'
+import { TeacherProfilePage as TeacherPersonalProfilePage } from '@/pages/teacher-personal-profile'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -130,13 +131,24 @@ export const router = createRouter({
         },
         {
           path: 'question-banks',
-          name: 'teacher-question-banks',
-          component: TeacherQuestionBanksPage
+          component: () => import('@/shared/ui').then((m) => m.EmptyLayout),
+          children: [
+            {
+              path: '',
+              name: 'teacher-question-banks',
+              component: TeacherQuestionBanksPage
+            },
+            {
+              path: ':bankId',
+              name: 'teacher-bank-questions',
+              component: TeacherBankQuestionsPage
+            }
+          ]
         },
         {
-          path: 'question-banks/:bankId',
-          name: 'teacher-bank-questions',
-          component: TeacherBankQuestionsPage
+          path: 'profile',
+          name: 'teacher-profile',
+          component: TeacherPersonalProfilePage
         }
       ]
     }
