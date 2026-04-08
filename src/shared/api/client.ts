@@ -284,6 +284,22 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
       }
     }
 
+    // ==============================================================
+    // 🛑 БЛОК STUDENT COURSES (MOCK)
+    // ==============================================================
+    if (endpoint.startsWith('/student/courses')) {
+      if (method === 'GET') {
+        if (!dbCache.studentCourses) {
+          const res = await fetch('/mock-data/student-courses.json')
+          if (!res.ok) {
+            throw new Error(`Failed to load mock data (student-courses): ${res.status}`)
+          }
+          dbCache.studentCourses = await res.json()
+        }
+        return dbCache.studentCourses as T
+      }
+    }
+
     // ✅ БЛОК ДЛЯ РЕАЛЬНОГО БЭКЕНДА (Сейчас закомментирован)
     /*
     const baseUrl = 'https://api.university.com/v1';

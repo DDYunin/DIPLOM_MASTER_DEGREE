@@ -24,6 +24,10 @@ import { TeacherQuestionBanksPage } from '@/pages/teacher-question-banks'
 import { TeacherBankQuestionsPage } from '@/pages/teacher-bank-questions'
 import { TeacherProfilePage as TeacherPersonalProfilePage } from '@/pages/teacher-personal-profile'
 
+// Страницы, относящиеся к студенту
+import { StudentRoot } from '@/pages/student-root'
+import { StudentCoursesPage } from '@/pages/student-courses'
+
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -149,6 +153,33 @@ export const router = createRouter({
           path: 'profile',
           name: 'teacher-profile',
           component: TeacherPersonalProfilePage
+        }
+      ]
+    },
+    {
+      path: '/student',
+      component: StudentRoot,
+      children: [
+        {
+          path: '',
+          redirect: { name: 'student-courses' }
+        },
+        {
+          path: 'courses',
+          component: () => import('@/shared/ui').then((m) => m.EmptyLayout),
+          children:[
+            {
+              path: '',
+              name: 'student-courses',
+              component: StudentCoursesPage
+            },
+            // В будущем здесь будет страница конкретного курса:
+            // {
+            //   path: ':id',
+            //   name: 'student-course-details',
+            //   component: StudentCourseDetailsPage
+            // }
+          ]
         }
       ]
     }

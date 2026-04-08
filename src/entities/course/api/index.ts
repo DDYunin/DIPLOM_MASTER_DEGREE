@@ -1,5 +1,5 @@
 import { api } from '@/shared/api'
-import type { Course } from '../model/types'
+import type { Course, StudentCourse } from '../model/types'
 
 // === GET ===
 // Получить список курсов преподавателя
@@ -21,3 +21,8 @@ export const updateCourseById = (id: string, updatedData: Partial<Course>) =>
     method: 'PATCH',
     body: JSON.stringify(updatedData)
   })
+
+// Методы для студента
+
+// === GET ===
+export const fetchStudentCoursesList = () => api<StudentCourse[]>('/student/courses')

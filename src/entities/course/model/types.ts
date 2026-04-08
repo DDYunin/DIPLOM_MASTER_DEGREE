@@ -13,3 +13,19 @@ export interface Course {
   // Опциональное поле для обложки, если в будущем добавим картинки
   coverUrl?: string
 }
+
+export interface Instructor {
+  id: string
+  name: string
+  avatarUrl?: string
+}
+
+export interface StudentCourse {
+  id: string
+  code: string
+  title: string
+  category: string
+  status: 'Active' | 'Completed'
+  coverUrl?: string
+  instructors: Instructor[]
+}
