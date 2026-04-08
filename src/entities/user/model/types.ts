@@ -29,14 +29,14 @@ export interface User {
   role: UserRole;
   status: UserStatus;
   avatar?: string;
-  avatarInitials?: string;
-  lastLogin?: string;
+  avatarInitials?: string; // Не надо
+  lastLogin?: string; // Не надо
 
   // === БЕЗОПАСНОСТЬ ===
-  twoFactorEnabled?: boolean;
+  twoFactorEnabled?: boolean; // ?
 
   // === СПЕЦИФИЧНЫЕ ПОЛЯ: АДМИН ===
-  phone?: string;
+  phone?: string; // Не надо
 
   // === СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ / ПРЕПОДАВАТЕЛЬ ===
   identifier?: string; // Универсальное поле для Student ID или Employee ID

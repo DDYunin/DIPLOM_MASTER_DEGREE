@@ -78,7 +78,7 @@ const handleSave = () => {
 
 <template>
   <Button label="Add Permission" icon="pi pi-plus" text class="add-btn" @click="openModal" />
-
+  <!-- TODO: лишнее дерево, поменять на другой вариант -->
   <Dialog
     v-model:visible="isVisible"
     modal
