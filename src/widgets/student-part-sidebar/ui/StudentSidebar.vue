@@ -28,7 +28,6 @@ const toggleSidebar = () => {
     <div class="sidebar-top">
       <div class="brand-header">
         <div class="logo">
-          <!-- Иконка изменена под стиль студента -->
           <i class="pi pi-graduation-cap logo-icon"></i>
           <span v-if="!collapsed" class="logo-text">StudLearn</span>
         </div>
@@ -43,37 +42,17 @@ const toggleSidebar = () => {
       </div>
 
       <nav class="nav-menu">
-        <!-- Пункты из макета 1 -->
-        <RouterLink to="/student/dashboard" class="nav-item" active-class="active">
-          <i class="pi pi-th-large nav-icon"></i>
-          <span v-if="!collapsed" class="nav-text">{{
-            t('studentSidebar.dashboard', 'Dashboard')
-          }}</span>
-        </RouterLink>
-
         <RouterLink to="/student/courses" class="nav-item" active-class="active">
           <i class="pi pi-book nav-icon"></i>
           <span v-if="!collapsed" class="nav-text">{{
-            t('studentSidebar.courses', 'My Courses')
+            t('studentSidebar.courses', 'Courses')
           }}</span>
         </RouterLink>
 
-        <RouterLink to="/student/calendar" class="nav-item" active-class="active">
-          <i class="pi pi-calendar nav-icon"></i>
+        <RouterLink to="/student/profile" class="nav-item" active-class="active">
+          <i class="pi pi-user nav-icon"></i>
           <span v-if="!collapsed" class="nav-text">{{
-            t('studentSidebar.calendar', 'Calendar')
-          }}</span>
-        </RouterLink>
-
-        <RouterLink to="/student/grades" class="nav-item" active-class="active">
-          <i class="pi pi-star nav-icon"></i>
-          <span v-if="!collapsed" class="nav-text">{{ t('studentSidebar.grades', 'Grades') }}</span>
-        </RouterLink>
-
-        <RouterLink to="/student/settings" class="nav-item" active-class="active">
-          <i class="pi pi-cog nav-icon"></i>
-          <span v-if="!collapsed" class="nav-text">{{
-            t('studentSidebar.settings', 'Settings')
+            t('studentSidebar.profile', 'Profile')
           }}</span>
         </RouterLink>
       </nav>

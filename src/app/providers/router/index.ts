@@ -27,6 +27,7 @@ import { TeacherProfilePage as TeacherPersonalProfilePage } from '@/pages/teache
 // Страницы, относящиеся к студенту
 import { StudentRoot } from '@/pages/student-root'
 import { StudentCoursesPage } from '@/pages/student-courses'
+import { StudentPersonalProfile } from '@/pages/student-personal-profile'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -180,6 +181,11 @@ export const router = createRouter({
             //   component: StudentCourseDetailsPage
             // }
           ]
+        },
+        {
+          path: 'profile',
+          name: 'student-personal-profile',
+          component: StudentPersonalProfile
         }
       ]
     }
