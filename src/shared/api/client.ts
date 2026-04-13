@@ -260,7 +260,7 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
         const bankIndex = dbCache.questionBanks.findIndex((b: any) => b.id === bankId)
         if (bankIndex > -1) {
           const bank = dbCache.questionBanks[bankIndex]
-          
+
           // Если прилетел объект с вопросом (создание или апдейт)
           if (updates.question) {
             const qData = updates.question
@@ -281,6 +281,32 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
           return dbCache.questionBanks[bankIndex] as T
         }
         throw new Error('Bank not found')
+      }
+    }
+
+    // Обработка получения детальной информации по конкретному курсу (GET /student/courses/:id)
+    if (endpoint.match(/^\/student\/courses\/[^/]+$/)) {
+      if (method === 'GET') {
+        const id = endpoint.split('/')[3] // Получаем ID из урла
+
+        // Инициализируем объект кэша для деталей курсов, если его нет
+        if (!dbCache.studentCourseDetails) {
+          dbCache.studentCourseDetails = {}
+        }
+
+        if (!dbCache.studentCourseDetails[id]) {
+          // Загружаем наш мок-файл.
+          // В реальности бекенд отдал бы нужный курс по ID, мы же просто берем мок
+          const res = await fetch('/mock-data/student-course-details.json')
+          if (!res.ok) throw new Error(`Failed to load mock data: ${res.status}`)
+
+          const mockData = await res.json()
+          // Переопределяем ID из мока на запрошенный, чтобы роутер и данные совпадали
+          mockData.id = id
+          dbCache.studentCourseDetails[id] = mockData
+        }
+
+        return dbCache.studentCourseDetails[id] as T
       }
     }
 

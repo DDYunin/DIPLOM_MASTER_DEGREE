@@ -6,10 +6,12 @@ import Select from 'primevue/select'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Skeleton from 'primevue/skeleton'
+import { useRouter } from 'vue-router'
 
 // ✅ Импорт только через Public API сущности
 import { useStudentCourseStore, StudentCourseCard } from '@/entities/course'
 
+const router = useRouter()
 const store = useStudentCourseStore()
 
 const searchQuery = ref('')
@@ -53,11 +55,14 @@ const filteredCourses = computed(() => {
 })
 
 const handleResume = (id: string) => {
-  console.log('Navigate to course:', id)
+  router.push({ name: 'student-course-details', params: { id } })
 }
 
 const handleSyllabus = (id: string) => {
-  console.log('Open syllabus:', id)
+  router.push({
+    name: 'student-course-details',
+    params: { id }
+  })
 }
 </script>
 

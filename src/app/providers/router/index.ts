@@ -28,6 +28,7 @@ import { TeacherProfilePage as TeacherPersonalProfilePage } from '@/pages/teache
 import { StudentRoot } from '@/pages/student-root'
 import { StudentCoursesPage } from '@/pages/student-courses'
 import { StudentPersonalProfile } from '@/pages/student-personal-profile'
+import { StudentCourseDetailsPage } from '@/pages/student-course-details'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -168,18 +169,17 @@ export const router = createRouter({
         {
           path: 'courses',
           component: () => import('@/shared/ui').then((m) => m.EmptyLayout),
-          children:[
+          children: [
             {
               path: '',
               name: 'student-courses',
               component: StudentCoursesPage
             },
-            // В будущем здесь будет страница конкретного курса:
-            // {
-            //   path: ':id',
-            //   name: 'student-course-details',
-            //   component: StudentCourseDetailsPage
-            // }
+            {
+              path: ':id',
+              name: 'student-course-details',
+              component: StudentCourseDetailsPage
+            }
           ]
         },
         {

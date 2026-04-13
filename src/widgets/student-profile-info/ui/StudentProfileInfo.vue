@@ -178,7 +178,6 @@ const handleSaveProfile = async () => {
   flex-direction: column;
   gap: 2rem;
   max-width: 1000px;
-  margin: 0 auto;
 }
 
 .loading-state {

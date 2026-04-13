@@ -1,0 +1,72 @@
+{
+  "id": "1",
+  "code": "CS-204",
+  "title": "Data Structures & Algorithms",
+  "category": "CORE CS",
+  "status": "Active",
+  "instructors": [{ "id": "i1", "name": "Dr. Sarah Jenkins", "avatarUrl": "" }],
+  "description": "Master the fundamental building blocks of modern software engineering through intensive practical implementation and theory.",
+  "gradePercentage": 94,
+  "completedElements": 12,
+  "totalElements": 18,
+  "modules": [
+    {
+      "id": "m1",
+      "order": 1,
+      "title": "Foundations of Algorithms",
+      "status": "completed",
+      "elements": [
+        {
+          "id": "e1",
+          "title": "Asymptotic Analysis & Big O",
+          "type": "video",
+          "meta": "Video • 12:45 min",
+          "status": "completed"
+        },
+        {
+          "id": "e2",
+          "title": "Time Complexity Cheat Sheet",
+          "type": "pdf",
+          "meta": "PDF • 1.2 MB",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "order": 2,
+      "title": "Linear Data Structures",
+      "status": "current",
+      "elements": [
+        {
+          "id": "e3",
+          "title": "Implementation of Linked Lists",
+          "type": "video",
+          "meta": "Video • 18:20 min",
+          "status": "current"
+        },
+        {
+          "id": "e4",
+          "title": "Stacks vs. Queues Knowledge Check",
+          "type": "quiz",
+          "meta": "Quiz • 10 Questions",
+          "status": "locked"
+        },
+        {
+          "id": "e5",
+          "title": "Assignment: Doubly Linked List",
+          "type": "assignment",
+          "meta": "Project • Due Next Friday",
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "order": 3,
+      "title": "Sorting & Searching",
+      "status": "locked",
+      "elements": []
+    }
+  ]
+}

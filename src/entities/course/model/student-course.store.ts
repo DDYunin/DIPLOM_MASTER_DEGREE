@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { StudentCourse } from './types'
-import { fetchStudentCoursesList } from '../api'
+import type { StudentCourse, StudentCourseDetails } from './types'
+import { fetchStudentCoursesList, fetchStudentCourseDetails } from '../api'
 
 export const useStudentCourseStore = defineStore('studentCourse', () => {
   const courses = ref<StudentCourse[]>([])
@@ -22,11 +22,28 @@ export const useStudentCourseStore = defineStore('studentCourse', () => {
     }
   }
 
+  const currentCourseDetails = ref<StudentCourseDetails | null>(null)
+  const isDetailsLoading = ref(false)
+  const loadCourseDetails = async (id: string) => {
+    isDetailsLoading.value = true
+    try {
+      const data = await fetchStudentCourseDetails(id)
+      if (data) {
+        currentCourseDetails.value = data
+      }
+    } finally {
+      isDetailsLoading.value = false
+    }
+  }
+
   return {
     courses,
     isLoading,
     activeCourses,
     completedCourses,
-    loadCourses
+    loadCourses,
+    currentCourseDetails,
+    isDetailsLoading,
+    loadCourseDetails
   }
 })
