@@ -4,6 +4,9 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import ProgressBar from 'primevue/progressbar'
 import type { StudentCourseDetails, CourseElement } from '@/entities/course'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const props = defineProps<{
   course: StudentCourseDetails
@@ -30,6 +33,27 @@ const getElementIconConfig = (type: CourseElement['type'], status: CourseElement
 const progressPercentage = computed(() => {
   return Math.round((props.course.completedElements / props.course.totalElements) * 100)
 })
+
+const handleElementClick = (element: CourseElement) => {
+  if (element.status === 'locked') {
+    return
+  }
+
+  if (element.type === 'quiz' || element.type === 'assignment') {
+    // Переход на страницу информации об оценке
+    router.push({
+      name: 'student-assessment-info',
+      params: {
+        id: props.course.id,
+        assessmentId: element.id
+      }
+    })
+  } else if (element.type === 'pdf' || element.type === 'video') {
+    // Скачивание или открытие в новой вкладке (по твоему предложению)
+    // Пока заглушка:
+    alert(`Downloading material: ${element.title}`)
+  }
+}
 </script>
 
 <template>
@@ -95,6 +119,7 @@ const progressPercentage = computed(() => {
                 label="Resume"
                 size="small"
                 rounded
+                @click="handleElementClick(element)"
               />
               <div v-else-if="element.status === 'locked'" class="locked-dot"></div>
             </div>

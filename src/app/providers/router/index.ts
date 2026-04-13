@@ -29,6 +29,7 @@ import { StudentRoot } from '@/pages/student-root'
 import { StudentCoursesPage } from '@/pages/student-courses'
 import { StudentPersonalProfile } from '@/pages/student-personal-profile'
 import { StudentCourseDetailsPage } from '@/pages/student-course-details'
+import { AssessmentInfoPage } from '@/pages/assessment-info'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -179,6 +180,12 @@ export const router = createRouter({
               path: ':id',
               name: 'student-course-details',
               component: StudentCourseDetailsPage
+            },
+            {
+              // Маршрут для страницы подготовки к тесту
+              path: ':id/assessment/:assessmentId',
+              name: 'student-assessment-info',
+              component: AssessmentInfoPage
             }
           ]
         },
