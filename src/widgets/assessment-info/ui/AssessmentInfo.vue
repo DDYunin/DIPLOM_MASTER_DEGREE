@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 import { useAssessmentStore } from '@/entities/assessment'
 
 const router = useRouter()
+const route = useRoute()
 const store = useAssessmentStore()
 
 const handleReturn = () => {
@@ -20,8 +21,14 @@ const handleReturn = () => {
 }
 
 const handleStartTest = () => {
-  console.log('Starting test...', store.currentAssessment?.id)
-  // В будущем: router.push({ name: 'student-assessment-take', params: { id: store.currentAssessment?.id } })
+  // console.log('Starting test...', store.currentAssessment?.id)
+  router.push({
+    name: 'student-assessment-take',
+    params: {
+      id: route.params.id,
+      assessmentId: store.currentAssessment?.id
+    }
+  })
 }
 </script>
 
