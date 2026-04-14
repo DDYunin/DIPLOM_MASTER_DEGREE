@@ -284,29 +284,31 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
       }
     }
 
-    // TODO: обновить путь
-    if (endpoint.match(/^\/student\/courses\/[^/]+$\/assessment/)) {
+    if (endpoint.match(/^\/student\/courses\/[^/]+\/assessments\/[^/]+$/)) {
       if (method === 'GET') {
-        const id = endpoint.split('/')[3] // Получаем ID из урла
+        // Разбиваем URL:["", "student", "courses", "1", "assessments", "e4"]
+        const parts = endpoint.split('/')
+        const courseId = parts[3]
+        const assessmentId = parts[5]
 
-        // Инициализируем объект кэша для деталей курсов, если его нет
-        if (!dbCache.studentCourseDetails) {
-          dbCache.studentCourseDetails = {}
+        if (!dbCache.assessments) {
+          dbCache.assessments = {}
         }
 
-        if (!dbCache.studentCourseDetails[id]) {
-          // Загружаем наш мок-файл.
-          // В реальности бекенд отдал бы нужный курс по ID, мы же просто берем мок
-          const res = await fetch('/mock-data/student-course-details.json')
+        if (!dbCache.assessments[assessmentId]) {
+          const res = await fetch('/mock-data/assessment-info.json')
           if (!res.ok) throw new Error(`Failed to load mock data: ${res.status}`)
 
           const mockData = await res.json()
-          // Переопределяем ID из мока на запрошенный, чтобы роутер и данные совпадали
-          mockData.id = id
-          dbCache.studentCourseDetails[id] = mockData
+
+          // Синхронизируем ID из мока с запрошенными параметрами
+          mockData.id = assessmentId
+          mockData.courseId = courseId
+
+          dbCache.assessments[assessmentId] = mockData
         }
 
-        return dbCache.studentCourseDetails[id] as T
+        return dbCache.assessments[assessmentId] as T
       }
     }
 

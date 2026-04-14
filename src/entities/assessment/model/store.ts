@@ -7,10 +7,10 @@ export const useAssessmentStore = defineStore('assessment', () => {
   const currentAssessment = ref<AssessmentInfo | null>(null)
   const isLoading = ref(false)
 
-  const loadAssessment = async (id: string) => {
+  const loadAssessment = async (courseId: string, assessmentId: string) => {
     isLoading.value = true
     try {
-      const data = await fetchAssessmentInfo(id)
+      const data = await fetchAssessmentInfo(courseId, assessmentId)
       if (data) {
         currentAssessment.value = data
       }

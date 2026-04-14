@@ -8,9 +8,10 @@ const route = useRoute()
 const store = useAssessmentStore()
 
 onMounted(() => {
+  const courseId = route.params.id as string
   const assessmentId = route.params.assessmentId as string
-  if (assessmentId) {
-    store.loadAssessment(assessmentId)
+  if (courseId && assessmentId) {
+    store.loadAssessment(courseId, assessmentId)
   }
 })
 </script>
