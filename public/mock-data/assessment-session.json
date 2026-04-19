@@ -1,0 +1,48 @@
+{
+  "id": "sess-999",
+  "assessmentId": "e4",
+  "courseTitle": "Advanced Cognitive Psychology",
+  "title": "Quiz Module",
+  "timeRemaining": 2535,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single-choice",
+      "text": "Which of the following models of attention suggests that information is filtered out after some semantic processing has occurred, rather than being blocked entirely at the sensory level?",
+      "imageUrl": "https://picsum.photos/id/1044/800/400",
+      "points": 5,
+      "options": [
+        {
+          "id": "opt1",
+          "text": "Broadbent's Filter Model",
+          "description": "Suggests early selection based on physical characteristics."
+        },
+        {
+          "id": "opt2",
+          "text": "Deutsch-Deutsch Late Selection Model",
+          "description": "Proposes that all stimuli are processed for meaning before selection."
+        },
+        {
+          "id": "opt3",
+          "text": "Treisman's Attenuation Theory",
+          "description": "Unattended info is turned down like a volume knob, not cut off."
+        },
+        {
+          "id": "opt4",
+          "text": "Capacity Model of Attention",
+          "description": "Focuses on cognitive resources rather than structural filters."
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "type": "long-text",
+      "text": "Explain the difference between short-term and working memory from a neurobiological perspective. Provide examples of brain regions involved.",
+      "points": 15
+    }
+  ],
+  "answers": {
+    "q1": { "questionId": "q1", "value": "opt2", "isFlagged": false },
+    "q2": { "questionId": "q2", "value": null, "isFlagged": false }
+  }
+}

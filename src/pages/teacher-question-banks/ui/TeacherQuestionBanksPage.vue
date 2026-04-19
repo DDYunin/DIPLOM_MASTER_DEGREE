@@ -23,7 +23,6 @@ const handleImportSuccess = () => {
 // 2. ОБРАБОТЧИК СОЗДАНИЯ
 const handleCreateBank = (data: { title: string; description: string }) => {
   // Вызываем твой готовый метод из стора
-  debugger
   bankStore.createBank(data)
 
   // При желании здесь можно вызвать Toast "Bank created successfully"

@@ -5,6 +5,7 @@ import * as userApi from '../api'
 
 export const useUserStore = defineStore('user', () => {
   const users = ref<User[]>([])
+  const currentUser = ref<User | null>(null) // Текущий залогиненный юзер
   const isLoading = ref(false)
 
   // Геттеры...
@@ -38,5 +39,35 @@ export const useUserStore = defineStore('user', () => {
 
   const getUserById = (id: string) => users.value.find((user) => user.id === id)
 
-  return { users, isLoading, students, loadUsers, addUser, updateUser, getUserById }
+  // Экшены для текущего профиля
+  const loadCurrentUser = async () => {
+    isLoading.value = true
+    try {
+      currentUser.value = await userApi.fetchCurrentUser()
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  const updateProfile = async (updates: Partial<User>) => {
+    if (!currentUser.value) {
+      return
+    }
+    const updatedUser = await userApi.updateUserById(currentUser.value.id, updates)
+    if (updatedUser) {
+      currentUser.value = updatedUser
+    }
+  }
+
+  return {
+    users,
+    isLoading,
+    students,
+    loadUsers,
+    addUser,
+    updateUser,
+    getUserById,
+    loadCurrentUser,
+    updateProfile
+  }
 })

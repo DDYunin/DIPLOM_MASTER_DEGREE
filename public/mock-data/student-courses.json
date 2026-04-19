@@ -1,0 +1,36 @@
+[
+  {
+    "id": "1",
+    "code": "CS-204",
+    "title": "Data Structures & Algorithms",
+    "category": "CORE CS",
+    "status": "Active",
+    "coverUrl": "https://picsum.photos/id/1/600/300",
+    "instructors": [
+      { "id": "i1", "name": "Dr. Sarah Jenkins", "avatarUrl": "https://i.pravatar.cc/150?u=sarah" }
+    ]
+  },
+  {
+    "id": "2",
+    "code": "WEB-301",
+    "title": "Advanced Full-Stack Development",
+    "category": "ELECTIVE",
+    "status": "Active",
+    "coverUrl": "",
+    "instructors": [
+      { "id": "i2", "name": "Prof. Marcus Vane", "avatarUrl": "" },
+      { "id": "i3", "name": "Alex Chen", "avatarUrl": "https://i.pravatar.cc/150?u=alex" }
+    ]
+  },
+  {
+    "id": "3",
+    "code": "MTH-112",
+    "title": "Discrete Mathematics for CS",
+    "category": "REQUIRED",
+    "status": "Completed",
+    "coverUrl": "",
+    "instructors": [
+      { "id": "i4", "name": "Dr. Anita Patel", "avatarUrl": "https://i.pravatar.cc/150?u=anita" }
+    ]
+  }
+]
