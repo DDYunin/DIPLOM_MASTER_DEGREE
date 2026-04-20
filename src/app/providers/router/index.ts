@@ -13,6 +13,7 @@ import { OrganizationPage } from '@/pages/organization'
 import { TeacherRoot } from '@/pages/teacher-root'
 import { TeacherCoursesPage } from '@/pages/teacher-courses'
 import { TeacherAddCoursePage } from '@/pages/teacher-add-course'
+import { TeacherQuizBuilderPage } from '@/pages/teacher-quiz-builder'
 import {
   TeacherCourseDetailsPage,
   CourseMainInfoTab,
@@ -126,6 +127,11 @@ export const router = createRouter({
                   component: CourseGradesTab
                 }
               ]
+            },
+            {
+              path: ':id/quiz-builder',
+              name: 'teacher-quiz-builder',
+              component: TeacherQuizBuilderPage
             }
           ]
         },

@@ -1,10 +1,74 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useCourseContentStore, type ElementType } from '@/entities/course-content'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import ProgressBar from 'primevue/progressbar'
+import { useNotifications } from '@/shared/model/useNotifications'
+
+import { CreateTopicModal } from '@/features/create-course-topic'
+import { CreateElementModal } from '@/features/create-course-element'
+
+const router = useRouter()
+const route = useRoute()
 
 const contentStore = useCourseContentStore()
+const notifications = useNotifications()
+
+const editingTopic = ref<any>(null)
+const targetTopicId = ref<string | null>(null)
+
+const isElementModalVisible = ref(false)
+const isTopicModalVisible = ref(false)
+
+const openCreateTopic = () => {
+  editingTopic.value = null
+  isTopicModalVisible.value = true
+}
+
+const openEditTopic = (topic: any) => {
+  editingTopic.value = topic
+  isTopicModalVisible.value = true
+}
+
+const handleTopicSave = (data: any) => {
+  if (data.id) {
+    contentStore.updateTopic(data.id, data)
+    notifications.showToast('success', 'Success', 'Topic have been updated.')
+  } else {
+    contentStore.createTopic(data)
+    notifications.showToast('success', 'Success', 'Topic have been created.')
+  }
+}
+
+const openAddElement = (topicId: string) => {
+  targetTopicId.value = topicId
+  isElementModalVisible.value = true
+}
+
+const handleElementCreate = (data: any) => {
+  // Добавляем элемент в локальный стор (можешь добавить этот экшен в useCourseContentStore)
+  const topic = contentStore.topics.find((t) => t.id === data.topicId)
+  if (topic) {
+    topic.elements.push({
+      id: `el-${Date.now()}`,
+      type: data.type,
+      title: data.title,
+      meta: data.meta
+    })
+  }
+}
+
+const handleGoToQuizBuilder = (topicId: string) => {
+  // Перенаправляем на страницу Quiz Builder, передавая ID курса из URL
+  const courseId = route.params.id as string
+  router.push({
+    name: 'teacher-quiz-builder',
+    params: { id: courseId },
+    query: { topicId } // Передаем topicId через query, чтобы строитель знал, куда прикрепить тест
+  })
+}
 
 // Хелперы для рендера иконок и цветов в зависимости от типа элемента
 const getElementConfig = (type: ElementType) => {
@@ -48,7 +112,7 @@ const getElementConfig = (type: ElementType) => {
       <!-- Тулбар -->
       <div class="toolbar">
         <div class="toolbar-left">
-          <Button label="Add New Topic" icon="pi pi-plus" />
+          <Button label="Add New Topic" icon="pi pi-plus" @click="isTopicModalVisible = true" />
           <div class="toolbar-actions">
             <Button
               icon="pi pi-angle-up"
@@ -87,10 +151,29 @@ const getElementConfig = (type: ElementType) => {
               <span class="topic-meta">{{ topic.meta }}</span>
             </div>
 
-            <i
-              class="pi chevron-icon"
-              :class="topic.isExpanded ? 'pi-angle-up' : 'pi-angle-down'"
-            ></i>
+            <!-- НОВЫЕ КНОПКИ ДЕЙСТВИЙ -->
+            <div class="topic-actions">
+              <Button
+                icon="pi pi-pencil"
+                text
+                rounded
+                severity="secondary"
+                @click.stop="openEditTopic(topic)"
+                aria-label="Edit Topic"
+              />
+              <Button
+                icon="pi pi-trash"
+                text
+                rounded
+                severity="danger"
+                @click.stop="contentStore.deleteTopic(topic.id)"
+                aria-label="Delete Topic"
+              />
+              <i
+                class="pi chevron-icon ml-2"
+                :class="topic.isExpanded ? 'pi-angle-up' : 'pi-angle-down'"
+              ></i>
+            </div>
           </div>
 
           <!-- Список элементов (виден только если развернуто) -->
@@ -126,14 +209,14 @@ const getElementConfig = (type: ElementType) => {
             </div>
 
             <!-- Кнопка добавления элемента внутрь темы -->
-            <button class="add-element-btn">
-              <i class="pi pi-plus"></i> Add Element to {{ topic.id.replace('-', ' ') }}
+            <button class="add-element-btn" @click="openAddElement(topic.id)">
+              <i class="pi pi-plus"></i> Add Element to {{ topic.title }}
             </button>
           </div>
         </div>
 
         <!-- Зона добавления новой темы -->
-        <div class="add-topic-zone">
+        <div class="add-topic-zone" @click="isTopicModalVisible = true">
           <Button
             icon="pi pi-plus"
             rounded
@@ -220,6 +303,18 @@ const getElementConfig = (type: ElementType) => {
         <i class="pi pi-graduation-cap help-bg-icon"></i>
       </div>
     </aside>
+
+    <CreateTopicModal
+      v-model:visible="isTopicModalVisible"
+      :initial-data="editingTopic"
+      @save="handleTopicSave"
+    />
+    <CreateElementModal
+      v-model:visible="isElementModalVisible"
+      :topic-id="targetTopicId"
+      @create="handleElementCreate"
+      @go-to-quiz-builder="handleGoToQuizBuilder"
+    />
   </div>
 </template>
 
@@ -622,5 +717,13 @@ const getElementConfig = (type: ElementType) => {
   opacity: 0.1;
   transform: rotate(-15deg);
   z-index: 1;
+}
+
+.topic-actions {
+  display: flex;
+  align-items: center;
+}
+.ml-2 {
+  margin-left: 0.5rem;
 }
 </style>

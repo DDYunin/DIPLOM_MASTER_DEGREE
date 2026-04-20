@@ -38,12 +38,47 @@ export const useCourseContentStore = defineStore('course-content', () => {
   const toggleTopic = (topicId: string) => {
     const topic = topics.value.find((t) => t.id === topicId)
     if (topic) {
-        topic.isExpanded = !topic.isExpanded
+      topic.isExpanded = !topic.isExpanded
     }
   }
 
   const expandAll = () => topics.value.forEach((t) => (t.isExpanded = true))
   const collapseAll = () => topics.value.forEach((t) => (t.isExpanded = false))
+
+  const createTopic = (data: { title: string; meta?: string }) => {
+    const newTopic: Topic = {
+      id: `topic-${Date.now()}`,
+      title: data.title,
+      meta: data.meta || '0 items • 0 mins',
+      elements: [],
+      isExpanded: true
+    }
+    topics.value.push(newTopic)
+  }
+
+  const updateTopic = (id: string, data: { title: string; meta: string }) => {
+    const topic = topics.value.find((t) => t.id === id)
+    if (topic) {
+      topic.title = data.title
+      topic.meta = data.meta
+    }
+  }
+
+  const deleteTopic = (id: string) => {
+    topics.value = topics.value.filter((t) => t.id !== id)
+  }
+
+  const createElement = (data: any) => {
+    const topic = topics.value.find((t) => t.id === data.topicId)
+    if (topic) {
+      topic.elements.push({
+        id: `el-${Date.now()}`,
+        type: data.type,
+        title: data.title,
+        meta: data.meta
+      })
+    }
+  }
 
   return {
     topics,
@@ -51,6 +86,11 @@ export const useCourseContentStore = defineStore('course-content', () => {
     totalElements,
     toggleTopic,
     expandAll,
-    collapseAll
+    collapseAll,
+    createTopic,
+    updateTopic,
+    deleteTopic,
+    /** Создание элемента топика */
+    createElement
   }
 })
