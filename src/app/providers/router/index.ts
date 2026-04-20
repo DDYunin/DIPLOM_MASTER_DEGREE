@@ -25,6 +25,14 @@ import { TeacherQuestionBanksPage } from '@/pages/teacher-question-banks'
 import { TeacherBankQuestionsPage } from '@/pages/teacher-bank-questions'
 import { TeacherProfilePage as TeacherPersonalProfilePage } from '@/pages/teacher-personal-profile'
 
+// Страницы, относящиеся к студенту
+import { StudentRoot } from '@/pages/student-root'
+import { StudentCoursesPage } from '@/pages/student-courses'
+import { StudentPersonalProfile } from '@/pages/student-personal-profile'
+import { StudentCourseDetailsPage } from '@/pages/student-course-details'
+import { AssessmentInfoPage } from '@/pages/assessment-info'
+import { AssessmentSessionPage } from '@/pages/assessment-session'
+
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -155,6 +163,49 @@ export const router = createRouter({
           path: 'profile',
           name: 'teacher-profile',
           component: TeacherPersonalProfilePage
+        }
+      ]
+    },
+    {
+      path: '/student',
+      component: StudentRoot,
+      children: [
+        {
+          path: '',
+          redirect: { name: 'student-courses' }
+        },
+        {
+          path: 'courses',
+          component: () => import('@/shared/ui').then((m) => m.EmptyLayout),
+          children: [
+            {
+              path: '',
+              name: 'student-courses',
+              component: StudentCoursesPage
+            },
+            {
+              path: ':id',
+              name: 'student-course-details',
+              component: StudentCourseDetailsPage
+            },
+            {
+              // Маршрут для страницы подготовки к тесту
+              path: ':id/assessment/:assessmentId',
+              name: 'student-assessment-info',
+              component: AssessmentInfoPage
+            },
+            {
+              // НОВЫЙ МАРШРУТ: Прохождение теста (Session)
+              path: ':id/assessment/:assessmentId/take',
+              name: 'student-assessment-take',
+              component: AssessmentSessionPage
+            }
+          ]
+        },
+        {
+          path: 'profile',
+          name: 'student-personal-profile',
+          component: StudentPersonalProfile
         }
       ]
     }

@@ -1,4 +1,17 @@
 import { useCourseStore } from './model/store'
+import { useStudentCourseStore } from './model/student-course.store'
 import CourseCard from './ui/CourseCard.vue'
+import StudentCourseCard from './ui/StudentCourseCard.vue'
 
-export { useCourseStore, CourseCard }
+import type { StudentCourse, Instructor, StudentCourseDetails, CourseElement } from './model/types'
+
+export {
+  useCourseStore,
+  useStudentCourseStore,
+  CourseCard,
+  StudentCourseCard,
+  type StudentCourse,
+  type Instructor,
+  type StudentCourseDetails,
+  type CourseElement
+}

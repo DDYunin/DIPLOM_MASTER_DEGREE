@@ -260,7 +260,7 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
         const bankIndex = dbCache.questionBanks.findIndex((b: any) => b.id === bankId)
         if (bankIndex > -1) {
           const bank = dbCache.questionBanks[bankIndex]
-          
+
           // Если прилетел объект с вопросом (создание или апдейт)
           if (updates.question) {
             const qData = updates.question
@@ -281,6 +281,140 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
           return dbCache.questionBanks[bankIndex] as T
         }
         throw new Error('Bank not found')
+      }
+    }
+
+    if (endpoint.match(/^\/student\/courses\/[^/]+\/assessments\/[^/]+$/)) {
+      if (method === 'GET') {
+        // Разбиваем URL:["", "student", "courses", "1", "assessments", "e4"]
+        const parts = endpoint.split('/')
+        const courseId = parts[3]
+        const assessmentId = parts[5]
+
+        if (!dbCache.assessments) {
+          dbCache.assessments = {}
+        }
+
+        if (!dbCache.assessments[assessmentId]) {
+          const res = await fetch('/mock-data/assessment-info.json')
+          if (!res.ok) throw new Error(`Failed to load mock data: ${res.status}`)
+
+          const mockData = await res.json()
+
+          // Синхронизируем ID из мока с запрошенными параметрами
+          mockData.id = assessmentId
+          mockData.courseId = courseId
+
+          dbCache.assessments[assessmentId] = mockData
+        }
+
+        return dbCache.assessments[assessmentId] as T
+      }
+    }
+
+    // Обработка получения детальной информации по конкретному курсу (GET /student/courses/:id)
+    if (endpoint.match(/^\/student\/courses\/[^/]+$/)) {
+      if (method === 'GET') {
+        const id = endpoint.split('/')[3] // Получаем ID из урла
+
+        // Инициализируем объект кэша для деталей курсов, если его нет
+        if (!dbCache.studentCourseDetails) {
+          dbCache.studentCourseDetails = {}
+        }
+
+        if (!dbCache.studentCourseDetails[id]) {
+          // Загружаем наш мок-файл.
+          // В реальности бекенд отдал бы нужный курс по ID, мы же просто берем мок
+          const res = await fetch('/mock-data/student-course-details.json')
+          if (!res.ok) throw new Error(`Failed to load mock data: ${res.status}`)
+
+          const mockData = await res.json()
+          // Переопределяем ID из мока на запрошенный, чтобы роутер и данные совпадали
+          mockData.id = id
+          dbCache.studentCourseDetails[id] = mockData
+        }
+
+        return dbCache.studentCourseDetails[id] as T
+      }
+    }
+
+    // Перехватываем GET /student/courses/:courseId/assessments/:assessmentId/session
+    if (endpoint.match(/^\/student\/courses\/[^/]+\/assessments\/[^/]+\/session$/)) {
+      if (method === 'GET') {
+        // Разбиваем URL:["", "student", "courses", "1", "assessments", "e4", "session"]
+        const parts = endpoint.split('/')
+        const courseId = parts[3]
+        const assessmentId = parts[5]
+
+        if (!dbCache.assessmentSessions) {
+          dbCache.assessmentSessions = {}
+        }
+
+        // Создаем уникальный ключ для кэша на основе курса и теста
+        const sessionKey = `${courseId}_${assessmentId}`
+
+        if (!dbCache.assessmentSessions[sessionKey]) {
+          const res = await fetch('/mock-data/assessment-session.json')
+          if (!res.ok) throw new Error(`Failed to load session mock: ${res.status}`)
+
+          const mockData = await res.json()
+
+          // Синхронизируем ID теста в моке с запрошенным
+          mockData.assessmentId = assessmentId
+
+          dbCache.assessmentSessions[sessionKey] = mockData
+        }
+
+        return dbCache.assessmentSessions[sessionKey] as T
+      }
+    }
+
+    // ==============================================================
+    // 🛑 БЛОК STUDENT COURSES (MOCK)
+    // ==============================================================
+    if (endpoint.startsWith('/student/courses')) {
+      if (method === 'GET') {
+        if (!dbCache.studentCourses) {
+          const res = await fetch('/mock-data/student-courses.json')
+          if (!res.ok) {
+            throw new Error(`Failed to load mock data (student-courses): ${res.status}`)
+          }
+          dbCache.studentCourses = await res.json()
+        }
+        return dbCache.studentCourses as T
+      }
+    }
+
+    // 1. Получение сессии тестирования
+
+    // 2. Автосохранение ответа
+    // Перехватываем PATCH /student/assessment-sessions/:sessionId/answers
+    if (endpoint.match(/^\/student\/assessment-sessions\/[^/]+\/answers$/)) {
+      if (method === 'PATCH' && options.body) {
+        const sessionId = endpoint.split('/')[3]
+        const { questionId, value } = JSON.parse(options.body as string)
+
+        // Имитируем небольшую задержку сети, чтобы студент видел индикатор "Saving..."
+        await new Promise((resolve) => setTimeout(resolve, 500))
+
+        // Ищем активную сессию в кэше и обновляем ответ
+        if (dbCache.assessmentSessions) {
+          // Ищем сессию по sessionId среди всех закэшированных
+          const session = Object.values(dbCache.assessmentSessions).find(
+            (s: any) => s.id === sessionId
+          ) as any
+
+          if (session) {
+            // Обновляем или добавляем ответ
+            if (!session.answers[questionId]) {
+              session.answers[questionId] = { questionId, value, isFlagged: false }
+            } else {
+              session.answers[questionId].value = value
+            }
+          }
+        }
+
+        return { success: true } as T
       }
     }
 

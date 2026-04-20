@@ -24,19 +24,25 @@ export interface UserPermissions {
 export interface User {
   // === ОБЩИЕ ПОЛЯ (Базовые для всех) ===
   id: string;
+  // Новые, переписать на их использование
+  firstName: string
+  lastName: string
+  patronymic?: string
+  // TODO: не использовать fullname
   fullName: string;
   email: string;
   role: UserRole;
   status: UserStatus;
   avatar?: string;
-  avatarInitials?: string;
-  lastLogin?: string;
+  // TODO: формировать самому
+  avatarInitials?: string; // Не надо
+  lastLogin?: string; // Не надо
 
   // === БЕЗОПАСНОСТЬ ===
-  twoFactorEnabled?: boolean;
+  twoFactorEnabled?: boolean; // ?
 
   // === СПЕЦИФИЧНЫЕ ПОЛЯ: АДМИН ===
-  phone?: string;
+  phone?: string; // Не надо
 
   // === СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ / ПРЕПОДАВАТЕЛЬ ===
   identifier?: string; // Универсальное поле для Student ID или Employee ID
@@ -44,11 +50,16 @@ export interface User {
   subDepartment?: string;
 
   // === СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ ===
+  // TODO: оставить только studentId
+  studentId?: string // Заменил identifier на конкретное поле
+  institute?: string
+  major?: string
+  group?: string
   cohort?: string;
   notes?: string;
 
   // === СПЕЦИФИЧНЫЕ ПОЛЯ: ПРЕПОДАВАТЕЛЬ ===
-  groups?: string[];
+  groups?: string[]; // TODO: думаю, что отдельная ручка
   permissions?: UserPermissions;
-  courses?: Course[];
+  courses?: Course[]; // TODO: думаю, что отдельная ручка
 }

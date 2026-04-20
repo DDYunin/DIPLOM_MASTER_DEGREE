@@ -1,0 +1,17 @@
+{
+  "id": "e4",
+  "courseId": "1",
+  "courseCode": "CS301: Algorithms & Complexity",
+  "title": "Midterm Exam - Algorithms",
+  "type": "Exam",
+  "description": "This assessment covers Module 1 to 4, focusing on Big O notation, Sorting algorithms, and Dynamic Programming fundamentals.",
+  "timeLimit": 60,
+  "totalQuestions": 24,
+  "dueDate": "Oct 24, 23:59",
+  "instructions": [
+    "Ensure you have a stable internet connection. If the connection is lost, your progress will be saved automatically up to the last submitted question.",
+    "Once you click Start Test, the timer will begin. You cannot pause the timer once it has started.",
+    "Academic integrity is monitored. Switching tabs or windows more than three times will result in an automatic submission and flagging for review.",
+    "Calculators are permitted for Section B (Complexity Analysis) tasks."
+  ]
+}
