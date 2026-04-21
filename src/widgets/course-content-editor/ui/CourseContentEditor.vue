@@ -18,6 +18,7 @@ const notifications = useNotifications()
 
 const editingTopic = ref<any>(null)
 const targetTopicId = ref<string | null>(null)
+const editingElement = ref<any>(null)
 
 const isElementModalVisible = ref(false)
 const isTopicModalVisible = ref(false)
@@ -44,29 +45,40 @@ const handleTopicSave = (data: any) => {
 
 const openAddElement = (topicId: string) => {
   targetTopicId.value = topicId
+  editingElement.value = null
   isElementModalVisible.value = true
 }
 
-const handleElementCreate = (data: any) => {
-  // Добавляем элемент в локальный стор (можешь добавить этот экшен в useCourseContentStore)
-  const topic = contentStore.topics.find((t) => t.id === data.topicId)
-  if (topic) {
-    topic.elements.push({
-      id: `el-${Date.now()}`,
-      type: data.type,
-      title: data.title,
-      meta: data.meta
+const openEditElement = (topicId: string, element: any) => {
+  // ЕСЛИ ТИП КВИЗ - УВОДИМ НА СТРАНИЦУ
+  if (element.type === 'quiz') {
+    router.push({
+      name: 'teacher-quiz-builder',
+      params: { id: route.params.id as string },
+      query: { editId: element.id }
     })
+    return
+  }
+
+  targetTopicId.value = topicId
+  editingElement.value = element
+  isElementModalVisible.value = true
+}
+
+const handleElementSave = (data: any) => {
+  // Добавляем элемент в локальный стор (можешь добавить этот экшен в useCourseContentStore)
+  if (data.id) {
+    contentStore.updateElement(data.topicId, data.id, data)
+  } else {
+    contentStore.createElement(data)
   }
 }
 
 const handleGoToQuizBuilder = (topicId: string) => {
-  // Перенаправляем на страницу Quiz Builder, передавая ID курса из URL
-  const courseId = route.params.id as string
   router.push({
     name: 'teacher-quiz-builder',
-    params: { id: courseId },
-    query: { topicId } // Передаем topicId через query, чтобы строитель знал, куда прикрепить тест
+    params: { id: route.params.id as string },
+    query: { topicId }
   })
 }
 
@@ -112,7 +124,7 @@ const getElementConfig = (type: ElementType) => {
       <!-- Тулбар -->
       <div class="toolbar">
         <div class="toolbar-left">
-          <Button label="Add New Topic" icon="pi pi-plus" @click="isTopicModalVisible = true" />
+          <Button label="Add New Topic" icon="pi pi-plus" @click="openCreateTopic" />
           <div class="toolbar-actions">
             <Button
               icon="pi pi-angle-up"
@@ -206,6 +218,25 @@ const getElementConfig = (type: ElementType) => {
                   <span class="element-meta">{{ element.meta }}</span>
                 </div>
               </div>
+
+              <div class="element-actions">
+                <Button
+                  icon="pi pi-pencil"
+                  text
+                  rounded
+                  severity="secondary"
+                  @click="openEditElement(topic.id, element)"
+                  aria-label="Edit Material"
+                />
+                <Button
+                  icon="pi pi-trash"
+                  text
+                  rounded
+                  severity="danger"
+                  @click="contentStore.deleteElement(topic.id, element.id)"
+                  aria-label="Delete Material"
+                />
+              </div>
             </div>
 
             <!-- Кнопка добавления элемента внутрь темы -->
@@ -216,7 +247,7 @@ const getElementConfig = (type: ElementType) => {
         </div>
 
         <!-- Зона добавления новой темы -->
-        <div class="add-topic-zone" @click="isTopicModalVisible = true">
+        <div class="add-topic-zone" @click="openCreateTopic">
           <Button
             icon="pi pi-plus"
             rounded
@@ -312,7 +343,8 @@ const getElementConfig = (type: ElementType) => {
     <CreateElementModal
       v-model:visible="isElementModalVisible"
       :topic-id="targetTopicId"
-      @create="handleElementCreate"
+      :initial-data="editingElement"
+      @save="handleElementSave"
       @go-to-quiz-builder="handleGoToQuizBuilder"
     />
   </div>
@@ -437,6 +469,7 @@ const getElementConfig = (type: ElementType) => {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--p-surface-100);
   gap: 1rem;
+  position: relative;
 }
 
 .element-drag {
@@ -475,6 +508,18 @@ const getElementConfig = (type: ElementType) => {
 .element-meta {
   font-size: 0.875rem;
   color: var(--p-text-muted-color);
+}
+
+.element-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.element-row:hover .element-actions {
+  opacity: 1;
 }
 
 .add-element-btn {

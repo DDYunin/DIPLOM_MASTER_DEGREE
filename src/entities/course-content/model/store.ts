@@ -80,6 +80,23 @@ export const useCourseContentStore = defineStore('course-content', () => {
     }
   }
 
+  const updateElement = (topicId: string, elementId: string, data: ContentElement) => {
+    const topic = topics.value.find((t) => t.id === topicId)
+    if (topic) {
+      const elIndex = topic.elements.findIndex((e) => e.id === elementId)
+      if (elIndex > -1) {
+        topic.elements[elIndex] = { ...topic.elements[elIndex], ...data }
+      }
+    }
+  }
+
+  const deleteElement = (topicId: string, elementId: string) => {
+    const topic = topics.value.find((t) => t.id === topicId)
+    if (topic) {
+      topic.elements = topic.elements.filter((e) => e.id !== elementId)
+    }
+  }
+
   return {
     topics,
     totalTopics,
@@ -91,6 +108,10 @@ export const useCourseContentStore = defineStore('course-content', () => {
     updateTopic,
     deleteTopic,
     /** Создание элемента топика */
-    createElement
+    createElement,
+    /** Обновление элемента топика */
+    updateElement,
+    /** Удаление элемента топика */
+    deleteElement
   }
 })
