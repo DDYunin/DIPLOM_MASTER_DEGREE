@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { useQuestionBankStore, type QuestionType, type Difficulty } from '@/entities/question-bank'
+import { type QuestionType, type Difficulty } from '@/entities/question-bank'
+import { useQuestionBanksManagerStore } from '../model/store'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 
-const bankStore = useQuestionBankStore()
+const widgetStore = useQuestionBanksManagerStore()
 const router = useRouter()
 
 const emit = defineEmits<{
@@ -37,10 +38,10 @@ const getDifficultyStyles = (diff: Difficulty) => {
 }
 
 const goToAllQuestions = () => {
-  if (bankStore.selectedBankId) {
+  if (widgetStore.selectedBankId) {
     router.push({
       name: 'teacher-bank-questions',
-      params: { bankId: bankStore.selectedBankId }
+      params: { bankId: widgetStore.selectedBankId }
     })
   }
 }
@@ -56,16 +57,16 @@ const goToAllQuestions = () => {
     <aside class="banks-sidebar">
       <div class="sidebar-header">
         <h3 class="sidebar-title">All Banks</h3>
-        <span class="total-badge">{{ bankStore.totalBanks }} Total</span>
+        <span class="total-badge">{{ widgetStore.totalBanks }} Total</span>
       </div>
 
       <div class="banks-list">
         <div
-          v-for="bank in bankStore.banks"
+          v-for="bank in widgetStore.banksList"
           :key="bank.id"
           class="bank-item"
-          :class="{ 'bank-item--active': bankStore.selectedBankId === bank.id }"
-          @click="bankStore.selectBank(bank.id)"
+          :class="{ 'bank-item--active': widgetStore.selectedBankId === bank.id }"
+          @click="widgetStore.selectBank(bank.id)"
         >
           <h4 class="bank-title">{{ bank.title }}</h4>
           <p class="bank-desc">{{ bank.description }}</p>
@@ -82,7 +83,7 @@ const goToAllQuestions = () => {
     <!-- ПРАВАЯ ПАНЕЛЬ: Рабочая область -->
     <main class="banks-content">
       <!-- EMPTY STATE (Ничего не выбрано) -->
-      <div v-if="!bankStore.selectedBank" class="empty-state">
+      <div v-if="!widgetStore.selectedBank" class="empty-state">
         <div class="empty-icon-wrapper">
           <i class="pi pi-copy empty-icon"></i>
         </div>
@@ -116,12 +117,12 @@ const goToAllQuestions = () => {
           <div class="form-group">
             <label class="form-label">Bank Title</label>
             <!-- Спец. класс filled-input для имитации серого фона как на макете -->
-            <InputText v-model="bankStore.selectedBank.title" class="w-full filled-input" />
+            <InputText v-model="widgetStore.selectedBank.title" class="w-full filled-input" />
           </div>
 
           <div class="form-group">
             <label class="form-label">Description</label>
-            <InputText v-model="bankStore.selectedBank.description" class="w-full filled-input" />
+            <InputText v-model="widgetStore.selectedBank.description" class="w-full filled-input" />
           </div>
         </section>
 
@@ -129,7 +130,7 @@ const goToAllQuestions = () => {
         <section class="questions-section">
           <div class="section-header">
             <h3 class="questions-title">
-              Questions in this Bank ({{ bankStore.selectedBank.questionsCount }})
+              Questions in this Bank ({{ widgetStore.selectedBank.questionsCount }})
             </h3>
             <div class="header-actions text-sm">
               <a href="#" class="action-link">Expand All</a>
@@ -140,7 +141,7 @@ const goToAllQuestions = () => {
 
           <div class="questions-list">
             <div
-              v-for="(question, index) in bankStore.selectedBank.questions"
+              v-for="(question, index) in widgetStore.selectedBank.questions"
               :key="question.id"
               class="question-card"
             >
