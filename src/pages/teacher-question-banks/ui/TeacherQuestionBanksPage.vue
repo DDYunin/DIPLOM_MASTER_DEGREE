@@ -3,13 +3,15 @@ import { ref, onMounted } from 'vue'
 
 import Button from 'primevue/button'
 
-import { QuestionBanksManager } from '@/widgets/question-banks-manager'
+import {
+  QuestionBanksManager,
+  useQuestionBanksManagerStore
+} from '@/widgets/question-banks-manager'
 import { ImportQuestionBankModal } from '@/features/import-question-bank'
 import { CreateQuestionBankModal } from '@/features/create-question-bank'
-import { useQuestionBankStore } from '@/entities/question-bank'
 import { useNotifications } from '@/shared/model'
 
-const bankStore = useQuestionBankStore()
+const widgetStore = useQuestionBanksManagerStore()
 const notifications = useNotifications()
 
 const isImportModalVisible = ref(false)
@@ -23,7 +25,7 @@ const handleImportSuccess = () => {
 // 2. ОБРАБОТЧИК СОЗДАНИЯ
 const handleCreateBank = (data: { title: string; description: string }) => {
   // Вызываем твой готовый метод из стора
-  bankStore.createBank(data)
+  widgetStore.createNewBank(data)
 
   // При желании здесь можно вызвать Toast "Bank created successfully"
   notifications.showToast('success', 'Bank list updated', `Bank created successfully`)
@@ -31,11 +33,11 @@ const handleCreateBank = (data: { title: string; description: string }) => {
 
 onMounted(async () => {
   // Загружаем банки с "бэкенда", если они еще не загружены
-  if (bankStore.banks.length === 0) {
-    await bankStore.loadBanks()
+  if (widgetStore.bankIds.length === 0) {
+    await widgetStore.loadBanks()
   }
   // Сбрасываем выделение банка, чтобы справа показывался стартовый экран (Empty State)
-  bankStore.clearSelection()
+  widgetStore.clearSelection()
 })
 </script>
 

@@ -1,10 +1,12 @@
-import { useQuestionBankStore } from './model/store'
+import { useQuestionBankEntityStore } from './model/store'
 import type { QuestionBank, Question, QuestionType, Difficulty } from './model/types'
+import * as questionBankApi from './api'
 
 export {
-    useQuestionBankStore,
-    type QuestionBank,
-    type Question,
-    type QuestionType,
-    type Difficulty,
+  useQuestionBankEntityStore,
+  type QuestionBank,
+  type Question,
+  type QuestionType,
+  type Difficulty,
+  questionBankApi
 }

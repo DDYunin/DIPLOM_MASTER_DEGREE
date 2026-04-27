@@ -1,5 +1,4 @@
-import QuizBuilderForm from "./ui/QuizBuilderForm.vue";
+import QuizBuilderForm from './ui/QuizBuilderForm.vue'
+import { useQuizBuilderStore } from './model/store'
 
-export {
-	QuizBuilderForm
-}
+export { QuizBuilderForm, useQuizBuilderStore }

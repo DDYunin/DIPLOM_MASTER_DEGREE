@@ -2,24 +2,25 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
+
 import { BankQuestionsTable } from '@/widgets/bank-questions-table'
 import { QuestionEditorModal } from '@/features/question-editor'
-import { useQuestionBankStore } from '@/entities/question-bank'
+import { useQuestionBankEntityStore, questionBankApi } from '@/entities/question-bank'
 
 const route = useRoute()
 const router = useRouter()
-const bankStore = useQuestionBankStore()
+const entityStore = useQuestionBankEntityStore()
 
 const bankId = computed(() => route.params.bankId as string)
 
-const currentBank = computed(() => bankStore.selectedBank)
+const currentBank = computed(() => entityStore.getBankById(bankId.value))
 
 onMounted(async () => {
   // Если зашли по прямой ссылке, грузим банки
-  if (bankStore.banks.length === 0) {
-    await bankStore.loadBanks()
+  if (!currentBank.value) {
+    const data = await questionBankApi.fetchBanks()
+    entityStore.upsertBanks(data) // Сохраняем в кэш
   }
-  bankStore.selectBank(bankId.value)
 })
 
 const isEditorVisible = ref(false)
@@ -36,8 +37,14 @@ const openEditModal = (question: any) => {
 }
 
 const handleSaveQuestion = async (questionData: any) => {
-  // Отправляем PATCH запрос через стор
-  await bankStore.addOrUpdateQuestion(bankId.value, questionData)
+  // 1. Отправляем изменения на бэкенд
+  const updatedBank = await questionBankApi.saveQuestion(bankId.value, questionData)
+
+  if (updatedBank) {
+    // 2. Кладем обновленный банк в глобальный кэш!
+    // Computed-свойство currentBank мгновенно обновит таблицу!
+    entityStore.upsertBanks([updatedBank])
+  }
 }
 
 const goBack = () => {
