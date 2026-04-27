@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useQuestionBankStore } from '@/entities/question-bank'
+import { ref, computed } from 'vue'
+import { useQuestionBankEntityStore } from '@/entities/question-bank'
+import { useQuizBuilderStore } from '../model/store'
+
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Checkbox from 'primevue/checkbox'
@@ -11,37 +13,43 @@ import InputNumber from 'primevue/inputnumber'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 
-const props = defineProps<{
-  initialData?: any // Если передано - режим редактирования
-}>()
-
 const emit = defineEmits<{
   (e: 'save-draft', data: any): void
   (e: 'publish', data: any): void
 }>()
 
-const bankStore = useQuestionBankStore()
+const entityStore = useQuestionBankEntityStore() // Глобальная БД
+const builderStore = useQuizBuilderStore()
 
-// --- СОСТОЯНИЕ ФОРМЫ ---
-const title = ref('')
-const instructions = ref('')
-const dueDate = ref<Date | null>(null)
-const timeLimit = ref<number | null>(60)
-const shuffleQuestions = ref(true)
-const showResults = ref(false)
+// === МАГИЯ НОРМАЛИЗАЦИИ ===
+// Мы склеиваем локальные UI-настройки (drawCount, isSelected)
+// с глобальными данными сущности (title, desc) на лету!
+const displayedBanks = computed(() => {
+  return builderStore.bankConfigs.map((config) => {
+    // Достаем актуальный банк из глобального кэша по ID
+    const bank = entityStore.getBankById(config.bankId)
 
-// Локальный стейт для конструктора (маппинг банков с их настройками для этого теста)
-const bankConfigs = ref<any[]>([{
-	title: 'Bank 1',
-	description: 'Some description of bank 1',
-	isSelected: false,
-	availableQs: 10,
-	pointsPerQ: 5
-}])
+    return {
+      ...config, // isSelected, drawCount, pointsPerQ
+      title: bank?.title || 'Unknown Bank',
+      description: bank?.description || '',
+      availableQs: bank?.questionsCount || 0
+    }
+  })
+})
 
-const totalPoints = ref(0)
-const totalQuestions = ref(0)
-const collectFormData = () => {}
+const collectFormData = () => {
+  return {
+    title: builderStore.title,
+    instructions: builderStore.instructions,
+    dueDate: builderStore.dueDate,
+    timeLimit: builderStore.timeLimit,
+    shuffleQuestions: builderStore.shuffleQuestions,
+    showResults: builderStore.showResults,
+    // Передаем только выбранные банки с их настройками
+    selectedBanks: builderStore.bankConfigs.filter((b) => b.isSelected)
+  }
+}
 </script>
 
 <template>
@@ -59,7 +67,7 @@ const collectFormData = () => {}
           <div class="field-group">
             <label class="field-label">Assessment Title</label>
             <InputText
-              v-model="title"
+              v-model="builderStore.title"
               placeholder="e.g. Midterm Exam: Data Structures"
               class="w-full"
             />
@@ -68,7 +76,7 @@ const collectFormData = () => {}
           <div class="field-group mt-4">
             <label class="field-label">Instructions for Students</label>
             <Textarea
-              v-model="instructions"
+              v-model="builderStore.instructions"
               rows="4"
               placeholder="Enter instructions, time limits, or allowed materials..."
               class="w-full text-area"
@@ -92,8 +100,8 @@ const collectFormData = () => {}
           <div class="banks-list">
             <!-- Цикл по банкам вопросов -->
             <div
-              v-for="bank in bankConfigs"
-              :key="bank.id"
+              v-for="(bank, index) in displayedBanks"
+              :key="index"
               class="bank-item"
               :class="{ 'bank-item--active': bank.isSelected }"
             >
@@ -152,15 +160,15 @@ const collectFormData = () => {}
         <div class="card-body summary-body">
           <div class="summary-row">
             <span>Total Questions</span>
-            <strong class="text-xl">{{ totalQuestions }}</strong>
+            <strong class="text-xl">{{ builderStore.totalQuestions }}</strong>
           </div>
           <div class="summary-row">
             <span>Total Points</span>
-            <strong class="text-xl text-blue">{{ totalPoints }}</strong>
+            <strong class="text-xl text-blue">{{ builderStore.totalPoints }}</strong>
           </div>
           <div class="summary-row">
             <span>Est. Duration</span>
-            <strong>~{{ timeLimit || 0 }} mins</strong>
+            <strong>~{{ builderStore.timeLimit || 0 }} mins</strong>
           </div>
 
           <div class="summary-actions mt-4">
@@ -181,7 +189,7 @@ const collectFormData = () => {}
         <div class="card-body params-body">
           <div class="field-group">
             <label class="field-label">Due Date</label>
-            <DatePicker v-model="dueDate" showIcon placeholder="mm/dd/yyyy, --:--" class="w-full" />
+            <DatePicker v-model="builderStore.dueDate" showIcon placeholder="mm/dd/yyyy, --:--" class="w-full" />
           </div>
 
           <div class="field-group mt-4">
@@ -189,7 +197,7 @@ const collectFormData = () => {}
             <IconField iconPosition="left">
               <InputIcon class="pi pi-clock" />
               <InputNumber
-                v-model="timeLimit"
+                v-model="builderStore.timeLimit"
                 placeholder="60"
                 class="w-full"
                 inputClass="w-full"
@@ -201,12 +209,12 @@ const collectFormData = () => {}
 
           <div class="toggle-row">
             <label>Shuffle Questions</label>
-            <ToggleSwitch v-model="shuffleQuestions" />
+            <ToggleSwitch v-model="builderStore.shuffleQuestions" />
           </div>
 
           <div class="toggle-row mt-4">
             <label>Show Results Instantly</label>
-            <ToggleSwitch v-model="showResults" />
+            <ToggleSwitch v-model="builderStore.showResults" />
           </div>
         </div>
       </section>

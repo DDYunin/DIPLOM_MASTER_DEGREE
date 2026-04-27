@@ -1,16 +1,28 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
-import { QuizBuilderForm } from '@/widgets/quiz-builder-form'
+import { QuizBuilderForm, useQuizBuilderStore } from '@/widgets/quiz-builder-form'
 
 const route = useRoute()
 const router = useRouter()
+const builderStore = useQuizBuilderStore() // Подключаем локальный стор формы
 
 // Получаем ID курса и опциональный ID темы из URL
 const courseId = computed(() => route.params.id as string)
 const isEditMode = computed(() => !!route.query.editId)
+
+// ЖИЗНЕННЫЙ ЦИКЛ СТРАНИЦЫ
+onMounted(async () => {
+  // Передаем editId (если есть), чтобы стор сам решил: создавать или редактировать
+  await builderStore.initBuilder(route.query.editId)
+})
+
+onUnmounted(() => {
+  // Очищаем форму при уходе со страницы, чтобы не было утечек памяти!
+  builderStore.resetBuilder()
+})
 
 const goBack = () => {
   router.push({ name: 'teacher-course-details', params: { id: courseId.value } })
