@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { LoginPage } from '@/pages/login'
+
+import { ROLES } from '@/shared/config/roles'
+import { setupRouterGuards } from './guards'
 
 // Страницы, относящиеся к админу
-import { AdminRoot } from '@/pages/admin-root'
 import { UsersPage } from '@/pages/users'
 import { StudentProfilePage } from '@/pages/student-profile'
 import { TeacherProfilePage } from '@/pages/teacher-profile'
@@ -37,17 +38,23 @@ export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      // TODO: заменил на /login
+      path: '',
+      redirect: { name: 'login' }
+    },
+    {
       path: '/login',
       name: 'login',
-      component: LoginPage
+      component: () => import('@/pages/login').then((m) => m.LoginPage),
+      meta: { requiresGuest: true }
     },
     {
       path: '/admin',
-      component: AdminRoot,
+      meta: { requiresAuth: true, allowedRoles: [ROLES.ADMIN] },
+      component: import('@/pages/admin-root').then((m) => m.AdminRoot),
       children: [
         {
           path: '',
+          name: 'admin-empty-page',
           redirect: { name: 'admin-users' }
         },
         {
@@ -86,9 +93,11 @@ export const router = createRouter({
     {
       path: '/teacher',
       component: TeacherRoot,
+      meta: { requiresAuth: true, allowedRoles: [ROLES.TEACHER] },
       children: [
         {
           path: '',
+          name: 'teacher-empty-page',
           redirect: { name: 'teacher-courses' }
         },
         {
@@ -112,6 +121,7 @@ export const router = createRouter({
               children: [
                 {
                   path: '',
+                  name: 'teacher-course-details-empty',
                   redirect: { name: 'course-main-info' } // По умолчанию кидаем на первую вкладку
                 },
                 {
@@ -169,9 +179,11 @@ export const router = createRouter({
     {
       path: '/student',
       component: StudentRoot,
+      meta: { requiresAuth: true, allowedRoles: [ROLES.STUDENT] },
       children: [
         {
           path: '',
+          name: 'student-empty-page',
           redirect: { name: 'student-courses' }
         },
         {
@@ -211,3 +223,6 @@ export const router = createRouter({
     }
   ]
 })
+
+// ПРИМЕНЯЕМ GUARDS К РОУТЕРУ
+setupRouterGuards(router)

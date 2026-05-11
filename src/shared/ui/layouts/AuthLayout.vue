@@ -1,11 +1,9 @@
 <script setup lang="ts">
-// Макет отвечает только за расположение блоков (центрирование, подвал, фон)
 </script>
 
 <template>
   <div class="auth-layout">
     <div class="auth-container">
-      <!-- Место для карточки формы -->
       <slot />
     </div>
   </div>
@@ -18,8 +16,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f8fafc; /* Светло-серый фон из макета */
-  font-family: var(--font-family); /* Из PrimeVue */
+  background-color: var(--surface-ground);
+  font-family: var(--font-family);
 }
 
 .auth-container {

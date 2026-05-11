@@ -5,12 +5,16 @@ import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import ConfirmDialog from 'primevue/confirmdialog'
 
-import { useNotifications } from '@/shared/model'
-import { useThemeStore } from '@/shared/model'
+import { useNotifications, useThemeStore } from '@/shared/model'
+import { useSessionStore } from '@/entities/session'
 
 const toast = useToast()
 const notifications = useNotifications()
-const themeStore = useThemeStore() // Инициализируем стор темы
+useThemeStore() // Инициализируем стор темы
+
+// --- ИНИЦИАЛИЗАЦИЯ СЕССИИ ---
+const sessionStore = useSessionStore()
+sessionStore.initAuth() // Читаем токены из localStorage
 
 // Следим за изменениями переменной message в сторе
 watch(

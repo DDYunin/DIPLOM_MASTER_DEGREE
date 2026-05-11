@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { RouterLink, useRouter } from 'vue-router'
+import { RouterLink } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
+import { useSessionStore } from '@/entities/session'
 
 const props = defineProps<{
   collapsed: boolean
@@ -11,11 +12,11 @@ const emit = defineEmits<{
   (e: 'update:collapsed', value: boolean): void
 }>()
 
-const router = useRouter()
 const { t } = useI18n()
+const sessionStore = useSessionStore()
 
 const handleLogout = () => {
-  router.push('/login')
+  sessionStore.logout()
 }
 
 const toggleSidebar = () => {

@@ -4,7 +4,9 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
-import { useSessionStore } from '@/entities/session/index'
+import { useSessionStore } from '@/entities/session'
+import { useNotifications } from '@/shared/model'
+import { useRouter, useRoute } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
@@ -12,6 +14,10 @@ const rememberMe = ref(false)
 const isLoading = ref(false)
 
 const sessionStore = useSessionStore()
+const notifications = useNotifications()
+
+const router = useRouter()
+const route = useRoute()
 
 const handleSubmit = async () => {
   if (!email.value || !password.value) {
@@ -20,9 +26,25 @@ const handleSubmit = async () => {
 
   try {
     isLoading.value = true
-    await sessionStore.login(email.value, password.value, rememberMe.value)
-    // Успех! Здесь обычно делается router.push('/dashboard')
-    alert('Успешная авторизация!')
+    await sessionStore.login({ login: email.value, password: password.value })
+
+    const redirectPath = route.query.redirect?.toString()
+    if (redirectPath) {
+      router.push(redirectPath)
+      return
+    }
+
+    if (sessionStore.isAdmin) {
+      router.push('/admin')
+    } else if (sessionStore.isTeacher) {
+      router.push('/teacher')
+    } else if (sessionStore.isStudent) {
+      router.push('/student')
+    } else {
+      router.push('/')
+    }
+
+    notifications.showToast('success', 'Welcome!', 'You have successfully logged in.')
   } catch (e) {
     console.error(e)
   } finally {
