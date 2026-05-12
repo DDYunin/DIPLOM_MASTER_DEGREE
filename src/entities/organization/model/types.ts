@@ -34,9 +34,9 @@ export interface OrgTreeNode {
   key: string
   label: string
   type: OrgUnitType
-  leaf: boolean // Обязательное поле для Lazy Loading (если true — стрелочки "развернуть" не будет)
-  loading?: boolean // Показывает спиннер при загрузке детей
-  data?: any // Сюда будем складывать оригинальный DTO
+  leaf: boolean
+  loading?: boolean
+  data?: any
   children?: OrgTreeNode[]
 }
 
