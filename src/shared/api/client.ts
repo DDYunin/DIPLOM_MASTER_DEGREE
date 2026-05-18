@@ -17,6 +17,7 @@ export const apiClient = async <T>(endpoint: string, options: RequestInit = {}):
   } catch (error: any) {
     if (error.status === 401 && endpoint !== '/auth/refresh') {
       try {
+        debugger
         return await refreshTokenAndRetry<T>(endpoint, { ...options, headers });
       } catch (refreshError) {
         throw refreshError;

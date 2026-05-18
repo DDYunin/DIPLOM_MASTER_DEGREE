@@ -13,6 +13,7 @@ export const useUserStore = defineStore('user', () => {
 
   // ЭКШЕНЫ
   const loadUsers = async () => {
+    debugger
     isLoading.value = true
     try {
       users.value = await userApi.fetchUsersList()

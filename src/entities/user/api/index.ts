@@ -3,7 +3,7 @@ import type { User } from '../model/types'
 
 // Теперь api возвращает готовый тип
 // TODO: Тут можно сокращённый вариант типа использовать, а полностью user только когда общую инфу
-export const fetchUsersList = () => api<User[]>('/users')
+export const fetchUsersList = () => api<User[]>('/admin/users')
 
 export const createUser = (userData: User) =>
   api<User>('/users', {

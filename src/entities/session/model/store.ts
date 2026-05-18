@@ -34,6 +34,7 @@ export const useSessionStore = defineStore('session', () => {
 
   const login = async (credentials: LoginCredentials) => {
     isLoading.value = true
+    debugger
     try {
       const response = await sessionApi.loginWithEmail(credentials)
 
