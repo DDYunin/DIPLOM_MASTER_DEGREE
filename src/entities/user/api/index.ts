@@ -1,9 +1,9 @@
 import { api } from '@/shared/api'
 import type { User } from '../model/types'
+import type { AdminUsersListQueryParams, AdminUsersPageDto } from './types'
 
-// Теперь api возвращает готовый тип
-// TODO: Тут можно сокращённый вариант типа использовать, а полностью user только когда общую инфу
-export const fetchUsersList = () => api<User[]>('/admin/users')
+export const fetchUsersList = (queryParams: AdminUsersListQueryParams = {}) =>
+  api<AdminUsersPageDto>('/admin/users', { queryParams })
 
 export const createUser = (userData: User) =>
   api<User>('/users', {

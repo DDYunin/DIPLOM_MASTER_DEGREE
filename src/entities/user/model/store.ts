@@ -3,72 +3,113 @@ import { ref, computed } from 'vue'
 import type { User } from './types'
 import * as userApi from '../api'
 
+// export const useUserStore = defineStore('user', () => {
+//   const users = ref<User[]>([])
+//   const currentUser = ref<User | null>(null) // Текущий залогиненный юзер
+//   const isLoading = ref(false)
+
+//   // Геттеры...
+//   const students = computed(() => users.value.filter((u) => u.role === 'Student'))
+
+//   // ЭКШЕНЫ
+//   const loadUsers = async () => {
+//     debugger
+//     isLoading.value = true
+//     try {
+//       users.value = await userApi.fetchUsersList()
+//       // Ошибки перехватит клиент и покажет Toast!
+//     } finally {
+//       isLoading.value = false
+//     }
+//   }
+
+//   const addUser = async (user: User) => {
+//     // Можно обернуть в try/finally для включения лоадера кнопки,
+//     // но try/catch для ошибки больше не обязателен
+//     const createdUser = await userApi.createUser(user)
+//     users.value.unshift(createdUser)
+//   }
+
+//   const updateUser = async (id: string, updatedData: Partial<User>) => {
+//     const updatedUser = await userApi.updateUserById(id, updatedData)
+//     const index = users.value.findIndex((u) => u.id === id)
+//     if (index !== -1) {
+//       users.value[index] = updatedUser
+//     }
+//   }
+
+//   const getUserById = (id: string) => users.value.find((user) => user.id === id)
+
+//   // Экшены для текущего профиля
+//   const loadCurrentUser = async () => {
+//     isLoading.value = true
+//     try {
+//       currentUser.value = await userApi.fetchCurrentUser()
+//     } finally {
+//       isLoading.value = false
+//     }
+//   }
+
+//   const updateProfile = async (updates: Partial<User>) => {
+//     if (!currentUser.value) {
+//       return
+//     }
+//     const updatedUser = await userApi.updateUserById(currentUser.value.id, updates)
+//     if (updatedUser) {
+//       currentUser.value = updatedUser
+//     }
+//   }
+
+//   return {
+//     users,
+//     isLoading,
+//     students,
+//     loadUsers,
+//     addUser,
+//     updateUser,
+//     getUserById,
+//     loadCurrentUser,
+//     updateProfile
+//   }
+// })
+
 export const useUserStore = defineStore('user', () => {
-  const users = ref<User[]>([])
-  const currentUser = ref<User | null>(null) // Текущий залогиненный юзер
-  const isLoading = ref(false)
+  const usersMap = ref<Record<string, User>>({})
 
-  // Геттеры...
-  const students = computed(() => users.value.filter((u) => u.role === 'Student'))
+  const getUserById = computed(() => {
+    return (id: string): User | undefined => usersMap.value[id]
+  })
 
-  // ЭКШЕНЫ
-  const loadUsers = async () => {
-    debugger
-    isLoading.value = true
-    try {
-      users.value = await userApi.fetchUsersList()
-      // Ошибки перехватит клиент и покажет Toast!
-    } finally {
-      isLoading.value = false
-    }
+  const upsertUsers = (incomingUsers: Partial<User>[]) => {
+    incomingUsers.forEach((user) => {
+      if (!user.id) {
+        return
+      }
+
+      if (usersMap.value[user.id]) {
+        usersMap.value[user.id] = {
+          ...usersMap.value[user.id],
+          ...user
+        } as User
+      } else {
+        usersMap.value[user.id] = user as User
+      }
+    })
   }
 
-  const addUser = async (user: User) => {
-    // Можно обернуть в try/finally для включения лоадера кнопки,
-    // но try/catch для ошибки больше не обязателен
-    const createdUser = await userApi.createUser(user)
-    users.value.unshift(createdUser)
+  const removeUserFromCache = (id: string) => {
+    delete usersMap.value[id]
   }
 
-  const updateUser = async (id: string, updatedData: Partial<User>) => {
-    const updatedUser = await userApi.updateUserById(id, updatedData)
-    const index = users.value.findIndex((u) => u.id === id)
-    if (index !== -1) {
-      users.value[index] = updatedUser
-    }
-  }
-
-  const getUserById = (id: string) => users.value.find((user) => user.id === id)
-
-  // Экшены для текущего профиля
-  const loadCurrentUser = async () => {
-    isLoading.value = true
-    try {
-      currentUser.value = await userApi.fetchCurrentUser()
-    } finally {
-      isLoading.value = false
-    }
-  }
-
-  const updateProfile = async (updates: Partial<User>) => {
-    if (!currentUser.value) {
-      return
-    }
-    const updatedUser = await userApi.updateUserById(currentUser.value.id, updates)
-    if (updatedUser) {
-      currentUser.value = updatedUser
-    }
+  const clearCache = () => {
+    usersMap.value = {}
   }
 
   return {
-    users,
-    isLoading,
-    students,
-    loadUsers,
-    addUser,
-    updateUser,
+    usersMap,
     getUserById,
-    loadCurrentUser,
-    updateProfile
+    upsertUsers,
+    removeUserFromCache,
+    clearCache
   }
 })

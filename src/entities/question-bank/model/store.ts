@@ -70,7 +70,6 @@ import { ref, computed } from 'vue'
 import type { QuestionBank } from './types'
 
 export const useQuestionBankEntityStore = defineStore('entity-question-bank', () => {
-  // === БАЗА ДАННЫХ (Single Source of Truth) ===
   // Ключ - ID банка, Значение - сам объект банка
   const banksMap = ref<Record<string, QuestionBank>>({})
 
