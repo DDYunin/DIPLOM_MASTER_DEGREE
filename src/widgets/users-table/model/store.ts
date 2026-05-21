@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
-import { ROLES } from '@/shared/config/roles'
+import { USERS_TABLE_FILTERS, type usersTableFilters } from '@/features/filter-users-by-role'
 import {
   type User,
   type AdminUsersListQueryParams,
@@ -9,15 +9,6 @@ import {
   userApi,
   mapAdminUserListItemsToUsers
 } from '@/entities/user'
-
-const ALL_USERS_ROLE = 'All Users'
-
-const UI_ROLE_TO_API_ROLE: Record<string, string | undefined> = {
-  [ALL_USERS_ROLE]: undefined,
-  Admin: ROLES.ADMIN,
-  Teacher: ROLES.TEACHER,
-  Student: ROLES.STUDENT
-}
 
 export const useAdminUsersTable = defineStore('widget-admin-users-table', () => {
   const usersStore = useUserStore()
@@ -27,7 +18,7 @@ export const useAdminUsersTable = defineStore('widget-admin-users-table', () => 
   const userIds = ref<string[]>([])
 
   const searchQuery = ref('')
-  const selectedRole = ref(ALL_USERS_ROLE)
+  const selectedRole = ref(USERS_TABLE_FILTERS.ALL)
   const page = ref(0)
   const rowsPerPage = ref(5)
 
@@ -48,8 +39,8 @@ export const useAdminUsersTable = defineStore('widget-admin-users-table', () => 
       params.search = trimmedSearch
     }
 
-    const apiRole = UI_ROLE_TO_API_ROLE[selectedRole.value]
-    if (apiRole) {
+    const apiRole = selectedRole.value
+    if (apiRole !== USERS_TABLE_FILTERS.ALL) {
       params.role = apiRole
     }
 

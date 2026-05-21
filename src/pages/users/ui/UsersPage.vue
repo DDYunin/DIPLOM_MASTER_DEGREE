@@ -5,11 +5,12 @@ import { UsersTable } from '@/widgets/users-table'
 import { ImportCSV } from '@/features/import-csv'
 import { AddUser } from '@/features/add-user'
 
-import { useUserStore } from '@/entities/user'
+import { useAdminUsersTable } from '@/widgets/users-table';
 
 const { t } = useI18n()
 
-const userStore = useUserStore()
+const adminUsersTableStore = useAdminUsersTable()
+
 </script>
 
 <template>
@@ -33,7 +34,7 @@ const userStore = useUserStore()
         <div class="stat-top">
           <div>
             <p class="stat-title">{{ t('adminUsers.statUsers') }}</p>
-            <h3 class="stat-value">{{ userStore.users.length }}</h3>
+            <h3 class="stat-value">{{ adminUsersTableStore.totalUsers }}</h3>
           </div>
           <div class="stat-icon bg-blue-100 text-blue-600"><i class="pi pi-users"></i></div>
         </div>

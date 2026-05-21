@@ -35,6 +35,12 @@
     "profile": "Profile",
     "logout": "Log Out"
   },
+  "roles": {
+    "all": "All Users",
+    "admin": "Admin",
+    "teacher": "Teacher",
+    "student": "Student"
+  },
   "primevue": {
     "emptyMessage": "No available options",
     "emptyFilterMessage": "No results found",

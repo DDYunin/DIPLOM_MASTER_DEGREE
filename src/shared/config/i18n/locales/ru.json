@@ -35,6 +35,12 @@
     "profile": "Мой профиль",
     "logout": "Выйти"
   },
+  "roles": {
+    "all": "Все пользователи",
+    "admin": "Админы",
+    "teacher": "Преподаватели",
+    "student": "Студенты"
+  },
   "primevue": {
     "emptyMessage": "Нет доступных опций",
     "emptyFilterMessage": "Ничего не найдено",
