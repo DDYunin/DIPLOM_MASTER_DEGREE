@@ -83,5 +83,11 @@
     "weak": "Weak",
     "medium": "Medium",
     "strong": "Strong"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "subtitle": "The address you requested does not exist or has been moved. Check the link or return to the home page.",
+    "goHome": "Go to home",
+    "goBack": "Go back"
   }
 }

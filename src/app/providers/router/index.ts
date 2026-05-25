@@ -220,6 +220,11 @@ export const router = createRouter({
           component: StudentPersonalProfile
         }
       ]
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/pages/not-found').then((m) => m.NotFoundPage)
     }
   ]
 })
