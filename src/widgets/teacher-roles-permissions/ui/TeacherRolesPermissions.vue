@@ -33,7 +33,7 @@ const removeGroup = (groupToRemove: string) => {
   <WidgetCard
     icon="pi-check-circle"
     title="Roles & Permissions"
-    iconColorToken="#3b82f6"
+    iconColorToken="var(--color-primary)"
     subtitle="Access levels and administrative groups assigned to this user"
   >
     <template #header-actions>
@@ -83,7 +83,7 @@ const removeGroup = (groupToRemove: string) => {
 .section-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.75rem;
@@ -97,19 +97,19 @@ const removeGroup = (groupToRemove: string) => {
 
 /* Стилизация Chip (наш бейджик с крестиком) */
 .custom-chip {
-  background: #eff6ff; /* Светло-синий фон, как на макете */
-  color: #3b82f6;
+  background: var(--color-primary-subtle); /* Светло-синий фон, как на макете */
+  color: var(--color-primary);
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.25rem 0.75rem;
 }
 /* Делаем крестик удаления чуть бледнее */
 :deep(.p-chip-remove-icon) {
-  color: #93c5fd;
+  color: var(--color-primary-icon-muted);
   transition: color 0.2s;
 }
 :deep(.p-chip-remove-icon:hover) {
-  color: #2563eb;
+  color: var(--color-primary-strong);
 }
 
 .permissions-grid {
@@ -118,13 +118,13 @@ const removeGroup = (groupToRemove: string) => {
   gap: 1rem;
 }
 .permission-item {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f8fafc;
+  background: var(--surface-ground);
 }
 .perm-text {
   display: flex;
@@ -133,11 +133,11 @@ const removeGroup = (groupToRemove: string) => {
 }
 .perm-name {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-color);
   font-size: 0.875rem;
 }
 .perm-desc {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-color-secondary);
 }
 </style>

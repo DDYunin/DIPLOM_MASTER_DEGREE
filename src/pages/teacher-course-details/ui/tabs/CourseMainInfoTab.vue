@@ -48,6 +48,6 @@ const handleCancel = () => {
   display: flex;
   justify-content: center;
   padding: 4rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 </style>

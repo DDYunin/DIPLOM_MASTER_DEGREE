@@ -102,7 +102,7 @@ const handleSyllabus = (id: string) => {
 
     <!-- Grid -->
     <div v-if="store.isLoading" class="courses-grid">
-      <Skeleton v-for="i in 3" :key="i" height="320px" borderRadius="var(--p-border-radius)" />
+      <Skeleton v-for="i in 3" :key="i" height="320px" borderRadius="var(--radius-md)" />
     </div>
 
     <div v-else-if="filteredCourses.length > 0" class="courses-grid">
@@ -169,19 +169,19 @@ const handleSyllabus = (id: string) => {
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  background-color: var(--p-surface-0);
-  border: 1px dashed var(--p-surface-300);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px dashed var(--surface-border-strong);
+  border-radius: var(--radius-md);
 }
 
 .empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: var(--p-surface-400);
+  color: var(--icon-muted);
 }
 
 .empty-text {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 500;
 }
 </style>

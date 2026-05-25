@@ -180,7 +180,7 @@ const handleGeneratePassword = () => {
 .form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -201,7 +201,7 @@ const handleGeneratePassword = () => {
   gap: 1.5rem;
 }
 .security-box {
-  border: 1px solid var(--surface-border, #e2e8f0);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;
@@ -220,11 +220,11 @@ const handleGeneratePassword = () => {
   flex-shrink: 0;
 }
 .bg-blue {
-  background: var(--p-blue-50);
-  color: var(--p-blue-500);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
 }
-:root[class*='my-app-dark'] .bg-blue {
-  background: rgba(var(--p-blue-500), 0.16);
+.my-app-dark .bg-blue {
+  background: var(--accent-blue-bg);
 }
 
 .box-content {
@@ -233,13 +233,13 @@ const handleGeneratePassword = () => {
 }
 .box-title {
   font-weight: 600;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
   font-size: 1rem;
   margin-bottom: 0.25rem;
 }
 .box-desc {
   font-size: 0.75rem;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   line-height: 1.4;
 }
 .mt-3 {
@@ -258,7 +258,7 @@ const handleGeneratePassword = () => {
 }
 .toggle-label {
   font-size: 0.875rem;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   font-weight: 500;
 }
 

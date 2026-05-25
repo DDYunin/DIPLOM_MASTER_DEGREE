@@ -53,21 +53,21 @@ const handleCreate = async (courseData: any) => {
 }
 
 .page-intro-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 2rem;
 }
 
 .page-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   margin: 0 0 0.5rem 0;
 }
 
 .page-subtitle {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 1rem;
   margin: 0;
 }

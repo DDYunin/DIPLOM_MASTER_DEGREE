@@ -150,12 +150,12 @@ const goToCourseDetails = (courseId: string) => {
 .welcome-title {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   margin: 0;
 }
 
 .welcome-subtitle {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 1rem;
   margin: 0;
 }
@@ -177,7 +177,7 @@ const goToCourseDetails = (courseId: string) => {
 .stat-value {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   line-height: 1;
 }
 
@@ -190,16 +190,16 @@ const goToCourseDetails = (courseId: string) => {
 }
 
 .trend-up {
-  color: var(--p-green-500);
+  color: var(--color-success);
 }
 
 .stat-desc {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .text-warning {
-  color: var(--p-orange-500);
+  color: var(--color-warning);
   font-weight: 500;
 }
 
@@ -240,6 +240,6 @@ const goToCourseDetails = (courseId: string) => {
   justify-content: center;
   align-items: center;
   padding: 4rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 </style>

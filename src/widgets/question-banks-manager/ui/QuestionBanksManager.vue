@@ -16,24 +16,24 @@ const emit = defineEmits<{
 const getTypeStyles = (type: QuestionType) => {
   switch (type) {
     case 'multiple-choice':
-      return { bg: 'var(--p-purple-100)', color: 'var(--p-purple-700)', label: 'MULTIPLE CHOICE' }
+      return { bg: 'var(--color-accent-purple-muted)', color: 'var(--color-accent-purple-text)', label: 'MULTIPLE CHOICE' }
     case 'true-false':
-      return { bg: 'var(--p-blue-100)', color: 'var(--p-blue-700)', label: 'TRUE / FALSE' }
+      return { bg: 'var(--color-primary-muted)', color: 'var(--color-primary-text-on-subtle)', label: 'TRUE / FALSE' }
     case 'short-answer':
-      return { bg: 'var(--p-orange-100)', color: 'var(--p-orange-700)', label: 'SHORT ANSWER' }
+      return { bg: 'var(--color-warning-muted)', color: 'var(--color-warning-text)', label: 'SHORT ANSWER' }
     case 'essay':
-      return { bg: 'var(--p-orange-100)', color: 'var(--p-orange-700)', label: 'ESSAY' }
+      return { bg: 'var(--color-warning-muted)', color: 'var(--color-warning-text)', label: 'ESSAY' }
   }
 }
 
 const getDifficultyStyles = (diff: Difficulty) => {
   switch (diff) {
     case 'easy':
-      return { bg: 'var(--p-green-100)', color: 'var(--p-green-700)', label: 'EASY' }
+      return { bg: 'var(--color-success-muted)', color: 'var(--color-success-text)', label: 'EASY' }
     case 'medium':
-      return { bg: 'var(--p-yellow-100)', color: 'var(--p-yellow-700)', label: 'MEDIUM' }
+      return { bg: 'var(--color-caution-muted)', color: 'var(--color-caution-text)', label: 'MEDIUM' }
     case 'hard':
-      return { bg: 'var(--p-red-100)', color: 'var(--p-red-700)', label: 'HARD' }
+      return { bg: 'var(--color-danger-muted)', color: 'var(--color-danger-text)', label: 'HARD' }
   }
 }
 
@@ -207,9 +207,9 @@ const goToAllQuestions = () => {
 /* --- ЛЕВАЯ ПАНЕЛЬ (САЙДБАР) --- */
 .banks-sidebar {
   width: 320px;
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -221,19 +221,19 @@ const goToAllQuestions = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--p-surface-100);
+  border-bottom: 1px solid var(--surface-subtle);
 }
 
 .sidebar-title {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .total-badge {
-  background-color: var(--p-surface-100);
-  color: var(--p-text-muted-color);
+  background-color: var(--surface-subtle);
+  color: var(--text-color-muted);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.25rem 0.5rem;
@@ -249,36 +249,36 @@ const goToAllQuestions = () => {
 
 .bank-item {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--p-surface-100);
+  border-bottom: 1px solid var(--surface-subtle);
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
 .bank-item:hover {
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
 }
 
 /* Активное состояние банка */
 .bank-item--active {
-  background-color: var(--p-primary-50);
-  border-left: 3px solid var(--p-primary-500);
+  background-color: var(--color-primary-subtle);
+  border-left: 3px solid var(--color-primary);
 }
 
 .bank-title {
   margin: 0 0 0.25rem 0;
   font-size: 1rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .bank-item--active .bank-title {
-  color: var(--p-primary-600);
+  color: var(--color-primary-strong);
 }
 
 .bank-desc {
   margin: 0 0 1rem 0;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -294,26 +294,26 @@ const goToAllQuestions = () => {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  background-color: var(--p-surface-100);
-  color: var(--p-text-muted-color);
+  background-color: var(--surface-subtle);
+  color: var(--text-color-muted);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.25rem 0.5rem;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
 }
 
 .meta-date {
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 500;
 }
 
 /* --- ПРАВАЯ ПАНЕЛЬ (КОНТЕНТ) --- */
 .banks-content {
   flex-grow: 1;
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   min-height: 600px;
   display: flex;
   flex-direction: column;
@@ -333,7 +333,7 @@ const goToAllQuestions = () => {
 .empty-icon-wrapper {
   width: 80px;
   height: 80px;
-  background-color: var(--p-surface-100);
+  background-color: var(--surface-subtle);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -343,20 +343,20 @@ const goToAllQuestions = () => {
 
 .empty-icon {
   font-size: 2.5rem;
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 
 .empty-title {
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .empty-desc {
   margin: 0 0 2rem 0;
   font-size: 1rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   line-height: 1.5;
 }
 
@@ -379,7 +379,7 @@ const goToAllQuestions = () => {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .header-actions {
@@ -398,7 +398,7 @@ const goToAllQuestions = () => {
 .form-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .w-full {
@@ -406,13 +406,13 @@ const goToAllQuestions = () => {
 }
 
 .filled-input {
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
   border-color: transparent;
   font-weight: 500;
 }
 .filled-input:focus {
-  background-color: var(--p-surface-0);
-  border-color: var(--p-primary-400);
+  background-color: var(--surface-card);
+  border-color: var(--color-primary-focus);
 }
 
 /* Список вопросов */
@@ -420,7 +420,7 @@ const goToAllQuestions = () => {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .text-sm {
@@ -428,18 +428,18 @@ const goToAllQuestions = () => {
 }
 
 .action-link {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 
 .action-link:hover {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 
 .divider {
-  color: var(--p-surface-300);
+  color: var(--surface-border-strong);
   margin: 0 0.5rem;
 }
 
@@ -450,22 +450,22 @@ const goToAllQuestions = () => {
 }
 
 .question-card {
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   display: flex;
-  background-color: var(--p-surface-0);
+  background-color: var(--surface-card);
   transition: border-color 0.2s;
 }
 
 .question-card:hover {
-  border-color: var(--p-primary-300);
+  border-color: var(--color-primary-border);
 }
 
 .question-left {
   padding: 1.5rem 1rem;
   display: flex;
   align-items: flex-start;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .drag-handle {
@@ -500,7 +500,7 @@ const goToAllQuestions = () => {
   font-size: 0.65rem;
   font-weight: 700;
   padding: 0.25rem 0.5rem;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
   letter-spacing: 0.5px;
 }
 
@@ -508,21 +508,21 @@ const goToAllQuestions = () => {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .question-answer {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .answer-label {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .text-green {
-  color: var(--p-green-600);
+  color: var(--color-success-strong);
   font-weight: 500;
 }
 

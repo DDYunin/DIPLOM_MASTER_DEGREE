@@ -33,6 +33,6 @@ import { ThemeToggler } from '@/features/toggle-theme'
 }
 
 .icon-btn {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 </style>

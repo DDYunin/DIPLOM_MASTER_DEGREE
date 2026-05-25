@@ -19,7 +19,7 @@ const themeStore = useThemeStore()
 <style scoped>
 .theme-toggler-btn {
   /* Используем токен цвета текста, чтобы иконка органично смотрелась в хедере */
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   transition:
     color 0.2s,
     transform 0.3s;

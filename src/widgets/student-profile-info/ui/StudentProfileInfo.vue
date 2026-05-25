@@ -63,8 +63,8 @@ const handleSaveProfile = async () => {
 <template>
   <div class="profile-widget">
     <div v-if="store.isLoading" class="loading-state">
-      <Skeleton height="300px" borderRadius="var(--p-border-radius)" />
-      <Skeleton height="200px" borderRadius="var(--p-border-radius)" />
+      <Skeleton height="300px" borderRadius="var(--radius-md)" />
+      <Skeleton height="200px" borderRadius="var(--radius-md)" />
     </div>
 
     <template v-else>
@@ -195,7 +195,7 @@ const handleSaveProfile = async () => {
 .field-group label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -227,8 +227,8 @@ const handleSaveProfile = async () => {
   width: 100px;
   height: 100px;
   font-size: 2rem;
-  background-color: var(--p-primary-100);
-  color: var(--p-primary-600);
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-strong);
 }
 
 .avatar-edit-btn {
@@ -238,9 +238,9 @@ const handleSaveProfile = async () => {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  color: var(--p-text-muted-color);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  color: var(--text-color-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,8 +249,8 @@ const handleSaveProfile = async () => {
 }
 
 .avatar-edit-btn:hover {
-  background-color: var(--p-surface-100);
-  color: var(--p-primary-500);
+  background-color: var(--surface-subtle);
+  color: var(--color-primary);
 }
 
 .fields-grid {

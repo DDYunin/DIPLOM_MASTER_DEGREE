@@ -245,7 +245,7 @@ const getIcon = (type: string) => {
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--surface-border, #e2e8f0);
+  border-bottom: 1px solid var(--surface-border);
   padding-bottom: 0.5rem;
 }
 .tab-btn {
@@ -253,7 +253,7 @@ const getIcon = (type: string) => {
   border: none;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   cursor: pointer;
   padding: 0.5rem 0.5rem;
   display: flex;
@@ -263,11 +263,11 @@ const getIcon = (type: string) => {
   transition: all 0.2s;
 }
 .tab-btn:hover {
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
 }
 .tab-btn.active {
-  color: var(--p-primary-500);
-  border-bottom: 2px solid var(--p-primary-500);
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
 }
 
 /* ТУЛБАР */
@@ -280,7 +280,7 @@ const getIcon = (type: string) => {
 }
 .toolbar-info {
   font-size: 0.875rem;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -288,20 +288,20 @@ const getIcon = (type: string) => {
 
 /* КОНТЕЙНЕРЫ ДЕРЕВА */
 .skeleton-container {
-  background: var(--surface-card, #ffffff);
+  background: var(--surface-card);
   border-radius: 12px;
   padding: 1.5rem;
   flex-grow: 1;
-  border: 1px solid var(--surface-border, #e2e8f0);
+  border: 1px solid var(--surface-border);
 }
 .tree-container {
   flex-grow: 1;
   overflow-y: auto;
-  background: var(--surface-card, #ffffff);
+  background: var(--surface-card);
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--surface-border, #e2e8f0);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--surface-border);
   position: relative;
 }
 
@@ -319,7 +319,7 @@ const getIcon = (type: string) => {
 }
 :deep(.p-treenode-children) {
   padding-left: 1.5rem;
-  border-left: 1px dashed var(--surface-border, #e2e8f0);
+  border-left: 1px dashed var(--surface-border);
   margin-left: 1rem;
 }
 :deep(.p-tree-node-label) {
@@ -332,24 +332,24 @@ const getIcon = (type: string) => {
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--surface-border, #e2e8f0);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
-  background: var(--surface-card, #ffffff);
+  background: var(--surface-card);
   transition: all 0.2s;
 }
 .node-card:hover {
-  border-color: var(--surface-border, #e2e8f0);
-  background: var(--surface-hover, #d6d4d4);
+  border-color: var(--surface-border);
+  background: var(--surface-hover);
 }
 .node-card.is-selected {
-  background: var(--p-blue-50);
-  border-color: var(--p-blue-200);
+  background: var(--color-primary-subtle);
+  border-color: var(--color-primary-border);
 }
 
 /* Поддержка темной темы для выделения */
-:root[class*='my-app-dark'] .node-card.is-selected {
-  background: rgba(var(--p-blue-500), 0.16);
-  border-color: var(--p-blue-700);
+.my-app-dark .node-card.is-selected {
+  background: var(--accent-blue-bg);
+  border-color: var(--color-primary-text-on-subtle);
 }
 
 /* ТЕКСТА И ИКОНКИ УЗЛА */
@@ -357,16 +357,16 @@ const getIcon = (type: string) => {
   font-size: 1.25rem;
 }
 .text-blue-500 {
-  color: var(--p-blue-500);
+  color: var(--color-primary);
 }
 .text-orange-500 {
-  color: var(--p-orange-500);
+  color: var(--color-warning);
 }
 .text-purple-500 {
-  color: var(--p-purple-500);
+  color: var(--color-accent-purple);
 }
 .text-gray-500 {
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
 }
 
 .node-content {
@@ -376,12 +376,12 @@ const getIcon = (type: string) => {
 }
 .node-label {
   font-weight: 500;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
   font-size: 0.9rem;
 }
 .node-sub {
   font-size: 0.75rem;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
 }
 .text-capitalize {
   text-transform: capitalize;
@@ -389,12 +389,12 @@ const getIcon = (type: string) => {
 
 /* СОСТОЯНИЯ И КНОПКИ */
 .text-selected {
-  color: var(--p-blue-500);
+  color: var(--color-primary);
   font-weight: 400;
   margin-left: 0.25rem;
 }
 .text-editing {
-  color: var(--p-purple-500);
+  color: var(--color-accent-purple);
   font-weight: 500;
   margin-left: 0.25rem;
 }
@@ -411,9 +411,9 @@ const getIcon = (type: string) => {
   padding: 1rem;
   margin-top: 1rem;
   background: transparent;
-  border: 1px dashed var(--surface-border, #e2e8f0);
+  border: 1px dashed var(--surface-border);
   border-radius: 8px;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -423,8 +423,8 @@ const getIcon = (type: string) => {
   transition: all 0.2s;
 }
 .add-unit-btn:hover:not(:disabled) {
-  background: var(--surface-hover, #d6d4d4);
-  border-color: var(--text-color-secondary, #64748b);
-  color: var(--text-color, #0f172a);
+  background: var(--surface-hover);
+  border-color: var(--text-color-secondary);
+  color: var(--text-color);
 }
 </style>

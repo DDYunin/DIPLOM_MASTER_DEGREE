@@ -34,15 +34,15 @@ defineSlots<{
   display: flex;
   height: 100vh;
   width: 100vw;
-  background-color: var(--p-surface-50); /* Токен Aura вместо #f8fafc */
+  background-color: var(--surface-ground);
   overflow: hidden;
   font-family: var(--font-family);
 }
 
 .sidebar-container {
   width: 260px;
-  background-color: var(--p-surface-0); /* Токен Aura вместо #ffffff */
-  border-right: 1px solid var(--p-surface-200); /* Токен Aura вместо #e2e8f0 */
+  background-color: var(--surface-elevated);
+  border-right: 1px solid var(--surface-border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -62,8 +62,8 @@ defineSlots<{
 
 .header-container {
   height: 72px;
-  background-color: var(--p-surface-0);
-  border-bottom: 1px solid var(--p-surface-200);
+  background-color: var(--surface-elevated);
+  border-bottom: 1px solid var(--surface-border);
   display: flex;
   align-items: center;
   padding: 0 2rem;

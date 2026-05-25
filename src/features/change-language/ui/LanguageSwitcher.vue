@@ -68,7 +68,7 @@ watch(selectedLang, (newVal) => {
   box-shadow: none;
 }
 .lang-switcher:hover {
-  background: #f8fafc;
+  background: var(--surface-hover);
   border-radius: 8px;
 }
 :deep(.p-select-label) {
@@ -78,7 +78,7 @@ watch(selectedLang, (newVal) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #64748b;
+  color: var(--text-color-secondary);
   font-weight: 600;
   font-size: 0.875rem;
 }

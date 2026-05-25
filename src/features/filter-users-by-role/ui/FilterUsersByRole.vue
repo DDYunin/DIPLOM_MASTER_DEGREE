@@ -54,8 +54,8 @@ const roleTabs = computed<
   color: var(--text-color);
 }
 .tab-btn.active {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
   font-weight: 600;
-  border-bottom: 2px solid var(--p-primary-500);
+  border-bottom: 2px solid var(--color-primary);
 }
 </style>

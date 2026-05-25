@@ -150,7 +150,7 @@ const deptOptions = [
 
 <style scoped>
 .edit-link {
-  color: var(--p-blue-500);
+  color: var(--color-primary);
   font-size: 0.875rem;
   text-decoration: none;
   font-weight: 500;
@@ -173,8 +173,8 @@ const deptOptions = [
   position: relative;
 }
 .custom-avatar {
-  background-color: var(--p-orange-100);
-  color: var(--p-orange-700);
+  background-color: var(--color-warning-muted);
+  color: var(--color-warning-text);
   font-weight: 700;
   width: 80px;
   height: 80px;
@@ -194,12 +194,12 @@ const deptOptions = [
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   transition: all 0.2s;
 }
 .camera-btn:hover {
-  color: var(--p-primary-500);
-  border-color: var(--p-primary-500);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* Сетка формы */
@@ -217,7 +217,7 @@ const deptOptions = [
 .form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

@@ -98,7 +98,7 @@ watch(visible, (newVal) => {
 
 .form-desc {
   margin: 0;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
 }
 
@@ -110,12 +110,12 @@ watch(visible, (newVal) => {
 
 .field-label {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 0.875rem;
 }
 
 .required {
-  color: var(--p-red-500);
+  color: var(--color-danger);
 }
 
 .w-full {
@@ -123,7 +123,7 @@ watch(visible, (newVal) => {
 }
 
 .error-text {
-  color: var(--p-red-500);
+  color: var(--color-danger);
   font-size: 0.75rem;
 }
 </style>

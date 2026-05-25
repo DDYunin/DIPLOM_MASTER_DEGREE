@@ -74,9 +74,9 @@ const getStatusSeverity = (status: string) => {
 <style scoped>
 /* Сюда переносим все стили карточки из предыдущего шага */
 .course-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -87,14 +87,14 @@ const getStatusSeverity = (status: string) => {
 }
 
 .course-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-card);
   transform: translateY(-2px);
-  border-color: var(--p-primary-300);
+  border-color: var(--color-primary-border);
 }
 
 .course-cover {
   height: 140px;
-  background: linear-gradient(135deg, var(--p-surface-200) 0%, var(--p-surface-100) 100%);
+  background: var(--surface-media);
   position: relative;
   padding: 1rem;
   display: flex;
@@ -117,7 +117,7 @@ const getStatusSeverity = (status: string) => {
 }
 
 .course-code {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 1px;
@@ -127,13 +127,13 @@ const getStatusSeverity = (status: string) => {
 .course-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   margin: 0 0 0.5rem 0;
   line-height: 1.3;
 }
 
 .course-desc {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
   line-height: 1.5;
   margin: 0 0 1.5rem 0;
@@ -153,18 +153,18 @@ const getStatusSeverity = (status: string) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .course-footer {
   padding: 1.25rem 1.5rem;
-  border-top: 1px solid var(--p-surface-100);
+  border-top: 1px solid var(--surface-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
 }
 
 .due-info {
@@ -176,13 +176,13 @@ const getStatusSeverity = (status: string) => {
 .due-label {
   font-size: 0.65rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 0.5px;
 }
 
 .due-value {
   font-size: 0.875rem;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-weight: 600;
 }
 </style>

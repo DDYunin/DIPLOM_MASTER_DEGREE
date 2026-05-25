@@ -238,9 +238,9 @@ const collectFormData = () => {
 
 /* --- CARDS COMMON --- */
 .builder-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -249,23 +249,23 @@ const collectFormData = () => {
   align-items: center;
   gap: 0.75rem;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--p-surface-100);
+  border-bottom: 1px solid var(--surface-subtle);
 }
 
 .header-icon {
   font-size: 1.25rem;
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 
 .text-blue {
-  color: var(--p-blue-600);
+  color: var(--color-primary-strong);
 }
 
 .card-title {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .card-body {
@@ -280,7 +280,7 @@ const collectFormData = () => {
   font-size: 1.25rem;
 }
 .text-muted {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 .uppercase {
   text-transform: uppercase;
@@ -314,7 +314,7 @@ const collectFormData = () => {
 }
 .divider {
   height: 1px;
-  background-color: var(--p-surface-200);
+  background-color: var(--surface-border);
   margin: 1.5rem 0;
 }
 
@@ -327,11 +327,11 @@ const collectFormData = () => {
 .field-label {
   font-weight: 600;
   font-size: 0.875rem;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 .field-hint {
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   margin-top: 0.25rem;
 }
 .text-area {
@@ -350,8 +350,8 @@ const collectFormData = () => {
 }
 
 .bank-item {
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   transition:
     border-color 0.2s,
     background-color 0.2s;
@@ -359,8 +359,8 @@ const collectFormData = () => {
 }
 
 .bank-item--active {
-  border-color: var(--p-primary-300);
-  background-color: var(--p-primary-50);
+  border-color: var(--color-primary-border);
+  background-color: var(--color-primary-subtle);
 }
 
 .bank-item-header {
@@ -373,17 +373,17 @@ const collectFormData = () => {
 .bank-title {
   margin: 0 0 0.25rem 0;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 .bank-desc {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .badge-green {
-  background-color: var(--p-green-100);
-  color: var(--p-green-700);
+  background-color: var(--color-success-muted);
+  color: var(--color-success-text);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.25rem 0.5rem;
@@ -391,12 +391,12 @@ const collectFormData = () => {
 }
 
 .bank-item-settings {
-  border-top: 1px solid var(--p-surface-200);
+  border-top: 1px solid var(--surface-border);
   padding: 1rem 1.25rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  background-color: var(--p-surface-0);
+  background-color: var(--surface-card);
 }
 
 .settings-inputs {
@@ -412,13 +412,13 @@ const collectFormData = () => {
 
 .setting-field label {
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 500;
 }
 
 .setting-total {
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 /* --- SIDEBAR SUMMARY & PARAMS --- */
@@ -432,12 +432,12 @@ const collectFormData = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
 }
 
 .summary-row strong {
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .toggle-row {
@@ -448,7 +448,7 @@ const collectFormData = () => {
 
 .toggle-row label {
   font-weight: 500;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 0.875rem;
 }
 </style>

@@ -11,7 +11,7 @@ export const useCourseGradeStore = defineStore('course-grade', () => {
         name: 'John Doe',
         email: 'john.doe@example.com',
         avatarInitials: 'JD',
-        avatarColor: 'var(--p-blue-100)'
+        avatarColor: 'var(--color-primary-muted)'
       },
       group: 'CS-2023-A',
       grades: {
@@ -28,7 +28,7 @@ export const useCourseGradeStore = defineStore('course-grade', () => {
         name: 'Sarah Smith',
         email: 'sarah.s@example.com',
         avatarInitials: 'SS',
-        avatarColor: 'var(--p-orange-100)'
+        avatarColor: 'var(--color-warning-muted)'
       },
       group: 'CS-2023-A',
       grades: {
@@ -45,7 +45,7 @@ export const useCourseGradeStore = defineStore('course-grade', () => {
         name: 'Alexey Kuznetsov',
         email: 'alexey.k@example.com',
         avatarInitials: 'AK',
-        avatarColor: 'var(--p-purple-100)'
+        avatarColor: 'var(--color-accent-purple-muted)'
       },
       group: 'CS-2023-B',
       grades: {
@@ -62,7 +62,7 @@ export const useCourseGradeStore = defineStore('course-grade', () => {
         name: 'Michael Chen',
         email: 'm.chen@example.com',
         avatarInitials: 'MC',
-        avatarColor: 'var(--p-gray-100)'
+        avatarColor: 'var(--color-neutral-muted)'
       },
       group: 'CS-2023-A',
       grades: {
@@ -79,7 +79,7 @@ export const useCourseGradeStore = defineStore('course-grade', () => {
         name: 'Elena Sokolova',
         email: 'elena.s@example.com',
         avatarInitials: 'ES',
-        avatarColor: 'var(--p-green-100)'
+        avatarColor: 'var(--color-success-muted)'
       },
       group: 'CS-2023-C',
       grades: {

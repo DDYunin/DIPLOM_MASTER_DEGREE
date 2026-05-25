@@ -35,9 +35,9 @@ const handleStartTest = () => {
 <template>
   <div class="assessment-info-widget">
     <div v-if="store.isLoading || !store.currentAssessment" class="loading-state">
-      <Skeleton height="150px" borderRadius="var(--p-border-radius-xl)" />
-      <Skeleton height="120px" borderRadius="var(--p-border-radius-xl)" />
-      <Skeleton height="300px" borderRadius="var(--p-border-radius-xl)" />
+      <Skeleton height="150px" borderRadius="var(--radius-xl)" />
+      <Skeleton height="120px" borderRadius="var(--radius-xl)" />
+      <Skeleton height="300px" borderRadius="var(--radius-xl)" />
     </div>
 
     <template v-else>
@@ -159,7 +159,7 @@ const handleStartTest = () => {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 500;
 }
 
@@ -168,7 +168,7 @@ const handleStartTest = () => {
 }
 
 .current-page {
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-weight: 600;
 }
 
@@ -190,14 +190,14 @@ const handleStartTest = () => {
   margin: 0;
   font-size: 2.5rem;
   font-weight: 800;
-  color: var(--p-text-color);
+  color: var(--text-color);
   line-height: 1.2;
 }
 
 .description {
   margin: 0;
   font-size: 1.125rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   line-height: 1.6;
   max-width: 700px;
 }
@@ -210,9 +210,9 @@ const handleStartTest = () => {
 }
 
 .stat-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius-xl);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -231,22 +231,22 @@ const handleStartTest = () => {
 
 /* Используем тональные цвета для иконок */
 .bg-blue-100 {
-  background-color: var(--p-blue-100);
+  background-color: var(--color-primary-muted);
 }
 .text-blue-600 {
-  color: var(--p-blue-600);
+  color: var(--color-primary-strong);
 }
 .bg-green-100 {
-  background-color: var(--p-green-100);
+  background-color: var(--color-success-muted);
 }
 .text-green-600 {
-  color: var(--p-green-600);
+  color: var(--color-success-strong);
 }
 .bg-orange-100 {
-  background-color: var(--p-orange-100);
+  background-color: var(--color-warning-muted);
 }
 .text-orange-600 {
-  color: var(--p-orange-600);
+  color: var(--color-warning-strong);
 }
 
 .stat-content {
@@ -258,20 +258,20 @@ const handleStartTest = () => {
 .stat-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 0.5px;
 }
 
 .stat-value {
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 /* Instructions */
 .instructions-section {
-  background-color: var(--p-surface-50);
-  border-radius: var(--p-border-radius-xl);
+  background-color: var(--surface-ground);
+  border-radius: var(--radius-xl);
   padding: 2.5rem;
 }
 
@@ -279,7 +279,7 @@ const handleStartTest = () => {
   margin: 0 0 1.5rem 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .instructions-list {
@@ -298,8 +298,8 @@ const handleStartTest = () => {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: var(--p-primary-50);
-  color: var(--p-primary-600);
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -311,7 +311,7 @@ const handleStartTest = () => {
 
 .instruction-text {
   margin: 0;
-  color: var(--p-text-color);
+  color: var(--text-color);
   line-height: 1.6;
   font-size: 1rem;
 }
@@ -337,7 +337,7 @@ const handleStartTest = () => {
 .footer-note {
   text-align: center;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-style: italic;
   margin-top: 1rem;
 }

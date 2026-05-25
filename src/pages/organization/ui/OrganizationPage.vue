@@ -129,11 +129,11 @@ const closePanel = () => {
   font-size: 1.75rem;
   margin: 0 0 0.5rem 0;
   font-weight: 700;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
 }
 
 .page-subtitle {
-  color: #64748b;
+  color: var(--text-color-secondary);
   margin: 0;
 }
 
@@ -141,7 +141,7 @@ const closePanel = () => {
   display: flex;
   flex-grow: 1;
   overflow: hidden;
-  background: var(--surface-ground, #f8fafc);
+  background: var(--surface-ground);
 }
 
 .left-panel {
@@ -164,7 +164,7 @@ const closePanel = () => {
     z-index: 10;
     width: 100%;
     max-width: 350px;
-    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-panel);
     transform: translateX(100%);
     transition: transform 0.3s;
   }

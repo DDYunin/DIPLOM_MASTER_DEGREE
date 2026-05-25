@@ -161,7 +161,7 @@ const handleCreate = () => {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
 }
 
 .form-layout {
@@ -177,7 +177,7 @@ const handleCreate = () => {
 .form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -191,11 +191,11 @@ const handleCreate = () => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: var(--surface-ground, #f8fafc);
-  border: 1px solid var(--surface-border, #e2e8f0);
+  background: var(--surface-ground);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   padding: 0.75rem 1rem;
-  color: var(--text-color-secondary, #475569);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: not-allowed;
@@ -206,16 +206,16 @@ const handleCreate = () => {
   justify-content: flex-end;
   gap: 0.75rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--surface-border, #f1f5f9);
+  border-top: 1px solid var(--surface-border-subtle);
   width: 100%;
 }
 .cancel-btn {
-  color: var(--text-color-secondary, #475569);
+  color: var(--text-color-muted);
 }
 .submit-btn {
-  background: var(--p-primary-500);
+  background: var(--color-primary);
   border: none;
-  color: white;
+  color: var(--color-on-primary);
 }
 
 /* Фикс ширины для PrimeVue */

@@ -16,28 +16,16 @@ const getStatusSeverity = (status: string) => {
 </script>
 
 <template>
-  <WidgetCard icon="pi-book" title="Assigned Courses" iconColorToken="#3b82f6">
+  <WidgetCard icon="pi-book" title="Assigned Courses" iconColorToken="var(--color-primary)">
     <template #header-actions>
       <a href="#" class="history-link">View All History</a>
     </template>
     <template #default>
       <DataTable :value="profile.courses" class="courses-table">
-        <Column
-          field="code"
-          header="Course Code"
-          headerStyle="color: #64748b; font-size: 0.875rem;"
-        ></Column>
-        <Column
-          field="name"
-          header="Course Name"
-          headerStyle="color: #64748b; font-size: 0.875rem;"
-        ></Column>
-        <Column
-          field="semester"
-          header="Semester"
-          headerStyle="color: #64748b; font-size: 0.875rem;"
-        ></Column>
-        <Column field="status" header="Status" headerStyle="color: #64748b; font-size: 0.875rem;">
+        <Column field="code" header="Course Code"></Column>
+        <Column field="name" header="Course Name"></Column>
+        <Column field="semester" header="Semester"></Column>
+        <Column field="status" header="Status">
           <template #body="slotProps">
             <Tag
               :value="slotProps.data.status"
@@ -53,18 +41,20 @@ const getStatusSeverity = (status: string) => {
 
 <style scoped>
 .history-link {
-  color: #3b82f6;
+  color: var(--color-primary);
   font-size: 0.875rem;
   text-decoration: none;
   font-weight: 500;
 }
 :deep(.p-datatable-thead > tr > th) {
   background: transparent;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--surface-border);
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
 }
 :deep(.p-datatable-tbody > tr > td) {
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--text-color-emphasis);
   font-weight: 500;
 }
 </style>

@@ -181,7 +181,7 @@ const finishImport = () => {
 .step-actions {
   display: flex;
   padding-top: 1rem;
-  border-top: 1px solid var(--p-surface-200);
+  border-top: 1px solid var(--surface-border);
 }
 
 .justify-end {
@@ -200,12 +200,12 @@ const finishImport = () => {
 
 /* --- Upload Zone (Step 1) --- */
 .upload-zone {
-  border: 2px dashed var(--p-surface-300);
-  border-radius: var(--p-border-radius);
+  border: 2px dashed var(--surface-border-strong);
+  border-radius: var(--radius-md);
   padding: 3rem 2rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -213,26 +213,26 @@ const finishImport = () => {
 }
 
 .upload-zone:hover {
-  border-color: var(--p-primary-400);
-  background-color: var(--p-primary-50);
+  border-color: var(--color-primary-focus);
+  background-color: var(--color-primary-subtle);
 }
 
 .upload-icon {
   font-size: 3rem;
-  color: var(--p-primary-500);
+  color: var(--color-primary);
   margin-bottom: 1rem;
 }
 
 .upload-title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   margin: 0 0 0.5rem 0;
 }
 
 .upload-desc {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   max-width: 400px;
   margin: 0 0 1.5rem 0;
   line-height: 1.5;
@@ -244,8 +244,8 @@ const finishImport = () => {
 }
 
 .format-badge {
-  background-color: var(--p-surface-200);
-  color: var(--p-text-color);
+  background-color: var(--surface-border);
+  color: var(--text-color);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.25rem 0.5rem;
@@ -262,10 +262,10 @@ const finishImport = () => {
 }
 
 .text-primary {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 .text-muted {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   margin-bottom: 1rem;
 }
 .text-4xl {
@@ -280,16 +280,16 @@ const finishImport = () => {
   display: flex;
   align-items: center;
   gap: 1rem;
-  background-color: var(--p-surface-50);
-  border: 1px solid var(--p-surface-200);
+  background-color: var(--surface-ground);
+  border: 1px solid var(--surface-border);
   padding: 1rem;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
 }
 
 .file-icon {
   font-size: 2rem;
-  color: var(--p-green-500);
+  color: var(--color-success);
 }
 
 .file-info {
@@ -299,12 +299,12 @@ const finishImport = () => {
 
 .file-name {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .file-size {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .stats-grid {
@@ -315,44 +315,44 @@ const finishImport = () => {
 }
 
 .stat-box {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
   padding: 1rem;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
 .error-box {
-  background-color: var(--p-red-50);
-  border-color: var(--p-red-200);
+  background-color: var(--color-danger-subtle);
+  border-color: var(--color-danger-border);
 }
 
 .stat-label {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 500;
 }
 
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .text-red {
-  color: var(--p-red-500);
+  color: var(--color-danger);
 }
 
 .mapping-hint {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--p-blue-700);
-  background-color: var(--p-blue-50);
+  color: var(--color-primary-text-on-subtle);
+  background-color: var(--color-primary-subtle);
   padding: 1rem;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
   font-size: 0.875rem;
 }
 
@@ -364,7 +364,7 @@ const finishImport = () => {
 .success-icon-wrapper {
   width: 72px;
   height: 72px;
-  background-color: var(--p-green-100);
+  background-color: var(--color-success-muted);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -374,18 +374,18 @@ const finishImport = () => {
 
 .success-icon {
   font-size: 2.5rem;
-  color: var(--p-green-600);
+  color: var(--color-success-strong);
 }
 
 .success-title {
   margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .success-desc {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   margin: 0;
 }
 </style>

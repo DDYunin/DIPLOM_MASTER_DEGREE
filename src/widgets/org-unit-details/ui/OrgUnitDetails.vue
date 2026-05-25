@@ -244,8 +244,8 @@ const formatType = (type?: string) => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--surface-card, #ffffff);
-  border-left: 1px solid var(--surface-border, #e2e8f0);
+  background: var(--surface-card);
+  border-left: 1px solid var(--surface-border);
   padding: 1.5rem;
   overflow-y: auto;
 }
@@ -255,14 +255,14 @@ const formatType = (type?: string) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--surface-card, #ffffff);
-  border-left: 1px solid var(--surface-border, #e2e8f0);
-  color: var(--text-color-secondary, #64748b);
+  background: var(--surface-card);
+  border-left: 1px solid var(--surface-border);
+  color: var(--text-color-secondary);
 }
 .empty-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: var(--surface-border, #e2e8f0);
+  color: var(--surface-border);
 }
 
 /* ИКОНКА ШАПКИ */
@@ -284,45 +284,45 @@ const formatType = (type?: string) => {
 }
 
 .bg-primary {
-  background: var(--p-primary-50);
-  color: var(--p-primary-500);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
 }
 .bg-info {
-  background: var(--p-blue-50);
-  color: var(--p-blue-500);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
 }
 .bg-warning {
-  background: var(--p-orange-50);
-  color: var(--p-orange-500);
+  background: var(--color-warning-subtle);
+  color: var(--color-warning);
 }
 .bg-purple {
-  background: var(--p-purple-50);
-  color: var(--p-purple-500);
+  background: var(--color-accent-purple-subtle);
+  color: var(--color-accent-purple);
 }
 
-:root[class*='my-app-dark'] .bg-primary {
-  background: rgba(var(--p-primary-500), 0.16);
+.my-app-dark .bg-primary {
+  background: var(--accent-primary-bg);
 }
-:root[class*='my-app-dark'] .bg-info {
-  background: rgba(var(--p-blue-500), 0.16);
+.my-app-dark .bg-info {
+  background: var(--accent-blue-bg);
 }
-:root[class*='my-app-dark'] .bg-warning {
-  background: rgba(var(--p-orange-500), 0.16);
+.my-app-dark .bg-warning {
+  background: var(--accent-orange-bg);
 }
-:root[class*='my-app-dark'] .bg-purple {
-  background: rgba(var(--p-purple-500), 0.16);
+.my-app-dark .bg-purple {
+  background: var(--accent-purple-bg);
 }
 
 .close-btn {
   background: none;
   border: none;
   font-size: 1.25rem;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   cursor: pointer;
   transition: color 0.2s;
 }
 .close-btn:hover {
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
 }
 
 /* РЕЖИМ ПРОСМОТРА */
@@ -333,7 +333,7 @@ const formatType = (type?: string) => {
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
 }
 
 .stats-grid {
@@ -343,23 +343,23 @@ const formatType = (type?: string) => {
   margin-bottom: 2rem;
 }
 .stat-box {
-  background: var(--surface-ground, #f8fafc);
+  background: var(--surface-ground);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--surface-border, #e2e8f0);
+  border: 1px solid var(--surface-border);
 }
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
 }
 .stat-label {
   font-size: 0.75rem;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   margin-top: 0.25rem;
 }
 
@@ -377,13 +377,13 @@ const formatType = (type?: string) => {
 .meta-label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 .meta-value {
   font-size: 0.875rem;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -391,7 +391,7 @@ const formatType = (type?: string) => {
 }
 .font-mono {
   font-family: monospace;
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 
 .actions-section {
@@ -403,16 +403,16 @@ const formatType = (type?: string) => {
 .actions-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
   margin-bottom: 0.25rem;
 }
 .action-btn {
   width: 100%;
 }
 .btn-primary {
-  background: var(--p-primary-500);
+  background: var(--color-primary);
   border: none;
-  color: white;
+  color: var(--color-on-primary);
 }
 
 /* РЕЖИМ РЕДАКТИРОВАНИЯ */
@@ -429,7 +429,7 @@ const formatType = (type?: string) => {
 .form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   letter-spacing: 0.05em;
 }
 .mt-3 {
@@ -444,24 +444,24 @@ const formatType = (type?: string) => {
   margin-top: 2rem;
 }
 .btn-success {
-  background: var(--p-green-500);
+  background: var(--color-success);
   border: none;
-  color: white;
+  color: var(--color-on-primary);
 }
 .btn-success:hover {
-  background: var(--p-green-600);
+  background: var(--color-success-strong);
 }
 .cancel-link {
   background: none;
   border: none;
   font-size: 0.875rem;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
   text-decoration: underline;
   text-underline-offset: 4px;
   cursor: pointer;
 }
 .cancel-link:hover {
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
 }
 
 :deep(.p-inputtext) {

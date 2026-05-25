@@ -76,9 +76,9 @@ const mainInstructor = computed(() => props.course.instructors[0])
 
 <style scoped>
 .course-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -89,15 +89,15 @@ const mainInstructor = computed(() => props.course.instructors[0])
 }
 
 .course-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-card);
   transform: translateY(-2px);
-  border-color: var(--p-primary-300);
+  border-color: var(--color-primary-border);
 }
 
 .course-cover {
   height: 140px;
   position: relative;
-  background-color: var(--p-surface-100);
+  background-color: var(--surface-subtle);
 }
 
 .cover-image {
@@ -112,13 +112,13 @@ const mainInstructor = computed(() => props.course.instructors[0])
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--p-surface-200) 0%, var(--p-surface-100) 100%);
+  background: var(--surface-media);
 }
 
 .fallback-text {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--p-surface-400);
+  color: var(--icon-muted);
   letter-spacing: 2px;
 }
 
@@ -126,13 +126,13 @@ const mainInstructor = computed(() => props.course.instructors[0])
   position: absolute;
   top: 1rem;
   left: 1rem;
-  background-color: var(--p-surface-0);
-  color: var(--p-text-color);
+  background-color: var(--surface-card);
+  color: var(--text-color);
   font-size: 0.65rem;
   font-weight: 700;
   padding: 0.25rem 0.75rem;
-  border-radius: var(--p-border-radius-xl);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card-hover);
   letter-spacing: 0.5px;
 }
 
@@ -145,7 +145,7 @@ const mainInstructor = computed(() => props.course.instructors[0])
 }
 
 .course-code {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
   font-weight: 700;
   font-size: 0.75rem;
   letter-spacing: 1px;
@@ -155,7 +155,7 @@ const mainInstructor = computed(() => props.course.instructors[0])
 .course-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   margin: 0;
   line-height: 1.3;
 }
@@ -180,21 +180,21 @@ const mainInstructor = computed(() => props.course.instructors[0])
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .instructor-name {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .course-footer {
   padding: 1.25rem 1.5rem;
   display: flex;
   gap: 1rem;
-  background-color: var(--p-surface-50);
-  border-top: 1px solid var(--p-surface-100);
+  background-color: var(--surface-ground);
+  border-top: 1px solid var(--surface-subtle);
 }
 
 .footer-btn {

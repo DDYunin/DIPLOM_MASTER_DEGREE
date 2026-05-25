@@ -139,7 +139,7 @@ const handleSave = () => {
 
 <style scoped>
 .btn-add {
-  background: var(--p-primary-color);
+  background: var(--color-primary-strong);
   border: none;
 }
 
@@ -168,11 +168,11 @@ const handleSave = () => {
 label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-color-emphasis);
 }
 
 .cancel-btn {
-  color: #64748b;
+  color: var(--text-color-secondary);
 }
 
 /* Фикс ширины для PrimeVue компонентов внутри флекс-контейнеров */

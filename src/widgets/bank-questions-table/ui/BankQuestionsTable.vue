@@ -41,15 +41,15 @@ const difficulties = [
 const getTypeStyles = (type: string) => {
   switch (type) {
     case 'multiple-choice':
-      return { bg: 'var(--p-blue-100)', color: 'var(--p-blue-700)', label: 'Multiple Choice' }
+      return { bg: 'var(--color-primary-muted)', color: 'var(--color-primary-text-on-subtle)', label: 'Multiple Choice' }
     case 'true-false':
-      return { bg: 'var(--p-indigo-100)', color: 'var(--p-indigo-700)', label: 'True / False' }
+      return { bg: 'var(--color-accent-indigo-muted)', color: 'var(--color-accent-indigo-text)', label: 'True / False' }
     case 'short-answer':
-      return { bg: 'var(--p-orange-100)', color: 'var(--p-orange-700)', label: 'Short Answer' }
+      return { bg: 'var(--color-warning-muted)', color: 'var(--color-warning-text)', label: 'Short Answer' }
     case 'essay':
-      return { bg: 'var(--p-purple-100)', color: 'var(--p-purple-700)', label: 'Essay' }
+      return { bg: 'var(--color-accent-purple-muted)', color: 'var(--color-accent-purple-text)', label: 'Essay' }
     default:
-      return { bg: 'var(--p-surface-100)', color: 'var(--p-text-color)', label: type }
+      return { bg: 'var(--surface-subtle)', color: 'var(--text-color)', label: type }
   }
 }
 
@@ -57,13 +57,13 @@ const getTypeStyles = (type: string) => {
 const getDifficultyColor = (diff: Difficulty) => {
   switch (diff) {
     case 'easy':
-      return 'var(--p-green-500)'
+      return 'var(--color-success)'
     case 'medium':
-      return 'var(--p-yellow-600)'
+      return 'var(--color-caution)'
     case 'hard':
-      return 'var(--p-red-500)'
+      return 'var(--color-danger)'
     default:
-      return 'var(--p-text-muted-color)'
+      return 'var(--text-color-muted)'
   }
 }
 
@@ -251,7 +251,7 @@ const filteredQuestions = computed(() => {
 .selected-count {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .bulk-btn {
@@ -259,29 +259,29 @@ const filteredQuestions = computed(() => {
 }
 
 .bg-red-50 {
-  background-color: var(--p-red-50);
+  background-color: var(--color-danger-subtle);
 }
 
 /* --- TABLE --- */
 .table-container {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 .custom-table :deep(th) {
   background-color: transparent;
-  border-bottom: 1px solid var(--p-surface-200);
+  border-bottom: 1px solid var(--surface-border);
   padding: 1rem;
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .custom-table :deep(td) {
-  border-bottom: 1px solid var(--p-surface-100);
+  border-bottom: 1px solid var(--surface-subtle);
   padding: 1.25rem 1rem;
 }
 
@@ -291,23 +291,23 @@ const filteredQuestions = computed(() => {
   align-items: center;
   gap: 0.75rem;
   font-size: 0.95rem;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-weight: 500;
   line-height: 1.5;
 }
 
 .text-muted {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 /* Поддержка инлайн-математики из макета */
 .question-text-cell :deep(.math-inline) {
-  background-color: var(--p-surface-100);
+  background-color: var(--surface-subtle);
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
   font-family: monospace;
   font-size: 0.85rem;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .type-badge {

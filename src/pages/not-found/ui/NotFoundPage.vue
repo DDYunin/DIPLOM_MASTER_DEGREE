@@ -111,14 +111,12 @@ const goBack = () => {
   background: var(--surface-card);
   padding: 2.5rem 2rem;
   border-radius: 12px;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  border-bottom: 4px solid var(--p-primary-color);
+  box-shadow: var(--shadow-md);
+  border-bottom: 4px solid var(--color-primary-strong);
 }
 
 .logo-box {
-  background-color: color-mix(in srgb, var(--p-primary-color) 15%, transparent);
+  background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
   width: 48px;
   height: 48px;
   border-radius: 12px;
@@ -130,7 +128,7 @@ const goBack = () => {
 
 .logo-icon {
   font-size: 1.5rem;
-  color: var(--p-primary-color);
+  color: var(--color-primary);
 }
 
 .error-code {
@@ -139,7 +137,7 @@ const goBack = () => {
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
-  color: var(--p-primary-color);
+  color: var(--color-primary);
   opacity: 0.9;
 }
 

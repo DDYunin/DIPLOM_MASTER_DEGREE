@@ -146,8 +146,8 @@ const handleSave = () => {
 
 <style scoped>
 .add-btn {
-  background: #eff6ff;
-  color: #3b82f6;
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
   font-size: 0.875rem;
   font-weight: 600;
   padding: 0.5rem 1rem;
@@ -163,12 +163,12 @@ const handleSave = () => {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
 }
 .dialog-subtitle {
   margin: 0;
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-color-secondary);
 }
 
 .search-container {
@@ -178,17 +178,17 @@ const handleSave = () => {
 .search-input {
   width: 100%;
   border-radius: 8px;
-  border-color: #cbd5e1;
+  border-color: var(--surface-border);
 }
 .search-icon {
-  color: #94a3b8;
+  color: var(--text-color-placeholder);
 }
 
 /* Кастомизация Tree */
 .tree-container {
   height: 350px;
   overflow-y: auto;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--surface-border-subtle);
   border-radius: 8px;
   padding: 0.5rem;
 }
@@ -221,12 +221,12 @@ const handleSave = () => {
   gap: 0.75rem;
 }
 .node-icon {
-  color: #64748b;
+  color: var(--text-color-secondary);
   font-size: 1.1rem;
 }
 .node-label {
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--text-color-emphasis);
   font-weight: 500;
 }
 
@@ -234,8 +234,8 @@ const handleSave = () => {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  background: #eff6ff;
-  color: #3b82f6;
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.25rem 0.5rem;
@@ -253,11 +253,11 @@ const handleSave = () => {
   align-items: center;
   width: 100%;
   padding-top: 1rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--surface-border-subtle);
 }
 .selected-count {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--text-color-secondary);
   font-weight: 500;
 }
 .footer-actions {
@@ -265,10 +265,10 @@ const handleSave = () => {
   gap: 0.75rem;
 }
 .cancel-btn {
-  color: #475569;
+  color: var(--text-color-muted);
 }
 .save-btn {
-  background: #2563eb;
+  background: var(--color-primary-strong);
   border: none;
 }
 </style>

@@ -92,7 +92,7 @@ const getInitials = (user: User) => {
               :label="getInitials(data)"
               shape="circle"
               size="large"
-              style="background-color: var(--p-primary-50); color: var(--p-primary-600)"
+              style="background-color: var(--color-primary-subtle); color: var(--color-primary-strong)"
             />
             <div style="display: flex; flex-direction: column">
               <span style="font-weight: 600; color: var(--text-color)">{{ data.fullName }}</span>
@@ -143,7 +143,7 @@ const getInitials = (user: User) => {
   background: var(--surface-card);
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 :deep(.clickable-row) {
   cursor: pointer;

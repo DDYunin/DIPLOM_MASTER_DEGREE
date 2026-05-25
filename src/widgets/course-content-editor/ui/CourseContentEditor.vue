@@ -88,29 +88,29 @@ const getElementConfig = (type: ElementType) => {
     case 'video':
       return {
         icon: 'pi-play-circle',
-        color: 'var(--p-blue-500)',
-        bg: 'var(--p-blue-50)',
+        color: 'var(--color-primary)',
+        bg: 'var(--color-primary-subtle)',
         badge: 'VIDEO'
       }
     case 'file':
       return {
         icon: 'pi-file',
-        color: 'var(--p-orange-500)',
-        bg: 'var(--p-orange-50)',
+        color: 'var(--color-warning)',
+        bg: 'var(--color-warning-subtle)',
         badge: 'PDF'
       }
     case 'quiz':
       return {
         icon: 'pi-question-circle',
-        color: 'var(--p-purple-500)',
-        bg: 'var(--p-purple-50)',
+        color: 'var(--color-accent-purple)',
+        bg: 'var(--color-accent-purple-subtle)',
         badge: 'QUIZ'
       }
     case 'assignment':
       return {
         icon: 'pi-clipboard',
-        color: 'var(--p-green-500)',
-        bg: 'var(--p-green-50)',
+        color: 'var(--color-success)',
+        bg: 'var(--color-success-subtle)',
         badge: 'ASSIGNMENT'
       }
   }
@@ -272,19 +272,19 @@ const getElementConfig = (type: ElementType) => {
 
         <div class="quick-add-grid">
           <div class="quick-add-item">
-            <i class="pi pi-play-circle" style="color: var(--p-blue-500)"></i>
+            <i class="pi pi-play-circle" style="color: var(--color-primary)"></i>
             <span>Video</span>
           </div>
           <div class="quick-add-item">
-            <i class="pi pi-question-circle" style="color: var(--p-purple-500)"></i>
+            <i class="pi pi-question-circle" style="color: var(--color-accent-purple)"></i>
             <span>Quiz</span>
           </div>
           <div class="quick-add-item">
-            <i class="pi pi-file" style="color: var(--p-orange-500)"></i>
+            <i class="pi pi-file" style="color: var(--color-warning)"></i>
             <span>File/Reading</span>
           </div>
           <div class="quick-add-item">
-            <i class="pi pi-clipboard" style="color: var(--p-green-500)"></i>
+            <i class="pi pi-clipboard" style="color: var(--color-success)"></i>
             <span>Assignment</span>
           </div>
         </div>
@@ -369,9 +369,9 @@ const getElementConfig = (type: ElementType) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 0.75rem 1.5rem;
   margin-bottom: 1.5rem;
 }
@@ -386,12 +386,12 @@ const getElementConfig = (type: ElementType) => {
 .toolbar-actions {
   display: flex;
   gap: 0.25rem;
-  border-left: 1px solid var(--p-surface-200);
+  border-left: 1px solid var(--surface-border);
   padding-left: 1rem;
 }
 
 .last-saved {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
 }
 
@@ -403,9 +403,9 @@ const getElementConfig = (type: ElementType) => {
 }
 
 .topic-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -414,16 +414,16 @@ const getElementConfig = (type: ElementType) => {
   align-items: center;
   padding: 1.25rem 1.5rem;
   cursor: pointer;
-  background-color: var(--p-surface-0);
+  background-color: var(--surface-card);
   transition: background-color 0.2s;
 }
 
 .topic-header:hover {
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
 }
 
 .drag-handle {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 1rem;
   cursor: grab;
 }
@@ -444,43 +444,43 @@ const getElementConfig = (type: ElementType) => {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .topic-meta {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .chevron-icon {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 1.25rem;
 }
 
 /* --- ЭЛЕМЕНТЫ ТЕМЫ --- */
 .topic-body {
-  border-top: 1px solid var(--p-surface-200);
-  background-color: var(--p-surface-0);
+  border-top: 1px solid var(--surface-border);
+  background-color: var(--surface-card);
 }
 
 .element-row {
   display: flex;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--p-surface-100);
+  border-bottom: 1px solid var(--surface-subtle);
   gap: 1rem;
   position: relative;
 }
 
 .element-drag {
-  color: var(--p-surface-300);
+  color: var(--surface-border-strong);
   cursor: grab;
 }
 
 .element-icon {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -495,7 +495,7 @@ const getElementConfig = (type: ElementType) => {
 
 .element-title {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 0.95rem;
 }
 
@@ -507,7 +507,7 @@ const getElementConfig = (type: ElementType) => {
 
 .element-meta {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .element-actions {
@@ -527,7 +527,7 @@ const getElementConfig = (type: ElementType) => {
   padding: 1rem;
   background: transparent;
   border: none;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -540,20 +540,20 @@ const getElementConfig = (type: ElementType) => {
 }
 
 .add-element-btn:hover {
-  background-color: var(--p-surface-50);
-  color: var(--p-primary-500);
+  background-color: var(--surface-ground);
+  color: var(--color-primary);
 }
 
 /* --- ADD TOPIC ZONE --- */
 .add-topic-zone {
-  border: 2px dashed var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  border: 2px dashed var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  background-color: var(--p-surface-0);
+  background-color: var(--surface-card);
   transition:
     border-color 0.2s,
     background-color 0.2s;
@@ -561,8 +561,8 @@ const getElementConfig = (type: ElementType) => {
 }
 
 .add-topic-zone:hover {
-  border-color: var(--p-primary-300);
-  background-color: var(--p-primary-50);
+  border-color: var(--color-primary-border);
+  background-color: var(--color-primary-subtle);
 }
 
 .add-topic-text {
@@ -574,12 +574,12 @@ const getElementConfig = (type: ElementType) => {
 
 .add-title {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .add-desc {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 /* --- САЙДБАР --- */
@@ -590,9 +590,9 @@ const getElementConfig = (type: ElementType) => {
 }
 
 .sidebar-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
 }
 
@@ -600,13 +600,13 @@ const getElementConfig = (type: ElementType) => {
   margin: 0 0 0.5rem 0;
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .card-subtitle {
   margin: 0 0 1rem 0;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   line-height: 1.4;
 }
 
@@ -621,8 +621,8 @@ const getElementConfig = (type: ElementType) => {
 }
 
 .quick-add-item {
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 1.25rem 1rem;
   display: flex;
   flex-direction: column;
@@ -635,8 +635,8 @@ const getElementConfig = (type: ElementType) => {
 }
 
 .quick-add-item:hover {
-  border-color: var(--p-primary-300);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border-color: var(--color-primary-border);
+  box-shadow: var(--shadow-editor);
 }
 
 .quick-add-item i {
@@ -646,7 +646,7 @@ const getElementConfig = (type: ElementType) => {
 .quick-add-item span {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 /* Summary List */
@@ -658,10 +658,10 @@ const getElementConfig = (type: ElementType) => {
 }
 
 .bg-green-100 {
-  background-color: var(--p-green-100) !important;
+  background-color: var(--color-success-muted) !important;
 }
 .text-green-700 {
-  color: var(--p-green-700) !important;
+  color: var(--color-success-text) !important;
 }
 
 .summary-list {
@@ -676,16 +676,16 @@ const getElementConfig = (type: ElementType) => {
   justify-content: space-between;
   align-items: center;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .summary-row strong {
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 1rem;
 }
 
 .progress-section {
-  border-top: 1px solid var(--p-surface-200);
+  border-top: 1px solid var(--surface-border);
   padding-top: 1.5rem;
 }
 
@@ -694,28 +694,28 @@ const getElementConfig = (type: ElementType) => {
   justify-content: space-between;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-weight: 500;
 }
 
 .progress-percent {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
   font-weight: 700;
 }
 
 .progress-hint {
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   margin: 0.75rem 0 0 0;
   line-height: 1.4;
 }
 
 /* Help Banner */
 .help-banner {
-  background: linear-gradient(135deg, var(--p-blue-600) 0%, var(--p-indigo-700) 100%);
-  border-radius: var(--p-border-radius);
+  background: var(--gradient-hero);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
-  color: white;
+  color: var(--color-on-primary);
   position: relative;
   overflow: hidden;
 }
@@ -743,15 +743,15 @@ const getElementConfig = (type: ElementType) => {
 }
 
 .help-btn {
-  color: white;
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-on-primary);
+  border-color: var(--overlay-on-contrast);
+  background: var(--overlay-on-contrast-soft);
 }
 
 .help-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: white;
-  color: white;
+  background: var(--overlay-on-contrast-hover);
+  border-color: var(--overlay-on-contrast-border);
+  color: var(--color-on-primary);
 }
 
 .help-bg-icon {

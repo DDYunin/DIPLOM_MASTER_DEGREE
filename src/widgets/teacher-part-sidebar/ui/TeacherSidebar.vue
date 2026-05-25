@@ -75,7 +75,7 @@ const toggleSidebar = () => {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  background-color: var(--p-surface-0);
+  background-color: var(--surface-elevated);
   transition: all 0.3s ease;
 }
 
@@ -101,11 +101,11 @@ const toggleSidebar = () => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .logo-icon {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
   font-size: 1.5rem;
 }
 
@@ -131,9 +131,9 @@ const toggleSidebar = () => {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-decoration: none;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
   font-weight: 500;
   transition: all 0.2s;
   overflow: hidden;
@@ -154,13 +154,13 @@ const toggleSidebar = () => {
 }
 
 .nav-item:hover {
-  background-color: var(--p-surface-100);
-  color: var(--p-text-color);
+  background-color: var(--surface-hover);
+  color: var(--text-color);
 }
 
 .nav-item.active {
-  background-color: var(--p-primary-50);
-  color: var(--p-primary-500);
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary);
   font-weight: 600;
 }
 
@@ -170,7 +170,7 @@ const toggleSidebar = () => {
 
 .divider {
   height: 1px;
-  background-color: var(--p-surface-200);
+  background-color: var(--surface-border);
   margin-bottom: 1rem;
 }
 
@@ -182,11 +182,11 @@ const toggleSidebar = () => {
   padding: 0.75rem 1rem;
   background: transparent;
   border: none;
-  color: var(--p-red-500);
+  color: var(--color-danger);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
   transition: background 0.2s;
   overflow: hidden;
 }
@@ -206,6 +206,6 @@ const toggleSidebar = () => {
 }
 
 .logout-btn:hover {
-  background-color: var(--p-red-50);
+  background-color: var(--color-danger-subtle);
 }
 </style>

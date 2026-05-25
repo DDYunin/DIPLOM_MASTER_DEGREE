@@ -154,9 +154,9 @@ const handlePrev = () => {
 
 <style scoped>
 .player-container {
-  background-color: var(--p-surface-0);
-  border-radius: var(--p-border-radius-xl);
-  border: 1px solid var(--p-surface-200);
+  background-color: var(--surface-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--surface-border);
   padding: 3rem;
   display: flex;
   flex-direction: column;
@@ -174,7 +174,7 @@ const handlePrev = () => {
 
 .points-label {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 600;
 }
 
@@ -182,7 +182,7 @@ const handlePrev = () => {
   margin: 0;
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--p-text-color);
+  color: var(--text-color);
   line-height: 1.4;
 }
 
@@ -190,7 +190,7 @@ const handlePrev = () => {
   width: 100%;
   max-height: 400px;
   object-fit: cover;
-  border-radius: var(--p-border-radius-xl);
+  border-radius: var(--radius-xl);
 }
 
 /* Options List (Radio) */
@@ -205,22 +205,22 @@ const handlePrev = () => {
   align-items: flex-start;
   gap: 1.5rem;
   padding: 1.5rem;
-  border-radius: var(--p-border-radius-lg);
-  border: 2px solid var(--p-surface-200);
-  background-color: var(--p-surface-50);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--surface-border);
+  background-color: var(--surface-ground);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .option-card:hover {
-  border-color: var(--p-primary-300);
-  background-color: var(--p-primary-50);
+  border-color: var(--color-primary-border);
+  background-color: var(--color-primary-subtle);
 }
 
 .option-card.is-selected {
-  border-color: var(--p-primary-500);
-  background-color: var(--p-surface-0);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: var(--color-primary);
+  background-color: var(--surface-card);
+  box-shadow: var(--shadow-card);
 }
 
 .option-content {
@@ -233,20 +233,20 @@ const handlePrev = () => {
 .option-text {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   cursor: pointer;
 }
 
 .option-desc {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 /* Essay Editor */
 .essay-editor {
-  border: 1px solid var(--p-surface-300);
-  border-radius: var(--p-border-radius-lg);
+  border: 1px solid var(--surface-border-strong);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -255,8 +255,8 @@ const handlePrev = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
-  background-color: var(--p-surface-50);
-  border-bottom: 1px solid var(--p-surface-300);
+  background-color: var(--surface-ground);
+  border-bottom: 1px solid var(--surface-border-strong);
 }
 
 .toolbar-group {
@@ -267,7 +267,7 @@ const handlePrev = () => {
 .tool-btn {
   background: none;
   border: none;
-  color: var(--p-text-color);
+  color: var(--text-color);
   width: 32px;
   height: 32px;
   border-radius: 4px;
@@ -277,13 +277,13 @@ const handlePrev = () => {
   justify-content: center;
 }
 .tool-btn:hover {
-  background-color: var(--p-surface-200);
+  background-color: var(--surface-border);
 }
 
 .toolbar-hint {
   font-size: 0.65rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 0.5px;
 }
 
@@ -305,8 +305,8 @@ const handlePrev = () => {
   display: flex;
   justify-content: space-between;
   padding: 0.75rem 1.5rem;
-  background-color: var(--p-surface-50);
-  border-top: 1px solid var(--p-surface-200);
+  background-color: var(--surface-ground);
+  border-top: 1px solid var(--surface-border);
   font-size: 0.875rem;
   font-weight: 600;
 }
@@ -314,14 +314,14 @@ const handlePrev = () => {
 .word-counts {
   display: flex;
   gap: 1.5rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .text-success {
-  color: var(--p-green-600);
+  color: var(--color-success-strong);
 }
 .text-muted {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 /* Footer Navigation */
@@ -331,7 +331,7 @@ const handlePrev = () => {
   align-items: center;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid var(--p-surface-200);
+  border-top: 1px solid var(--surface-border);
 }
 
 .next-btn {
@@ -348,11 +348,11 @@ const handlePrev = () => {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--p-surface-300);
+  background-color: var(--surface-border-strong);
 }
 .dot.is-active {
   width: 24px;
   border-radius: 4px;
-  background-color: var(--p-primary-500);
+  background-color: var(--color-primary);
 }
 </style>

@@ -40,11 +40,11 @@ defineSlots<{
 
 <style scoped>
 .widget-card {
-  background: var(--surface-card, #ffffff);
+  background: var(--surface-card);
   border-radius: 12px;
   padding: 1.5rem;
-  border: 1px solid var(--surface-border, #e2e8f0);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--surface-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-header {
@@ -52,7 +52,7 @@ defineSlots<{
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid var(--surface-border, #f1f5f9);
+  border-bottom: 1px solid var(--surface-border-subtle);
   padding-bottom: 1rem;
 }
 
@@ -66,7 +66,7 @@ defineSlots<{
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--text-color, #0f172a);
+  color: var(--text-color);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -75,7 +75,7 @@ defineSlots<{
 .card-subtitle {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--text-color-secondary, #64748b);
+  color: var(--text-color-secondary);
 }
 
 .header-actions {
@@ -88,5 +88,4 @@ defineSlots<{
   color: v-bind(iconColorToken);
 }
 
-/* На случай отсутствия PrimeVue переменных заданы fallback-значения (#HEX) */
 </style>

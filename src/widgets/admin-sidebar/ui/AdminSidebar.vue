@@ -15,7 +15,7 @@ const handleLogout = () => {
   <div class="sidebar-container">
     <div class="sidebar-top">
       <div class="logo">
-        <i class="pi pi-graduation-cap text-blue-600 text-2xl"></i>
+        <i class="pi pi-graduation-cap logo-icon"></i>
         <span class="logo-text">StudLearn</span>
       </div>
 
@@ -47,11 +47,13 @@ const handleLogout = () => {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  background: white;
+  background: var(--surface-elevated);
 }
+
 .sidebar-top {
   padding: 1.5rem;
 }
+
 .logo {
   display: flex;
   align-items: center;
@@ -59,45 +61,53 @@ const handleLogout = () => {
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 2.5rem;
-  color: #0f172a;
+  color: var(--text-color);
 }
+
+.logo-icon {
+  color: var(--color-primary);
+  font-size: 1.5rem;
+}
+
 .nav-menu {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
+
 .nav-item {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  color: #475569;
+  color: var(--text-color-muted);
   text-decoration: none;
   border-radius: 8px;
   font-weight: 500;
   transition: all 0.2s;
 }
+
 .nav-item:hover {
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--surface-ground);
+  color: var(--text-color);
 }
 
-/* Активный пункт меню как на макете (синий фон, синий текст) */
 .nav-item.active {
-  background: #eff6ff;
-  color: #2563eb;
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
   font-weight: 600;
 }
 
-/* Нижняя часть с логаутом */
 .sidebar-bottom {
   padding: 1.5rem;
 }
+
 .divider {
   height: 1px;
-  background: #f1f5f9;
+  background: var(--surface-border-subtle);
   margin-bottom: 1rem;
 }
+
 .logout-btn {
   display: flex;
   align-items: center;
@@ -106,14 +116,15 @@ const handleLogout = () => {
   padding: 0.75rem 1rem;
   background: transparent;
   border: none;
-  color: #ef4444; /* Красный цвет */
+  color: var(--color-danger);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s;
 }
+
 .logout-btn:hover {
-  background: #fef2f2;
+  background: var(--color-danger-subtle);
 }
 </style>

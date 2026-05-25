@@ -363,17 +363,17 @@ const handleClose = () => {
   margin: 0 0 0.25rem 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .editor-subtitle {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .bg-surface-100 {
-  background-color: var(--p-surface-100);
-  color: var(--p-text-color);
+  background-color: var(--surface-subtle);
+  color: var(--text-color);
 }
 
 /* --- BODY & COMMON --- */
@@ -410,7 +410,7 @@ const handleClose = () => {
 
 label {
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 0.875rem;
 }
 
@@ -423,25 +423,25 @@ label {
 
 .preview-link {
   font-size: 0.875rem;
-  color: var(--p-primary-500);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 600;
 }
 
 .fake-editor {
-  border: 1px solid var(--p-surface-300);
-  border-radius: var(--p-border-radius);
+  border: 1px solid var(--surface-border-strong);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 .editor-toolbar {
-  background-color: var(--p-surface-50);
-  border-bottom: 1px solid var(--p-surface-300);
+  background-color: var(--surface-ground);
+  border-bottom: 1px solid var(--surface-border-strong);
   padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .editor-toolbar i {
@@ -450,13 +450,13 @@ label {
 }
 
 .editor-toolbar i:hover {
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .divider {
   width: 1px;
   height: 1rem;
-  background-color: var(--p-surface-300);
+  background-color: var(--surface-border-strong);
 }
 
 .editor-textarea {
@@ -483,7 +483,7 @@ label {
 
 .section-hint {
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 /* Options List (Multiple Choice) */
@@ -497,16 +497,16 @@ label {
   display: flex;
   align-items: center;
   gap: 1rem;
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 0.75rem 1rem;
-  background-color: var(--p-surface-0);
+  background-color: var(--surface-card);
   transition: border-color 0.2s;
 }
 
 .option-row.is-correct {
-  border-color: var(--p-primary-300);
-  background-color: var(--p-primary-50); /* Легкая подсветка правильного ответа */
+  border-color: var(--color-primary-border);
+  background-color: var(--color-primary-subtle); /* Легкая подсветка правильного ответа */
 }
 
 .option-control {
@@ -537,14 +537,14 @@ label {
 }
 
 .setting-card {
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
-  background-color: var(--p-surface-0);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-card);
   transition: border-color 0.2s;
 }
 
 .card-active {
-  border-color: var(--p-primary-300);
+  border-color: var(--color-primary-border);
 }
 
 .card-header {
@@ -569,7 +569,7 @@ label {
 .card-desc {
   margin: 0;
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   line-height: 1.4;
 }
 
@@ -585,7 +585,7 @@ label {
   justify-content: space-between;
   align-items: center;
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .setting-input {
@@ -597,7 +597,7 @@ label {
 }
 
 .border-top {
-  border-top: 1px solid var(--p-surface-200);
+  border-top: 1px solid var(--surface-border);
 }
 
 /* --- FOOTER --- */
@@ -606,20 +606,20 @@ label {
   justify-content: flex-end;
   gap: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--p-surface-200);
+  border-top: 1px solid var(--surface-border);
   width: 100%;
 }
 
 /* Кастомизация самого диалога для сходства с макетом */
 :global(.question-editor-dialog .p-dialog-header) {
-  border-bottom: 1px solid var(--p-surface-200);
+  border-bottom: 1px solid var(--surface-border);
   padding: 1.5rem;
 }
 :global(.question-editor-dialog .p-dialog-content) {
   padding: 1.5rem;
 }
 :global(.question-editor-dialog .p-dialog-footer) {
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
   padding: 1rem 1.5rem;
   border-top: none;
 }

@@ -19,7 +19,7 @@ const handleImport = () => {
 
 <style scoped>
 .btn-import {
-  border-color: #cbd5e1;
-  color: #475569;
+  border-color: var(--surface-border);
+  color: var(--text-color-muted);
 }
 </style>

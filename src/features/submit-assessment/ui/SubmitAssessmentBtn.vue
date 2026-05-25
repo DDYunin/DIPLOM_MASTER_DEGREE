@@ -118,7 +118,7 @@ const executeSubmit = () => {
 
 <style scoped>
 .submit-btn {
-  border-radius: var(--p-border-radius-xl);
+  border-radius: var(--radius-xl);
   font-weight: 600;
   padding: 0.75rem;
 }
@@ -135,11 +135,11 @@ const executeSubmit = () => {
 }
 
 .text-primary {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 
 .text-orange {
-  color: var(--p-orange-500);
+  color: var(--color-warning);
 }
 
 .dialog-text {
@@ -149,12 +149,12 @@ const executeSubmit = () => {
 .message-text {
   margin: 0;
   font-size: 1rem;
-  color: var(--p-text-color);
+  color: var(--text-color);
   line-height: 1.5;
 }
 
 .muted-text {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 </style>

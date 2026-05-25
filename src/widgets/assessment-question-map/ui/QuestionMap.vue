@@ -65,9 +65,9 @@ const handleFlagToggle = () => {
 
 <style scoped>
 .question-map-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius-xl);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ const handleFlagToggle = () => {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1px;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-transform: uppercase;
 }
 
@@ -92,10 +92,10 @@ const handleFlagToggle = () => {
 .grid-item {
   position: relative;
   aspect-ratio: 1;
-  border-radius: var(--p-border-radius);
-  border: 1px solid var(--p-surface-300);
-  background-color: var(--p-surface-0);
-  color: var(--p-text-color);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border-strong);
+  background-color: var(--surface-card);
+  color: var(--text-color);
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -106,19 +106,19 @@ const handleFlagToggle = () => {
 }
 
 .grid-item:hover {
-  background-color: var(--p-surface-100);
+  background-color: var(--surface-subtle);
 }
 
 .grid-item.is-answered {
-  background-color: var(--p-primary-500);
-  color: var(--p-surface-0);
-  border-color: var(--p-primary-500);
+  background-color: var(--color-primary);
+  color: var(--surface-card);
+  border-color: var(--color-primary);
 }
 
 .grid-item.is-current {
-  border: 2px solid var(--p-primary-500);
-  background-color: var(--p-primary-50);
-  color: var(--p-primary-600);
+  border: 2px solid var(--color-primary);
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary-strong);
 }
 
 .flag-icon {
@@ -126,8 +126,8 @@ const handleFlagToggle = () => {
   top: -4px;
   right: -4px;
   font-size: 0.65rem;
-  color: var(--p-orange-500);
-  background: var(--p-surface-0);
+  color: var(--color-warning);
+  background: var(--surface-card);
   border-radius: 50%;
   padding: 2px;
 }
@@ -137,8 +137,8 @@ const handleFlagToggle = () => {
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem 0;
-  border-top: 1px solid var(--p-surface-200);
-  border-bottom: 1px solid var(--p-surface-200);
+  border-top: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .progress-labels {
@@ -146,7 +146,7 @@ const handleFlagToggle = () => {
   justify-content: space-between;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .map-progress {
@@ -163,6 +163,6 @@ const handleFlagToggle = () => {
   width: 100%;
 }
 .flag-btn {
-  border-radius: var(--p-border-radius-xl);
+  border-radius: var(--radius-xl);
 }
 </style>

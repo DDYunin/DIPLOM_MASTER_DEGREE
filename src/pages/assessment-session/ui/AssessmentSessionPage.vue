@@ -64,9 +64,9 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius-xl);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl);
   padding: 1rem 1.5rem;
 }
 
@@ -80,28 +80,28 @@ onUnmounted(() => {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .divider-icon {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
 }
 
 .course-subtitle {
   font-size: 1rem;
   font-weight: 500;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .timer-badge {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: var(--p-red-50);
-  color: var(--p-red-600);
+  background-color: var(--color-danger-subtle);
+  color: var(--color-danger-strong);
   padding: 0.5rem 1rem;
-  border-radius: var(--p-border-radius-xl);
+  border-radius: var(--radius-xl);
   font-weight: 700;
   font-size: 1.125rem;
   letter-spacing: 1px;
@@ -113,13 +113,13 @@ onUnmounted(() => {
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    box-shadow: var(--shadow-danger-ring);
   }
   70% {
-    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    box-shadow: var(--shadow-danger-ring-expanded);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    box-shadow: var(--shadow-danger-ring-expanded);
   }
 }
 

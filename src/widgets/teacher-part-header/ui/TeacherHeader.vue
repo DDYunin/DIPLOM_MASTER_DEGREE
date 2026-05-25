@@ -32,7 +32,6 @@ import { ThemeToggler } from '@/features/toggle-theme'
 }
 
 .icon-btn {
-  /* Заменяем #64748b на токен Aura */
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 </style>

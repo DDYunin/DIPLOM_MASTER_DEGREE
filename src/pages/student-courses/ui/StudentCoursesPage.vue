@@ -35,12 +35,12 @@ import { StudentCourses } from '@/widgets/student-courses'
   margin: 0;
   font-size: 2rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .student-courses-page__subtitle {
   margin: 0;
   font-size: 1rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 </style>

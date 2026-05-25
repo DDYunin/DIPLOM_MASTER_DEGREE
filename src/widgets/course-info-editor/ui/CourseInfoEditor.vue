@@ -175,9 +175,9 @@ const handleSave = () => {
 
 /* --- MAIN FORM --- */
 .form-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -205,12 +205,12 @@ const handleSave = () => {
 
 .field-label {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 0.875rem;
 }
 
 .required {
-  color: var(--p-red-500);
+  color: var(--color-danger);
 }
 
 .textarea-field {
@@ -221,7 +221,7 @@ const handleSave = () => {
   display: flex;
   justify-content: space-between;
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   margin-top: 0.25rem;
 }
 
@@ -230,8 +230,8 @@ const handleSave = () => {
   align-items: flex-start;
   gap: 1rem;
   padding: 1rem 0;
-  border-top: 1px solid var(--p-surface-100);
-  border-bottom: 1px solid var(--p-surface-100);
+  border-top: 1px solid var(--surface-subtle);
+  border-bottom: 1px solid var(--surface-subtle);
 }
 
 .checkbox-label-wrapper {
@@ -242,14 +242,14 @@ const handleSave = () => {
 
 .checkbox-title {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 0.875rem;
   cursor: pointer;
 }
 
 .checkbox-desc {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .form-actions {
@@ -269,7 +269,7 @@ const handleSave = () => {
 .sidebar-title {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin: 0 0 1rem 0;
@@ -285,7 +285,7 @@ const handleSave = () => {
 }
 
 .upload-btn:hover {
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
 }
 
 .mt-3 {
@@ -294,9 +294,9 @@ const handleSave = () => {
 
 /* --- TIPS CARD --- */
 .tips-card {
-  background-color: var(--p-blue-50); /* Светло-синий фон */
-  border: 1px solid var(--p-blue-100);
-  border-radius: var(--p-border-radius);
+  background-color: var(--color-primary-subtle); /* Светло-синий фон */
+  border: 1px solid var(--color-primary-muted);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
 }
 
@@ -308,19 +308,19 @@ const handleSave = () => {
 }
 
 .tips-icon {
-  color: var(--p-blue-500);
+  color: var(--color-primary);
   font-size: 1.25rem;
 }
 
 .tips-title {
   font-weight: 700;
-  color: var(--p-blue-700);
+  color: var(--color-primary-text-on-subtle);
 }
 
 .tips-list {
   margin: 0;
   padding-left: 1.25rem;
-  color: var(--p-blue-700);
+  color: var(--color-primary-text-on-subtle);
   font-size: 0.875rem;
   display: flex;
   flex-direction: column;

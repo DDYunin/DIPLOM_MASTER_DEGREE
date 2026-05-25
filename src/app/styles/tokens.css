@@ -1,0 +1,239 @@
+/**
+ * Design tokens — единственный источник цветов приложения.
+ * Светлая тема: :root. Тёмная тема: .my-app-dark (см. useThemeStore).
+ * В компонентах используйте только семантические переменные (--text-color, --surface-card, …).
+ */
+
+/* --- Палитра (светлая) --- */
+:root {
+  --palette-slate-900: #0f172a;
+  --palette-slate-700: #334155;
+  --palette-slate-600: #475569;
+  --palette-slate-500: #64748b;
+  --palette-slate-400: #94a3b8;
+  --palette-slate-300: #cbd5e1;
+  --palette-slate-200: #e2e8f0;
+  --palette-slate-100: #f1f5f9;
+  --palette-slate-50: #f8fafc;
+  --palette-white: #ffffff;
+
+  --palette-blue-800: #1e40af;
+  --palette-blue-700: #1d4ed8;
+  --palette-blue-600: #2563eb;
+  --palette-blue-500: #3b82f6;
+  --palette-blue-400: #60a5fa;
+  --palette-blue-200: #bfdbfe;
+  --palette-blue-100: #dbeafe;
+  --palette-blue-50: #eff6ff;
+
+  --palette-indigo-700: #4338ca;
+  --palette-indigo-100: #e0e7ff;
+
+  --palette-green-700: #15803d;
+  --palette-green-600: #16a34a;
+  --palette-green-500: #22c55e;
+  --palette-green-100: #dcfce7;
+  --palette-green-50: #f0fdf4;
+
+  --palette-yellow-700: #a16207;
+  --palette-yellow-600: #ca8a04;
+  --palette-yellow-100: #fef9c3;
+  --palette-yellow-50: #fefce8;
+
+  --palette-gray-100: #f3f4f6;
+  --palette-red-700: #b91c1c;
+
+  --palette-orange-700: #c2410c;
+  --palette-orange-600: #ea580c;
+  --palette-orange-500: #f97316;
+  --palette-orange-100: #ffedd5;
+  --palette-orange-50: #fff7ed;
+
+  --palette-purple-700: #7e22ce;
+  --palette-purple-500: #a855f7;
+  --palette-purple-100: #f3e8ff;
+  --palette-purple-50: #faf5ff;
+
+  --palette-red-600: #dc2626;
+  --palette-red-500: #ef4444;
+  --palette-red-200: #fecaca;
+  --palette-red-100: #fee2e2;
+  --palette-red-50: #fef2f2;
+
+  /* --- Семантика: текст и поверхности --- */
+  --text-color: var(--palette-slate-900);
+  --text-color-secondary: var(--palette-slate-500);
+  --text-color-muted: var(--palette-slate-600);
+  --text-color-emphasis: var(--palette-slate-700);
+  --text-color-placeholder: var(--palette-slate-400);
+  --icon-muted: var(--palette-slate-400);
+
+  --surface-ground: var(--palette-slate-50);
+  --surface-card: var(--palette-white);
+  --surface-elevated: var(--palette-white);
+  --surface-subtle: var(--palette-slate-100);
+  --surface-hover: var(--palette-slate-100);
+  --surface-border: var(--palette-slate-200);
+  --surface-border-strong: var(--palette-slate-300);
+  --surface-border-subtle: var(--palette-slate-100);
+  --surface-media: linear-gradient(
+    135deg,
+    var(--palette-slate-200) 0%,
+    var(--palette-slate-100) 100%
+  );
+
+  /* --- Семантика: primary --- */
+  --color-primary: var(--palette-blue-500);
+  --color-primary-strong: var(--palette-blue-600);
+  --color-primary-focus: var(--palette-blue-400);
+  --color-primary-border: var(--palette-blue-400);
+  --color-primary-subtle: var(--palette-blue-50);
+  --color-primary-soft: var(--palette-blue-100);
+  --color-primary-muted: var(--palette-blue-100);
+  --color-primary-logo-bg: var(--palette-indigo-100);
+  --color-primary-icon-muted: var(--palette-blue-400);
+  --color-primary-text-on-subtle: var(--palette-blue-700);
+  --color-primary-text-deep: var(--palette-blue-800);
+
+  /* --- Семантика: статусы --- */
+  --color-danger: var(--palette-red-500);
+  --color-danger-strong: var(--palette-red-600);
+  --color-danger-subtle: var(--palette-red-50);
+  --color-danger-muted: var(--palette-red-100);
+  --color-danger-border: var(--palette-red-200);
+
+  --color-success: var(--palette-green-500);
+  --color-success-strong: var(--palette-green-600);
+  --color-success-subtle: var(--palette-green-50);
+  --color-success-muted: var(--palette-green-100);
+  --color-success-text: var(--palette-green-700);
+
+  --color-warning: var(--palette-orange-500);
+  --color-warning-strong: var(--palette-orange-600);
+  --color-warning-subtle: var(--palette-orange-50);
+  --color-warning-muted: var(--palette-orange-100);
+  --color-warning-text: var(--palette-orange-700);
+
+  --color-caution: var(--palette-yellow-600);
+  --color-caution-subtle: var(--palette-yellow-50);
+  --color-caution-muted: var(--palette-yellow-100);
+  --color-caution-text: var(--palette-yellow-700);
+
+  --color-neutral-muted: var(--palette-gray-100);
+  --color-danger-text: var(--palette-red-700);
+
+  --color-accent-purple: var(--palette-purple-500);
+  --color-accent-purple-subtle: var(--palette-purple-50);
+  --color-accent-purple-muted: var(--palette-purple-100);
+  --color-accent-purple-text: var(--palette-purple-700);
+
+  --color-accent-indigo-muted: var(--palette-indigo-100);
+  --color-accent-indigo-text: var(--palette-indigo-700);
+
+  --color-on-primary: var(--palette-white);
+
+  /* --- Радиусы (задаются один раз) --- */
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* --- Тени --- */
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -1px rgb(0 0 0 / 0.03);
+  --shadow-card: 0 4px 12px rgb(0 0 0 / 0.05);
+  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.1);
+  --shadow-panel: -4px 0 15px rgb(0 0 0 / 0.05);
+  --shadow-soft: 0 4px 20px rgb(0 0 0 / 0.03);
+  --shadow-subtle: 0 2px 8px rgb(0 0 0 / 0.02);
+  --shadow-editor: 0 4px 8px rgb(0 0 0 / 0.05);
+  --shadow-profile: 0 2px 4px rgb(0 0 0 / 0.05);
+
+  /* --- Акцентные фоны (прозрачность) --- */
+  --accent-primary-bg: color-mix(in srgb, var(--color-primary) 16%, transparent);
+  --accent-blue-bg: color-mix(in srgb, var(--palette-blue-500) 16%, transparent);
+  --accent-orange-bg: color-mix(in srgb, var(--palette-orange-500) 16%, transparent);
+  --accent-purple-bg: color-mix(in srgb, var(--palette-purple-500) 16%, transparent);
+
+  --overlay-on-contrast: rgb(255 255 255 / 0.4);
+  --overlay-on-contrast-soft: rgb(255 255 255 / 0.1);
+  --overlay-on-contrast-hover: rgb(255 255 255 / 0.2);
+  --overlay-on-contrast-border: var(--color-on-primary);
+
+  --shadow-danger-ring: 0 0 0 0 rgb(239 68 68 / 0.4);
+  --shadow-danger-ring-expanded: 0 0 0 6px rgb(239 68 68 / 0);
+
+  --gradient-hero: linear-gradient(
+    135deg,
+    var(--color-primary-strong) 0%,
+    var(--color-accent-indigo-text) 100%
+  );
+
+  --font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* --- Палитра (тёмная) --- */
+.my-app-dark {
+  --palette-slate-900: #f8fafc;
+  --palette-slate-700: #e2e8f0;
+  --palette-slate-600: #cbd5e1;
+  --palette-slate-500: #94a3b8;
+  --palette-slate-400: #64748b;
+  --palette-slate-300: #475569;
+  --palette-slate-200: #334155;
+  --palette-slate-100: #1e293b;
+  --palette-slate-50: #0f172a;
+  --palette-white: #1e293b;
+
+  --palette-blue-800: #93c5fd;
+  --palette-blue-700: #93c5fd;
+  --palette-blue-600: #60a5fa;
+  --palette-blue-500: #3b82f6;
+  --palette-blue-400: #60a5fa;
+  --palette-blue-200: #1e3a5f;
+  --palette-blue-100: rgb(59 130 246 / 0.2);
+  --palette-blue-50: rgb(59 130 246 / 0.12);
+
+  --palette-indigo-700: #a5b4fc;
+  --palette-indigo-100: rgb(99 102 241 / 0.2);
+
+  --palette-green-700: #86efac;
+  --palette-green-600: #4ade80;
+  --palette-green-500: #22c55e;
+  --palette-green-100: rgb(34 197 94 / 0.2);
+  --palette-green-50: rgb(34 197 94 / 0.12);
+
+  --palette-yellow-700: #fde047;
+  --palette-yellow-600: #facc15;
+  --palette-yellow-100: rgb(250 204 21 / 0.2);
+  --palette-yellow-50: rgb(250 204 21 / 0.12);
+
+  --palette-gray-100: #334155;
+  --palette-red-700: #fca5a5;
+
+  --palette-orange-700: #fdba74;
+  --palette-orange-600: #fb923c;
+  --palette-orange-500: #f97316;
+  --palette-orange-100: rgb(249 115 22 / 0.2);
+  --palette-orange-50: rgb(249 115 22 / 0.12);
+
+  --palette-purple-700: #d8b4fe;
+  --palette-purple-500: #a855f7;
+  --palette-purple-100: rgb(168 85 247 / 0.2);
+  --palette-purple-50: rgb(168 85 247 / 0.12);
+
+  --palette-red-600: #f87171;
+  --palette-red-500: #ef4444;
+  --palette-red-200: rgb(248 113 113 / 0.35);
+  --palette-red-100: rgb(248 113 113 / 0.2);
+  --palette-red-50: rgb(248 113 113 / 0.12);
+
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.35);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -1px rgb(0 0 0 / 0.25);
+  --shadow-card: 0 4px 12px rgb(0 0 0 / 0.35);
+  --shadow-card-hover: 0 2px 4px rgb(0 0 0 / 0.4);
+  --shadow-panel: -4px 0 15px rgb(0 0 0 / 0.4);
+  --shadow-soft: 0 4px 20px rgb(0 0 0 / 0.3);
+  --shadow-subtle: 0 2px 8px rgb(0 0 0 / 0.25);
+  --shadow-editor: 0 4px 8px rgb(0 0 0 / 0.35);
+  --shadow-profile: 0 2px 4px rgb(0 0 0 / 0.35);
+}

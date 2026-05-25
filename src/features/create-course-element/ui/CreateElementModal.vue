@@ -222,7 +222,7 @@ watch(visible, (newVal) => {
 }
 .field-label {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 0.875rem;
 }
 .w-full {
@@ -235,10 +235,10 @@ watch(visible, (newVal) => {
   margin-right: 0.5rem;
 }
 .required {
-  color: var(--p-red-500);
+  color: var(--color-danger);
 }
 .error-text {
-  color: var(--p-red-500);
+  color: var(--color-danger);
   font-size: 0.75rem;
 }
 .flex-align-center {
@@ -250,28 +250,28 @@ watch(visible, (newVal) => {
 .custom-fileupload :deep(.p-button) {
   width: 100%;
   justify-content: center;
-  background-color: var(--p-surface-50);
-  color: var(--p-text-color);
-  border: 1px solid var(--p-surface-300);
+  background-color: var(--surface-ground);
+  color: var(--text-color);
+  border: 1px solid var(--surface-border-strong);
 }
 .custom-fileupload :deep(.p-button:hover) {
-  background-color: var(--p-surface-100);
-  border-color: var(--p-primary-400);
+  background-color: var(--surface-subtle);
+  border-color: var(--color-primary-focus);
 }
 
 .quiz-info-box {
-  background-color: var(--p-blue-50);
-  border: 1px solid var(--p-blue-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--color-primary-subtle);
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--radius-md);
   padding: 1.25rem;
   display: flex;
   gap: 1rem;
   align-items: flex-start;
-  color: var(--p-blue-800);
+  color: var(--color-primary-text-deep);
 }
 .info-icon {
   font-size: 1.5rem;
-  color: var(--p-blue-600);
+  color: var(--color-primary-strong);
 }
 .info-text strong {
   display: block;
@@ -282,6 +282,6 @@ watch(visible, (newVal) => {
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.4;
-  color: var(--p-blue-700);
+  color: var(--color-primary-text-on-subtle);
 }
 </style>

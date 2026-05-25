@@ -14,19 +14,19 @@ const props = defineProps<{
 
 // Цветовое кодирование иконок в стиле Teacher Portal
 const getElementIconConfig = (type: CourseElement['type'], status: CourseElement['status']) => {
-  if (status === 'locked') return { class: 'pi pi-lock', color: 'var(--p-surface-400)' }
+  if (status === 'locked') return { class: 'pi pi-lock', color: 'var(--icon-muted)' }
 
   switch (type) {
     case 'video':
-      return { class: 'pi pi-play-circle', color: 'var(--p-blue-500)' }
+      return { class: 'pi pi-play-circle', color: 'var(--color-primary)' }
     case 'pdf':
-      return { class: 'pi pi-file-pdf', color: 'var(--p-orange-500)' }
+      return { class: 'pi pi-file-pdf', color: 'var(--color-warning)' }
     case 'quiz':
-      return { class: 'pi pi-question-circle', color: 'var(--p-purple-500)' }
+      return { class: 'pi pi-question-circle', color: 'var(--color-accent-purple)' }
     case 'assignment':
-      return { class: 'pi pi-clipboard', color: 'var(--p-primary-500)' }
+      return { class: 'pi pi-clipboard', color: 'var(--color-primary)' }
     default:
-      return { class: 'pi pi-file', color: 'var(--p-text-color)' }
+      return { class: 'pi pi-file', color: 'var(--text-color)' }
   }
 }
 
@@ -186,22 +186,22 @@ const handleElementClick = (element: CourseElement) => {
 }
 
 .module-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius-xl);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
   transition: all 0.2s;
 }
 
 .module-card.is-current {
-  border-color: var(--p-primary-300);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border-color: var(--color-primary-border);
+  box-shadow: var(--shadow-soft);
 }
 
 .module-card.is-locked {
   opacity: 0.7;
-  background-color: var(--p-surface-50);
-  border: 1px dashed var(--p-surface-200);
+  background-color: var(--surface-ground);
+  border: 1px dashed var(--surface-border);
 }
 
 .module-header {
@@ -218,7 +218,7 @@ const handleElementClick = (element: CourseElement) => {
 .module-order {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 1px;
 }
 
@@ -231,8 +231,8 @@ const handleElementClick = (element: CourseElement) => {
 .completed-check {
   width: 20px;
   height: 20px;
-  background-color: var(--p-primary-500);
-  color: var(--p-surface-0);
+  background-color: var(--color-primary);
+  color: var(--surface-card);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -244,15 +244,15 @@ const handleElementClick = (element: CourseElement) => {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .module-locked-state {
   padding: 2rem;
   text-align: center;
-  border-radius: var(--p-border-radius);
-  border: 1px dashed var(--p-surface-300);
-  color: var(--p-text-muted-color);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--surface-border-strong);
+  color: var(--text-color-muted);
   font-style: italic;
 }
 
@@ -267,19 +267,19 @@ const handleElementClick = (element: CourseElement) => {
   display: flex;
   align-items: center;
   padding: 1rem;
-  border-radius: var(--p-border-radius-lg);
-  border: 1px solid var(--p-surface-200);
-  background-color: var(--p-surface-0);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--surface-border);
+  background-color: var(--surface-card);
   transition: border-color 0.2s;
 }
 
 .element-item.is-current {
-  border-color: var(--p-primary-500);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-subtle);
 }
 
 .element-item.is-locked {
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
 }
 
 .element-icon {
@@ -290,8 +290,8 @@ const handleElementClick = (element: CourseElement) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--p-surface-50);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-ground);
+  border-radius: var(--radius-md);
 }
 
 .element-info {
@@ -303,17 +303,17 @@ const handleElementClick = (element: CourseElement) => {
 
 .element-title {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 1rem;
 }
 
 .is-locked .element-title {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .element-meta {
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 500;
 }
 
@@ -326,7 +326,7 @@ const handleElementClick = (element: CourseElement) => {
 }
 
 .text-primary {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
   font-size: 1.25rem;
 }
 
@@ -334,7 +334,7 @@ const handleElementClick = (element: CourseElement) => {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: var(--p-surface-300);
+  background-color: var(--surface-border-strong);
 }
 
 /* --- SIDEBAR COLUMN --- */
@@ -345,9 +345,9 @@ const handleElementClick = (element: CourseElement) => {
 }
 
 .sidebar-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius-xl);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
 }
 
@@ -355,7 +355,7 @@ const handleElementClick = (element: CourseElement) => {
   margin: 0 0 1.5rem 0;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 1px;
   display: flex;
   align-items: center;
@@ -378,7 +378,7 @@ const handleElementClick = (element: CourseElement) => {
   top: 10px;
   bottom: 10px;
   width: 2px;
-  background-color: var(--p-surface-200);
+  background-color: var(--surface-border);
   z-index: 0;
 }
 
@@ -393,31 +393,31 @@ const handleElementClick = (element: CourseElement) => {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: var(--p-surface-0);
-  border: 2px solid var(--p-surface-300);
+  background-color: var(--surface-card);
+  border: 2px solid var(--surface-border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   font-size: 0.75rem;
-  color: var(--p-surface-400);
+  color: var(--icon-muted);
 }
 
 .step-item.is-completed .step-indicator {
-  background-color: var(--p-primary-500);
-  border-color: var(--p-primary-500);
-  color: white;
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .step-item.is-current .step-indicator {
-  border-color: var(--p-primary-500);
+  border-color: var(--color-primary);
 }
 
 .current-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--p-primary-500);
+  background-color: var(--color-primary);
 }
 
 .step-content {
@@ -430,22 +430,22 @@ const handleElementClick = (element: CourseElement) => {
 .step-label {
   font-size: 0.65rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 0.5px;
 }
 
 .step-item.is-current .step-label {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 
 .step-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .step-item.is-locked .step-title {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .step-progress {
@@ -455,7 +455,7 @@ const handleElementClick = (element: CourseElement) => {
 
 .overall-progress {
   padding-top: 1.5rem;
-  border-top: 1px solid var(--p-surface-200);
+  border-top: 1px solid var(--surface-border);
 }
 
 .progress-header {
@@ -465,7 +465,7 @@ const handleElementClick = (element: CourseElement) => {
   margin-bottom: 0.75rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 0.5px;
 }
 

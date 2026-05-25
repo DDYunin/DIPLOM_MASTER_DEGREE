@@ -29,9 +29,9 @@ defineSlots<{
 
 <style scoped>
 .settings-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius-xl);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl);
   overflow: hidden;
 }
 
@@ -40,20 +40,20 @@ defineSlots<{
   align-items: center;
   gap: 0.75rem;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--p-surface-100);
-  background-color: var(--p-surface-50);
+  border-bottom: 1px solid var(--surface-border-subtle);
+  background-color: var(--surface-ground);
 }
 
 .header-icon {
   font-size: 1.25rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .header-title {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .card-body {
@@ -62,7 +62,7 @@ defineSlots<{
 
 .card-footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid var(--p-surface-100);
+  border-top: 1px solid var(--surface-border-subtle);
   display: flex;
   justify-content: flex-end;
 }

@@ -58,11 +58,11 @@ const adminUsersTableStore = useAdminUsersTable()
 .page-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
   margin: 0 0 0.5rem 0;
 }
 .page-subtitle {
-  color: #64748b;
+  color: var(--text-color-secondary);
   margin: 0;
 }
 .page-actions {
@@ -70,7 +70,7 @@ const adminUsersTableStore = useAdminUsersTable()
   gap: 1rem;
 }
 .btn-add {
-  background: var(--p-primary-color);
+  background: var(--color-primary-strong);
   border: none;
 }
 
@@ -81,10 +81,10 @@ const adminUsersTableStore = useAdminUsersTable()
   margin-bottom: 2rem;
 }
 .stat-card {
-  background: white;
+  background: var(--surface-card);
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 .stat-top {
   display: flex;
@@ -93,14 +93,14 @@ const adminUsersTableStore = useAdminUsersTable()
   margin-bottom: 1rem;
 }
 .stat-title {
-  color: #64748b;
+  color: var(--text-color-secondary);
   font-size: 0.875rem;
   margin: 0 0 0.5rem 0;
 }
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
   margin: 0;
 }
 .stat-icon {
@@ -113,9 +113,9 @@ const adminUsersTableStore = useAdminUsersTable()
 }
 
 .bg-blue-100 {
-  background: #dbeafe;
+  background: var(--color-primary-muted);
 }
 .text-blue-600 {
-  color: #2563eb;
+  color: var(--color-primary-strong);
 }
 </style>

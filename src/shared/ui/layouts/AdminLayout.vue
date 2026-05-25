@@ -33,15 +33,15 @@ defineSlots<{
   display: flex;
   height: 100vh;
   width: 100vw;
-  background-color: #f8fafc;
+  background-color: var(--surface-ground);
   overflow: hidden;
   font-family: var(--font-family);
 }
 
 .sidebar-container {
   width: 260px;
-  background: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  background: var(--surface-elevated);
+  border-right: 1px solid var(--surface-border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -56,8 +56,8 @@ defineSlots<{
 
 .header-container {
   height: 72px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--surface-border);
   display: flex;
   align-items: center;
   padding: 0 2rem;

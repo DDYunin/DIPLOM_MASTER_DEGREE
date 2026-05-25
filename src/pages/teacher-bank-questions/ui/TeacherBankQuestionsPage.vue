@@ -107,24 +107,24 @@ const goBack = () => {
 }
 
 .crumb {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 
 .crumb:hover {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 
 .crumb.active {
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-weight: 600;
   pointer-events: none;
 }
 
 .separator {
-  color: var(--p-surface-400);
+  color: var(--icon-muted);
 }
 
 /* --- HEADER --- */
@@ -147,13 +147,13 @@ const goBack = () => {
   margin: 0;
   font-size: 2.25rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   letter-spacing: -0.5px;
 }
 
 .page-subtitle {
   margin: 0;
   font-size: 1rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 </style>

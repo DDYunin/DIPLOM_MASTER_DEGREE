@@ -100,14 +100,12 @@ const handleSubmit = async () => {
 
 <style scoped>
 .auth-card {
-  background: #ffffff;
+  background: var(--surface-card);
   padding: 2.5rem 2rem;
   border-radius: 12px;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.05),
-    0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-md);
   /* Синяя полоска снизу, как на макете */
-  border-bottom: 4px solid var(--p-primary-color);
+  border-bottom: 4px solid var(--color-primary-strong);
 }
 
 .header {
@@ -116,7 +114,7 @@ const handleSubmit = async () => {
 }
 
 .logo-box {
-  background-color: #e0e7ff; /* Светло-синий фон */
+  background-color: var(--color-primary-logo-bg);
   width: 48px;
   height: 48px;
   border-radius: 12px;
@@ -128,19 +126,19 @@ const handleSubmit = async () => {
 
 .logo-icon {
   font-size: 1.5rem;
-  color: var(--p-primary-color);
+  color: var(--color-primary);
 }
 
 .title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-color);
   margin: 0 0 0.5rem 0;
 }
 
 .subtitle-link {
   font-size: 0.875rem;
-  color: var(--p-primary-color);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -159,7 +157,7 @@ const handleSubmit = async () => {
 label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-color);
 }
 
 .password-header {
@@ -170,7 +168,7 @@ label {
 
 .forgot-link {
   font-size: 0.875rem;
-  color: var(--p-primary-color);
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
 }
@@ -185,7 +183,7 @@ label {
 .remember-label {
   font-size: 0.875rem;
   font-weight: 400;
-  color: #475569;
+  color: var(--text-color-muted);
   cursor: pointer;
 }
 

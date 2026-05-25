@@ -199,15 +199,15 @@ const handleCancel = () => {
 
 /* --- КАРТОЧКА --- */
 .settings-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 .card-header {
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--p-surface-100);
+  border-bottom: 1px solid var(--surface-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -219,11 +219,11 @@ const handleCancel = () => {
   gap: 0.75rem;
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .header-title i {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 1.25rem;
 }
 
@@ -247,8 +247,8 @@ const handleCancel = () => {
   position: relative;
   width: 90px;
   height: 90px;
-  background-color: var(--p-orange-100);
-  color: var(--p-orange-700);
+  background-color: var(--color-warning-muted);
+  color: var(--color-warning-text);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -264,20 +264,20 @@ const handleCancel = () => {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-profile);
 }
 
 .avatar-edit-btn:hover {
-  background-color: var(--p-surface-50);
-  color: var(--p-primary-500);
+  background-color: var(--surface-ground);
+  color: var(--color-primary);
 }
 
 /* --- ПОЛЯ ВВОДА --- */
@@ -303,7 +303,7 @@ const handleCancel = () => {
 .field-group label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -335,15 +335,15 @@ const handleCancel = () => {
 /* Приглушаем текст в disabled инпутах, чтобы было понятнее */
 :deep(.p-inputtext:disabled) {
   opacity: 0.7;
-  background-color: var(--p-surface-50);
+  background-color: var(--surface-ground);
 }
 
 /* --- ПОДСКАЗКА (HINT) --- */
 .hint-box {
-  background-color: var(--p-blue-50);
-  color: var(--p-blue-700);
-  border: 1px solid var(--p-blue-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary-text-on-subtle);
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--radius-md);
   padding: 1rem;
   font-size: 0.875rem;
   font-weight: 500;

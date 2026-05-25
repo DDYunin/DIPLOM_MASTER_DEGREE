@@ -37,13 +37,13 @@ import { TeacherProfileSettings } from '@/widgets/teacher-profile-settings'
   margin: 0;
   font-size: 2rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   letter-spacing: -0.5px;
 }
 
 .page-subtitle {
   margin: 0;
   font-size: 1rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 </style>

@@ -124,7 +124,7 @@ const getStatusSeverity = (status: string) => {
 .page-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   margin: 0;
 }
 
@@ -132,7 +132,7 @@ const getStatusSeverity = (status: string) => {
 .tabs-navigation {
   display: flex;
   gap: 2rem;
-  border-bottom: 1px solid var(--p-surface-200);
+  border-bottom: 1px solid var(--surface-border);
   margin-bottom: 2rem;
 }
 
@@ -141,7 +141,7 @@ const getStatusSeverity = (status: string) => {
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 0;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
@@ -155,19 +155,19 @@ const getStatusSeverity = (status: string) => {
 }
 
 .tab-link:hover {
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .tab-link--active {
-  color: var(--p-primary-500);
-  border-bottom-color: var(--p-primary-500);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 /* --- TAB CONTAINER --- */
 .tab-container {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 2rem;
   min-height: 500px;
 }

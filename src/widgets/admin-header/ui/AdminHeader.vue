@@ -29,6 +29,6 @@ import { ThemeToggler } from '@/features/toggle-theme'
 }
 
 .icon-btn {
-  color: #64748b;
+  color: var(--text-color-secondary);
 }
 </style>

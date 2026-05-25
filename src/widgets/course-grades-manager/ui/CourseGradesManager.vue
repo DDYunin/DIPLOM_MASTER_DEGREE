@@ -26,9 +26,9 @@ const statuses = [
 
 // Хелпер для раскраски Total %
 const getTotalColor = (percent: number) => {
-  if (percent >= 90) return 'var(--p-green-600)'
-  if (percent >= 70) return 'var(--p-orange-600)'
-  return 'var(--p-red-600)'
+  if (percent >= 90) return 'var(--color-success-strong)'
+  if (percent >= 70) return 'var(--color-warning-strong)'
+  return 'var(--color-danger-strong)'
 }
 </script>
 
@@ -123,7 +123,7 @@ const getTotalColor = (percent: number) => {
             <div class="student-cell">
               <div
                 class="avatar"
-                :style="{ backgroundColor: data.student.avatarColor, color: 'var(--p-text-color)' }"
+                :style="{ backgroundColor: data.student.avatarColor, color: 'var(--text-color)' }"
               >
                 <!-- Если ID = 2, показываем картинку как на макете у Sarah Smith, либо инициалы -->
                 <img
@@ -270,9 +270,9 @@ const getTotalColor = (percent: number) => {
 }
 
 .stat-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
   display: flex;
   align-items: center;
@@ -282,7 +282,7 @@ const getTotalColor = (percent: number) => {
 .stat-icon-wrapper {
   width: 48px;
   height: 48px;
-  border-radius: var(--p-border-radius);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -291,31 +291,31 @@ const getTotalColor = (percent: number) => {
 
 /* Цвета иконок статистики на основе токенов Aura */
 .bg-blue {
-  background-color: var(--p-blue-50);
+  background-color: var(--color-primary-subtle);
 }
 .text-blue {
-  color: var(--p-blue-500);
+  color: var(--color-primary);
 }
 
 .bg-green {
-  background-color: var(--p-green-50);
+  background-color: var(--color-success-subtle);
 }
 .text-green {
-  color: var(--p-green-500);
+  color: var(--color-success);
 }
 
 .bg-yellow {
-  background-color: var(--p-yellow-50);
+  background-color: var(--color-caution-subtle);
 }
 .text-yellow {
-  color: var(--p-yellow-600);
+  color: var(--color-caution);
 }
 
 .bg-red {
-  background-color: var(--p-red-50);
+  background-color: var(--color-danger-subtle);
 }
 .text-red {
-  color: var(--p-red-500);
+  color: var(--color-danger);
 }
 
 .stat-info {
@@ -326,7 +326,7 @@ const getTotalColor = (percent: number) => {
 
 .stat-label {
   font-size: 0.875rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 500;
 }
 
@@ -339,7 +339,7 @@ const getTotalColor = (percent: number) => {
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   line-height: 1;
 }
 
@@ -348,21 +348,21 @@ const getTotalColor = (percent: number) => {
   font-weight: 600;
 }
 .trend-up {
-  color: var(--p-green-500);
+  color: var(--color-success);
 }
 
 /* --- TABLE SECTION --- */
 .table-container {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 /* Кастомизация заголовков колонок */
 .grades-table :deep(th) {
   background-color: transparent;
-  border-bottom: 1px solid var(--p-surface-200);
+  border-bottom: 1px solid var(--surface-border);
   padding: 1.25rem 1rem;
 }
 
@@ -372,7 +372,7 @@ const getTotalColor = (percent: number) => {
   align-items: center;
   gap: 0.25rem;
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 700;
@@ -385,7 +385,7 @@ const getTotalColor = (percent: number) => {
 }
 
 .grades-table :deep(td) {
-  border-bottom: 1px solid var(--p-surface-100);
+  border-bottom: 1px solid var(--surface-subtle);
   padding: 1rem;
 }
 
@@ -421,18 +421,18 @@ const getTotalColor = (percent: number) => {
 
 .student-name {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-size: 0.95rem;
 }
 
 .student-email {
   font-size: 0.8rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .group-tag {
-  background-color: var(--p-surface-100);
-  color: var(--p-text-color);
+  background-color: var(--surface-subtle);
+  color: var(--text-color);
   font-weight: 600;
   font-size: 0.75rem;
   letter-spacing: 0.5px;
@@ -440,17 +440,17 @@ const getTotalColor = (percent: number) => {
 
 .grade-text {
   font-size: 0.95rem;
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-weight: 500;
 }
 
 .empty-grade {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .late-tag {
-  background-color: var(--p-red-100);
-  color: var(--p-red-600);
+  background-color: var(--color-danger-muted);
+  color: var(--color-danger-strong);
   font-weight: 700;
 }
 

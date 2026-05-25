@@ -63,7 +63,7 @@ const groups = [
         paginator
         :rows="5"
         class="custom-table"
-        pt:headerRow:style="background-color: var(--p-surface-50);"
+        pt:headerRow:style="background-color: var(--surface-ground);"
       >
         <!-- Колонка: Студент -->
         <Column field="name" header="STUDENT NAME (F.I.O.)" style="width: 30%">
@@ -71,7 +71,7 @@ const groups = [
             <div class="student-cell">
               <div
                 class="avatar"
-                :style="{ backgroundColor: data.avatarColor, color: 'var(--p-text-color)' }"
+                :style="{ backgroundColor: data.avatarColor, color: 'var(--text-color)' }"
               >
                 <!-- Если есть фото, выводим img, иначе инициалы -->
                 <span v-if="data.id !== '2'">{{ data.avatarInitials }}</span>
@@ -179,9 +179,9 @@ const groups = [
 }
 
 .stat-card {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -192,7 +192,7 @@ const groups = [
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -204,15 +204,15 @@ const groups = [
 .stat-value {
   font-size: 2.5rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   line-height: 1;
 }
 
 /* --- TABLE SECTION --- */
 .table-section {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
 }
 
@@ -227,12 +227,12 @@ const groups = [
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .section-subtitle {
   margin: 0 0 1.5rem 0;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-size: 0.875rem;
 }
 
@@ -246,15 +246,15 @@ const groups = [
 
 .custom-table :deep(th) {
   font-size: 0.75rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   background-color: transparent;
-  border-bottom: 1px solid var(--p-surface-200);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .custom-table :deep(td) {
-  border-bottom: 1px solid var(--p-surface-100);
+  border-bottom: 1px solid var(--surface-subtle);
   padding: 1rem 0.5rem;
 }
 
@@ -284,18 +284,18 @@ const groups = [
 
 .student-name {
   font-weight: 600;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .text-muted {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 /* --- ENROLL SECTION --- */
 .enroll-section {
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
   padding: 1.5rem;
 }
 
@@ -319,7 +319,7 @@ const groups = [
 .form-group label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }

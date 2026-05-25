@@ -29,8 +29,8 @@ const goBack = () => {
 <template>
   <div class="course-page">
     <div v-if="store.isDetailsLoading || !store.currentCourseDetails" class="loading-state">
-      <Skeleton height="200px" borderRadius="var(--p-border-radius-xl)" />
-      <Skeleton height="500px" borderRadius="var(--p-border-radius-xl)" />
+      <Skeleton height="200px" borderRadius="var(--radius-xl)" />
+      <Skeleton height="500px" borderRadius="var(--radius-xl)" />
     </div>
 
     <template v-else>
@@ -132,7 +132,7 @@ const goBack = () => {
 .back-btn {
   align-self: flex-start;
   padding-left: 0;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   font-weight: 600;
 }
 
@@ -158,7 +158,7 @@ const goBack = () => {
 
 .course-code {
   font-weight: 600;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 0.5px;
 }
 
@@ -166,23 +166,23 @@ const goBack = () => {
   margin: 0 0 1rem 0;
   font-size: 3rem;
   font-weight: 800;
-  color: var(--p-text-color);
+  color: var(--text-color);
   line-height: 1.1;
 }
 
 .course-desc {
   margin: 0;
   font-size: 1.125rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   line-height: 1.6;
 }
 
 /* Stats Box */
 .header-stats {
   display: flex;
-  background-color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--p-border-radius-xl);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl);
   padding: 1.5rem 2.5rem;
   gap: 2.5rem;
 }
@@ -197,26 +197,26 @@ const goBack = () => {
 .stat-label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   letter-spacing: 1px;
 }
 
 .stat-value {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .stat-divider {
   width: 1px;
-  background-color: var(--p-surface-200);
+  background-color: var(--surface-border);
 }
 
 /* Tabs (Teacher Style) */
 .course-tabs {
   display: flex;
   gap: 2rem;
-  border-bottom: 1px solid var(--p-surface-200);
+  border-bottom: 1px solid var(--surface-border);
   margin-top: 1rem;
 }
 
@@ -227,28 +227,28 @@ const goBack = () => {
   padding: 0.75rem 0;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   cursor: pointer;
   transition: all 0.2s;
   margin-bottom: -1px;
 }
 
 .tab-btn:hover {
-  color: var(--p-text-color);
+  color: var(--text-color);
 }
 
 .tab-btn.active {
-  color: var(--p-primary-500);
-  border-bottom-color: var(--p-primary-500);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
 }
 
 .placeholder-tab {
   padding: 4rem;
   text-align: center;
-  color: var(--p-text-muted-color);
-  background-color: var(--p-surface-50);
-  border-radius: var(--p-border-radius-xl);
-  border: 1px dashed var(--p-surface-200);
+  color: var(--text-color-muted);
+  background-color: var(--surface-ground);
+  border-radius: var(--radius-xl);
+  border: 1px dashed var(--surface-border);
 }
 
 @media (max-width: 768px) {

@@ -97,7 +97,7 @@ const save = () => {}
   justify-content: space-between;
   align-items: flex-end;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--p-surface-200);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .header-left {
@@ -116,22 +116,22 @@ const save = () => {}
 }
 
 .crumb {
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
 }
 
 .crumb:hover {
-  color: var(--p-primary-500);
+  color: var(--color-primary);
 }
 .crumb.active {
-  color: var(--p-text-color);
+  color: var(--text-color);
   font-weight: 600;
   pointer-events: none;
 }
 .separator {
-  color: var(--p-surface-400);
+  color: var(--icon-muted);
 }
 
 .title-row {
@@ -144,20 +144,20 @@ const save = () => {}
   margin: 0;
   font-size: 2rem;
   font-weight: 700;
-  color: var(--p-text-color);
+  color: var(--text-color);
   letter-spacing: -0.5px;
 }
 
 .status-badge {
-  background-color: var(--p-yellow-100);
-  color: var(--p-yellow-700);
+  background-color: var(--color-caution-muted);
+  color: var(--color-caution-text);
   font-weight: 700;
 }
 
 .page-subtitle {
   margin: 0;
   font-size: 1rem;
-  color: var(--p-text-muted-color);
+  color: var(--text-color-muted);
 }
 
 .header-right {
