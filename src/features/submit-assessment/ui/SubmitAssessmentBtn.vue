@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import { useAssessmentSessionStore } from '@/entities/assessment-session'
 import { useNotifications } from '@/shared/model'
 
+const { t } = useI18n()
 const store = useAssessmentSessionStore()
 const router = useRouter()
 const notifications = useNotifications()
@@ -37,11 +39,7 @@ const executeSubmit = () => {
   isDialogVisible.value = false
   store.stopTimer()
 
-  notifications.showToast(
-    'success',
-    'Assessment Submitted!',
-    'Your responses have been successfully recorded.'
-  )
+  notifications.showToast('success', t('assessment.submittedTitle'), t('assessment.submittedDetail'))
 
   if (store.session?.courseId) {
     // Возвращаемся на страницу курса
@@ -58,7 +56,7 @@ const executeSubmit = () => {
 <template>
   <!-- Главная кнопка на панели (Question Map) -->
   <Button
-    label="Finish and Submit"
+    :label="t('assessment.finishSubmit')"
     :severity="isAllAnswered ? 'success' : 'primary'"
     class="submit-btn w-full"
     @click="confirmSubmit"
@@ -68,7 +66,7 @@ const executeSubmit = () => {
   <Dialog
     v-model:visible="isDialogVisible"
     modal
-    header="Submit Assessment"
+    :header="t('assessment.submitTitle')"
     :style="{ width: '450px' }"
     :closable="false"
   >
@@ -89,24 +87,21 @@ const executeSubmit = () => {
           <span class="muted-text">You won't be able to change your answers after submission.</span>
         </p>
 
-        <p v-else class="message-text">
-          You still have <strong>{{ unansweredCount }} unanswered</strong> question(s). Are you sure
-          you want to submit your assessment right now?
-        </p>
+        <p v-else class="message-text">{{ t('assessment.submitBody') }}</p>
       </div>
     </div>
 
     <!-- Кнопки управления модалкой -->
     <template #footer>
       <Button
-        label="Return to Test"
+        :label="t('assessment.returnTest')"
         icon="pi pi-times"
         text
         severity="secondary"
         @click="isDialogVisible = false"
       />
       <Button
-        label="Yes, Submit"
+        :label="t('assessment.yesSubmit')"
         icon="pi pi-check"
         :severity="isAllAnswered ? 'primary' : 'danger'"
         @click="executeSubmit"

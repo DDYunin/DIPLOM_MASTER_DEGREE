@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 
-// Мок-данные текущего пользователя (преподавателя)
+const { t } = useI18n()
+
 const personalInfo = ref({
   firstName: 'John',
   lastName: 'Smith',
@@ -53,7 +55,7 @@ const handleCancel = () => {
       <div class="card-header">
         <div class="header-title">
           <i class="pi pi-user"></i>
-          <span>Profile Information</span>
+          <span>{{ t('teacherProfile.profileInfo') }}</span>
         </div>
       </div>
 
@@ -62,7 +64,7 @@ const handleCancel = () => {
         <div class="avatar-section">
           <div class="avatar-circle">
             {{ personalInfo.avatarInitials }}
-            <button class="avatar-edit-btn" aria-label="Edit Avatar">
+            <button class="avatar-edit-btn" :aria-label="t('teacherProfile.editAvatar')">
               <i class="pi pi-camera"></i>
             </button>
           </div>
@@ -99,7 +101,7 @@ const handleCancel = () => {
       <div class="card-header">
         <div class="header-title">
           <i class="pi pi-envelope"></i>
-          <span>Email Configuration</span>
+          <span>{{ t('teacherProfile.emailConfig') }}</span>
         </div>
       </div>
       <div class="card-body">
@@ -116,7 +118,7 @@ const handleCancel = () => {
             <label>NEW EMAIL</label>
             <InputText
               v-model="emailForm.newEmail"
-              placeholder="Enter new email address"
+              :placeholder="t('teacherProfile.newEmail')"
               class="w-full"
             />
           </div>
@@ -124,7 +126,7 @@ const handleCancel = () => {
             <label>CONFIRM NEW EMAIL</label>
             <InputText
               v-model="emailForm.confirmNewEmail"
-              placeholder="Confirm new email address"
+              :placeholder="t('teacherProfile.confirmEmail')"
               class="w-full"
             />
           </div>
@@ -137,7 +139,7 @@ const handleCancel = () => {
       <div class="card-header">
         <div class="header-title">
           <i class="pi pi-lock"></i>
-          <span>Security & Password</span>
+          <span>{{ t('teacherProfile.security') }}</span>
         </div>
       </div>
       <div class="card-body">
@@ -184,8 +186,13 @@ const handleCancel = () => {
 
     <!-- FOOTER: Кнопки действий -->
     <div class="actions-footer">
-      <Button label="Cancel" severity="secondary" outlined @click="handleCancel" />
-      <Button label="Save Changes" icon="pi pi-check" severity="success" @click="handleSave" />
+      <Button :label="t('common.cancel')" severity="secondary" outlined @click="handleCancel" />
+      <Button
+        :label="t('common.saveChanges')"
+        icon="pi pi-check"
+        severity="success"
+        @click="handleSave"
+      />
     </div>
   </div>
 </template>

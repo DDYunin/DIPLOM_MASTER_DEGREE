@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
@@ -9,6 +10,7 @@ import Skeleton from 'primevue/skeleton'
 import { useUserStore } from '@/entities/user'
 import { SettingsCard } from '@/shared/ui'
 
+const { t } = useI18n()
 const store = useUserStore()
 
 const formData = ref({
@@ -69,12 +71,12 @@ const handleSaveProfile = async () => {
 
     <template v-else>
       <!-- Block 1: Profile Information -->
-      <SettingsCard title="Profile Information" icon="pi pi-user">
+      <SettingsCard :title="t('teacherProfile.profileInfo')" icon="pi pi-user">
         <div class="profile-info-body">
           <div class="avatar-section">
             <div class="avatar-wrapper">
               <Avatar :label="userInitials" size="xlarge" shape="circle" class="profile-avatar" />
-              <button class="avatar-edit-btn" aria-label="Edit Avatar">
+              <button class="avatar-edit-btn" :aria-label="t('aria.editAvatar')">
                 <i class="pi pi-camera"></i>
               </button>
             </div>
@@ -82,68 +84,73 @@ const handleSaveProfile = async () => {
 
           <div class="fields-grid">
             <div class="field-group">
-              <label>LAST NAME</label>
+              <label>{{ t('teacherProfile.lastName') }}</label>
               <InputText v-model="formData.lastName" class="w-full" />
             </div>
             <div class="field-group">
-              <label>FIRST NAME</label>
+              <label>{{ t('teacherProfile.firstName') }}</label>
               <InputText v-model="formData.firstName" class="w-full" />
             </div>
             <div class="field-group">
-              <label>PATRONYMIC</label>
+              <label>{{ t('teacherProfile.patronymic') }}</label>
               <InputText v-model="formData.patronymic" class="w-full" />
             </div>
             <div class="field-group">
-              <label>INSTITUTE</label>
+              <label>{{ t('teacherProfile.institute') }}</label>
               <InputText v-model="formData.institute" class="w-full" readonly />
             </div>
             <div class="field-group">
-              <label>MAJOR</label>
+              <label>{{ t('teacherProfile.major') }}</label>
               <InputText v-model="formData.major" class="w-full" readonly />
             </div>
             <div class="field-group">
-              <label>DEPARTMENT</label>
+              <label>{{ t('profileCard.department') }}</label>
               <InputText v-model="formData.department" class="w-full" readonly />
             </div>
             <div class="field-group">
-              <label>GROUP</label>
+              <label>{{ t('teacherProfile.group') }}</label>
               <InputText v-model="formData.group" class="w-full" readonly />
             </div>
             <div class="field-group">
-              <label>STUDENT ID</label>
+              <label>{{ t('teacherProfile.studentId') }}</label>
               <InputText v-model="formData.studentId" class="w-full" readonly />
             </div>
           </div>
         </div>
 
         <template #footer>
-          <Button label="Save Changes" severity="primary" size="small" @click="handleSaveProfile" />
+          <Button
+            :label="t('common.saveChanges')"
+            severity="primary"
+            size="small"
+            @click="handleSaveProfile"
+          />
         </template>
       </SettingsCard>
 
       <!-- Block 2: Email Configuration -->
-      <SettingsCard title="Email Configuration" icon="pi pi-envelope">
+      <SettingsCard :title="t('teacherProfile.emailConfig')" icon="pi pi-envelope">
         <div class="email-body">
           <div class="field-group full-width">
-            <label>CURRENT EMAIL</label>
+            <label>{{ t('teacherProfile.currentEmail') }}</label>
             <div class="p-inputgroup">
               <span class="p-inputgroup-addon"><i class="pi pi-envelope"></i></span>
               <InputText v-model="emailConfig.current" readonly />
             </div>
           </div>
           <div class="field-group">
-            <label>NEW EMAIL</label>
+            <label>{{ t('teacherProfile.newEmail') }}</label>
             <InputText
               v-model="emailConfig.new"
-              placeholder="Enter new email address"
+              :placeholder="t('teacherProfile.newEmail')"
               class="w-full"
             />
           </div>
           <div class="field-group">
-            <label>CONFIRM NEW EMAIL</label>
+            <label>{{ t('teacherProfile.confirmEmail') }}</label>
             <InputText
               v-model="emailConfig.confirm"
-              placeholder="Confirm new email address"
+              :placeholder="t('teacherProfile.confirmEmail')"
               class="w-full"
             />
           </div>
@@ -151,7 +158,7 @@ const handleSaveProfile = async () => {
       </SettingsCard>
 
       <!-- Block 3: Security & Password -->
-      <SettingsCard title="Security & Password" icon="pi pi-lock">
+      <SettingsCard :title="t('teacherProfile.security')" icon="pi pi-lock">
         <div class="security-body">
           <div class="field-group full-width">
             <label>CURRENT PASSWORD</label>

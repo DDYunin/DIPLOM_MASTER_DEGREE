@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { TeacherProfileSettings } from '@/widgets/teacher-profile-settings'
+
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="teacher-profile-page">
     <header class="page-header">
-      <h1 class="page-title">Profile Settings</h1>
-      <p class="page-subtitle">
-        Manage your personal profile, email configuration, and system security.
-      </p>
+      <h1 class="page-title">{{ t('teacherProfile.title') }}</h1>
     </header>
 
     <main class="page-content">

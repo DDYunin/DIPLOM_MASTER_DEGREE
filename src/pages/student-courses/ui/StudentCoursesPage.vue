@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { StudentCourses } from '@/widgets/student-courses'
+
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="student-courses-page">
     <header class="student-courses-page__header">
-      <h1 class="student-courses-page__title">My Courses</h1>
-      <p class="student-courses-page__subtitle">
-        Continue your academic journey and track your semester progress.
-      </p>
+      <h1 class="student-courses-page__title">{{ t('studentCourses.title') }}</h1>
     </header>
 
     <main class="student-courses-page__content">

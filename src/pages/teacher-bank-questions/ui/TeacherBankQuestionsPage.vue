@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 
 import { BankQuestionsTable } from '@/widgets/bank-questions-table'
 import { QuestionEditorModal } from '@/features/question-editor'
 import { useQuestionBankEntityStore, questionBankApi } from '@/entities/question-bank'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const entityStore = useQuestionBankEntityStore()
@@ -55,7 +57,7 @@ const goBack = () => {
 <template>
   <div class="bank-questions-page">
     <nav class="breadcrumbs">
-      <a href="#" class="crumb" @click.prevent="goBack">Question Banks</a>
+      <a href="#" class="crumb" @click.prevent="goBack">{{ t('teacherQuestionBanks.banksBreadcrumb') }}</a>
       <span class="separator">/</span>
       <span class="crumb active" v-if="currentBank">{{ currentBank.title }}</span>
     </nav>
@@ -68,7 +70,7 @@ const goBack = () => {
         </p>
       </div>
       <div class="header-actions">
-        <Button label="Add New Question" icon="pi pi-plus" @click="openCreateModal" />
+        <Button :label="t('teacherQuestionBanks.addQuestion')" icon="pi pi-plus" @click="openCreateModal" />
       </div>
     </header>
 

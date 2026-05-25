@@ -49,23 +49,19 @@ const childType = computed<OrgUnitType>(() => {
   return 'group'
 })
 
-const labels = computed(() => {
-  // Маппинг внутренних типов в красивые названия для UI
-  const typeNames: Record<OrgUnitType, string> = {
-    faculty: 'Faculty / Institute',
-    department: 'Department',
-    fieldOfStudy: 'Field of Study',
-    group: 'Student Group'
-  }
+const typeKey = (type: OrgUnitType) => `adminOrgUnitModal.${type}` as const
 
-  const cType = typeNames[childType.value]
-  const pType = props.parentNode ? typeNames[props.parentNode.type] : 'Root Organization'
+const labels = computed(() => {
+  const cType = t(typeKey(childType.value))
+  const pType = props.parentNode
+    ? t(typeKey(props.parentNode.type))
+    : t('adminOrg.rootOrganization')
 
   return {
-    modalTitle: `Add New ${cType}`,
-    parentLabel: `Parent ${pType}`,
-    nameLabel: `${cType} Name`,
-    btnLabel: `Create ${cType}`
+    modalTitle: t('adminOrg.addTitle', { type: cType }),
+    parentLabel: t('adminOrg.parentLabel', { type: pType }),
+    nameLabel: t('adminOrg.nameLabel', { type: cType }),
+    btnLabel: t('adminOrg.createLabel', { type: cType })
   }
 })
 
@@ -124,32 +120,32 @@ const handleCreate = () => {
         <label>{{ labels.parentLabel }}</label>
         <div class="disabled-input">
           <i class="pi" :class="parentIcon"></i>
-          <span>{{ parentNode ? parentNode.label : 'Root Organization' }}</span>
+          <span>{{ parentNode ? parentNode.label : t('adminOrg.rootOrganization') }}</span>
         </div>
       </div>
 
       <!-- Общее поле: Имя -->
       <div class="form-field mt-3">
         <label>{{ labels.nameLabel }}</label>
-        <InputText v-model="formData.name" placeholder="Enter name..." autofocus />
+        <InputText v-model="formData.name" :placeholder="t('adminOrg.namePlaceholder')" autofocus />
       </div>
 
       <!-- Специфичное поле: Short Name (Только для Факультетов) -->
       <div v-if="childType === 'faculty'" class="form-field mt-3">
-        <label>SHORT NAME / ABBREVIATION</label>
-        <InputText v-model="formData.shortName" placeholder="e.g. ENG" />
+        <label>{{ t('adminOrg.shortName') }}</label>
+        <InputText v-model="formData.shortName" :placeholder="t('adminOrg.codePlaceholder')" />
       </div>
 
       <!-- Специфичное поле: Code (Только для Направлений) -->
       <div v-if="childType === 'fieldOfStudy'" class="form-field mt-3">
-        <label>PROGRAM CODE</label>
-        <InputText v-model="formData.code" placeholder="e.g. SE-09" />
+        <label>{{ t('adminOrg.programCode') }}</label>
+        <InputText v-model="formData.code" :placeholder="t('adminOrg.codePlaceholder')" />
       </div>
     </div>
 
     <template #footer>
       <div class="footer-actions">
-        <Button label="Cancel" text class="cancel-btn" @click="isVisible = false" />
+        <Button :label="t('common.cancel')" text class="cancel-btn" @click="isVisible = false" />
         <Button :label="labels.btnLabel" class="submit-btn" @click="handleCreate" />
       </div>
     </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Stepper from 'primevue/stepper'
 import StepList from 'primevue/steplist'
@@ -10,6 +11,8 @@ import Button from 'primevue/button'
 import ProgressBar from 'primevue/progressbar'
 
 // Управление видимостью через v-model
+const { t } = useI18n()
+
 const visible = defineModel<boolean>('visible', { default: false })
 
 const emit = defineEmits<{
@@ -49,7 +52,7 @@ const finishImport = () => {
   <Dialog
     v-model:visible="visible"
     modal
-    header="Import Question Bank"
+    :header="t('modals.importBank.title')"
     :style="{ width: '600px' }"
     :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
   >
@@ -58,9 +61,9 @@ const finishImport = () => {
       <Stepper value="1">
         <!-- Навигация по шагам -->
         <StepList>
-          <Step value="1">Upload File</Step>
-          <Step value="2">Preview & Map</Step>
-          <Step value="3">Complete</Step>
+          <Step value="1">{{ t('modals.importBank.upload') }}</Step>
+          <Step value="2">{{ t('modals.importBank.preview') }}</Step>
+          <Step value="3">{{ t('modals.importBank.complete') }}</Step>
         </StepList>
 
         <!-- Контент шагов -->
@@ -89,12 +92,17 @@ const finishImport = () => {
               <!-- Состояние загрузки (фейковое) -->
               <div v-else class="uploading-state">
                 <i class="pi pi-spin pi-spinner text-primary text-4xl mb-3"></i>
-                <p class="text-muted">Parsing file contents...</p>
+                <p class="text-muted">{{ t('modals.importBank.parsing') }}</p>
                 <ProgressBar mode="indeterminate" style="height: 6px; width: 100%" />
               </div>
             </div>
             <div class="step-actions justify-end">
-              <Button label="Cancel" severity="secondary" outlined @click="visible = false" />
+              <Button
+                :label="t('common.cancel')"
+                severity="secondary"
+                outlined
+                @click="visible = false"
+              />
             </div>
           </StepPanel>
 
@@ -139,13 +147,17 @@ const finishImport = () => {
 
             <div class="step-actions justify-between">
               <Button
-                label="Back"
+                :label="t('common.back')"
                 severity="secondary"
                 outlined
                 icon="pi pi-arrow-left"
                 @click="activateCallback('1')"
               />
-              <Button label="Import Data" icon="pi pi-check" @click="activateCallback('3')" />
+              <Button
+                :label="t('modals.importBank.importData')"
+                icon="pi pi-check"
+                @click="activateCallback('3')"
+              />
             </div>
           </StepPanel>
 
@@ -159,7 +171,7 @@ const finishImport = () => {
               <p class="success-desc">24 questions have been added to your new question bank.</p>
             </div>
             <div class="step-actions justify-end">
-              <Button label="Finish" @click="finishImport" />
+              <Button :label="t('common.finish')" @click="finishImport" />
             </div>
           </StepPanel>
         </StepPanels>

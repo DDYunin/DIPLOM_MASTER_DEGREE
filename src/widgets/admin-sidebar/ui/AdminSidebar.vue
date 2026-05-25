@@ -16,7 +16,7 @@ const handleLogout = () => {
     <div class="sidebar-top">
       <div class="logo">
         <i class="pi pi-graduation-cap logo-icon"></i>
-        <span class="logo-text">StudLearn</span>
+        <span class="logo-text">{{ t('brand.name') }}</span>
       </div>
 
       <nav class="nav-menu">

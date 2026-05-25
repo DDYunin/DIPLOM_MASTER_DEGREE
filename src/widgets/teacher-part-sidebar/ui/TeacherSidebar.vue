@@ -30,7 +30,7 @@ const toggleSidebar = () => {
       <div class="brand-header">
         <div class="logo">
           <i class="pi pi-graduation-cap logo-icon"></i>
-          <span v-if="!collapsed" class="logo-text">StudLearn</span>
+          <span v-if="!collapsed" class="logo-text">{{ t('brand.name') }}</span>
         </div>
         <!-- Кнопка сворачивания/разворачивания -->
         <Button

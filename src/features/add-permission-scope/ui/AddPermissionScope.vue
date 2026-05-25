@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
@@ -9,6 +10,8 @@ import Tree from 'primevue/tree'
 
 // Мок-данные для дерева иерархии (в реальном приложении придут с бэкенда)
 import { rawTreeData } from '../api/mock'
+
+const { t } = useI18n()
 
 const emit = defineEmits<{
   (e: 'add', groups: string[]): void
@@ -77,7 +80,13 @@ const handleSave = () => {
 </script>
 
 <template>
-  <Button label="Add Permission" icon="pi pi-plus" text class="add-btn" @click="openModal" />
+  <Button
+    :label="t('addPermission.addPermission')"
+    icon="pi pi-plus"
+    text
+    class="add-btn"
+    @click="openModal"
+  />
   <!-- TODO: лишнее дерево, поменять на другой вариант -->
   <Dialog
     v-model:visible="isVisible"
@@ -91,8 +100,8 @@ const handleSave = () => {
   >
     <template #header>
       <div class="header-container">
-        <h2 class="dialog-title">Add Permission Scope</h2>
-        <p class="dialog-subtitle">Select organizations to grant access.</p>
+        <h2 class="dialog-title">{{ t('addPermission.modalTitle') }}</h2>
+        <p class="dialog-subtitle">{{ t('addPermission.subtitle') }}</p>
       </div>
     </template>
 
@@ -101,7 +110,7 @@ const handleSave = () => {
         <InputIcon class="pi pi-search search-icon" />
         <InputText
           v-model="searchQuery"
-          placeholder="Search institutes, departments, or groups..."
+          :placeholder="t('addPermission.searchPlaceholder')"
           class="search-input"
         />
       </IconField>
@@ -125,7 +134,7 @@ const handleSave = () => {
             <!-- Показываем бейджик "Selected" только для полностью выбранных узлов -->
             <div v-if="selectedKeys[slotProps.node.key]?.checked" class="selected-badge">
               <i class="pi pi-check badge-icon"></i>
-              Selected
+              {{ t('common.selected', { count: 1 }) }}
             </div>
           </div>
         </template>
@@ -134,10 +143,17 @@ const handleSave = () => {
 
     <template #footer>
       <div class="footer-container">
-        <span class="selected-count">{{ selectedGroupsCount }} groups selected</span>
+        <span class="selected-count">{{
+          t('addPermission.selectedCount', { count: selectedGroupsCount })
+        }}</span>
         <div class="footer-actions">
-          <Button label="Cancel" text class="cancel-btn" @click="isVisible = false" />
-          <Button label="Add Selected" class="save-btn" icon="pi pi-check" @click="handleSave" />
+          <Button :label="t('common.cancel')" text class="cancel-btn" @click="isVisible = false" />
+          <Button
+            :label="t('addPermission.addSelected')"
+            class="save-btn"
+            icon="pi pi-check"
+            @click="handleSave"
+          />
         </div>
       </div>
     </template>

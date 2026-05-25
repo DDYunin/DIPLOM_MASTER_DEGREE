@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import { LanguageSwitcher } from '@/features/change-language'
 import { ThemeToggler } from '@/features/toggle-theme'
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -12,8 +15,20 @@ import { ThemeToggler } from '@/features/toggle-theme'
       <ThemeToggler />
 
       <!-- Кнопки действий из макета студента -->
-      <Button icon="pi pi-bell" text rounded class="icon-btn" aria-label="Notifications" />
-      <Button icon="pi pi-question-circle" text rounded class="icon-btn" aria-label="Help" />
+      <Button
+        icon="pi pi-bell"
+        text
+        rounded
+        class="icon-btn"
+        :aria-label="t('aria.notifications')"
+      />
+      <Button
+        icon="pi pi-question-circle"
+        text
+        rounded
+        class="icon-btn"
+        :aria-label="t('aria.help')"
+      />
     </div>
   </div>
 </template>

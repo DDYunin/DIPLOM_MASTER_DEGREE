@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import SelectButton from 'primevue/selectbutton'
 import Select from 'primevue/select'
@@ -11,21 +12,22 @@ import { useRouter } from 'vue-router'
 // ✅ Импорт только через Public API сущности
 import { useStudentCourseStore, StudentCourseCard } from '@/entities/course'
 
+const { t } = useI18n()
 const router = useRouter()
 const store = useStudentCourseStore()
 
 const searchQuery = ref('')
 const statusFilter = ref<'Active' | 'Completed'>('Active')
-const statusOptions = [
-  { label: 'Current Courses', value: 'Active' },
-  { label: 'Past Courses', value: 'Completed' }
-]
+const statusOptions = computed(() => [
+  { label: t('studentCourses.current'), value: 'Active' },
+  { label: t('studentCourses.past'), value: 'Completed' }
+])
 
 const sortOption = ref('title')
-const sortOptions = [
-  { label: 'Title (A-Z)', value: 'title' },
-  { label: 'Code', value: 'code' }
-]
+const sortOptions = computed(() => [
+  { label: t('studentCourses.sortTitle'), value: 'title' },
+  { label: t('studentCourses.sortCode'), value: 'code' }
+])
 
 onMounted(() => {
   store.loadCourses()
@@ -75,7 +77,7 @@ const handleSyllabus = (id: string) => {
           <InputIcon class="pi pi-search" />
           <InputText
             v-model="searchQuery"
-            placeholder="Search courses by name or code..."
+            :placeholder="t('studentCourses.searchPlaceholder')"
             class="search-input"
           />
         </IconField>
@@ -87,7 +89,7 @@ const handleSyllabus = (id: string) => {
           :options="sortOptions"
           optionLabel="label"
           optionValue="value"
-          placeholder="Sort By"
+          :placeholder="t('studentCourses.sortBy')"
           class="sort-select"
         />
         <SelectButton
@@ -118,7 +120,7 @@ const handleSyllabus = (id: string) => {
     <!-- Empty State -->
     <div v-else class="empty-state">
       <i class="pi pi-book empty-icon"></i>
-      <p class="empty-text">No courses found matching your criteria.</p>
+      <p class="empty-text">{{ t('common.noData') }}</p>
     </div>
   </div>
 </template>

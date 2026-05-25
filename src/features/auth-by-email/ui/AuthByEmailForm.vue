@@ -7,7 +7,9 @@ import Button from 'primevue/button'
 import { useSessionStore } from '@/entities/session'
 import { useNotifications } from '@/shared/model'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
@@ -44,7 +46,7 @@ const handleSubmit = async () => {
       router.push('/')
     }
 
-    notifications.showToast('success', 'Welcome!', 'You have successfully logged in.')
+    notifications.showToast('success', t('auth.welcomeTitle'), t('auth.welcomeDetail'))
   } catch (e) {
     console.error(e)
   } finally {
@@ -60,20 +62,25 @@ const handleSubmit = async () => {
         <!-- Иконка шапочки выпускника (нужен пакет primeicons) -->
         <i class="pi pi-graduation-cap logo-icon"></i>
       </div>
-      <h1 class="title">Sign in to your account</h1>
-      <a href="#" class="subtitle-link">Access the student & faculty portal</a>
+      <h1 class="title">{{ t('auth.title') }}</h1>
+      <a href="#" class="subtitle-link">{{ t('auth.subtitle') }}</a>
     </div>
 
     <form @submit.prevent="handleSubmit" class="form">
       <div class="field">
-        <label for="email">Email Address</label>
-        <InputText id="email" v-model="email" placeholder="student@university.edu" class="w-full" />
+        <label for="email">{{ t('auth.email') }}</label>
+        <InputText
+          id="email"
+          v-model="email"
+          :placeholder="t('auth.emailPlaceholder')"
+          class="w-full"
+        />
       </div>
 
       <div class="field">
         <div class="password-header">
-          <label for="password">Password</label>
-          <a href="#" class="forgot-link">Forgot password?</a>
+          <label for="password">{{ t('auth.password') }}</label>
+          <a href="#" class="forgot-link">{{ t('auth.forgotPassword') }}</a>
         </div>
         <!-- :feedback="false" убирает индикатор сложности пароля -->
         <!-- toggleMask добавляет иконку глазика -->
@@ -82,7 +89,7 @@ const handleSubmit = async () => {
           v-model="password"
           :feedback="false"
           toggleMask
-          placeholder="••••••••"
+          :placeholder="t('auth.passwordPlaceholder')"
           inputClass="w-full"
           class="w-full"
         />
@@ -90,10 +97,10 @@ const handleSubmit = async () => {
 
       <div class="field-checkbox">
         <Checkbox v-model="rememberMe" inputId="remember" binary />
-        <label for="remember" class="remember-label">Remember me for 30 days</label>
+        <label for="remember" class="remember-label">{{ t('auth.rememberMe') }}</label>
       </div>
 
-      <Button type="submit" label="Sign In" class="submit-btn" :loading="isLoading" />
+      <Button type="submit" :label="t('auth.signIn')" class="submit-btn" :loading="isLoading" />
     </form>
   </div>
 </template>

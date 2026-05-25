@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import ProgressBar from 'primevue/progressbar'
 import Button from 'primevue/button'
 import { useAssessmentSessionStore } from '@/entities/assessment-session'
 import { SubmitAssessmentBtn } from '@/features/submit-assessment'
 
+const { t } = useI18n()
 const store = useAssessmentSessionStore()
 
 const getQuestionStatus = (qId: string) => {
@@ -25,7 +27,7 @@ const handleFlagToggle = () => {
 <template>
   <aside class="question-map-card">
     <div class="map-header">
-      <h3 class="map-title">QUESTION MAP</h3>
+      <h3 class="map-title">{{ t('assessment.questionMap') }}</h3>
     </div>
 
     <div class="map-grid">
@@ -42,7 +44,7 @@ const handleFlagToggle = () => {
 
     <div class="progress-section">
       <div class="progress-labels">
-        <span>Progress</span>
+        <span>{{ t('assessment.progress') }}</span>
         <span>{{ store.progressPercentage }}%</span>
       </div>
       <ProgressBar :value="store.progressPercentage" :showValue="false" class="map-progress" />
@@ -50,7 +52,9 @@ const handleFlagToggle = () => {
 
     <div class="map-actions">
       <Button
-        :label="isFlagged(store.currentQuestionId!) ? 'Remove Flag' : 'Flag for Review'"
+        :label="
+          isFlagged(store.currentQuestionId!) ? t('assessment.removeFlag') : t('assessment.flagReview')
+        "
         icon="pi pi-flag"
         severity="secondary"
         outlined

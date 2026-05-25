@@ -1,45 +1,512 @@
 {
+  "brand": {
+    "name": "StudLearn"
+  },
   "common": {
     "saveChanges": "Save Changes",
+    "save": "Save",
     "cancel": "Cancel",
     "search": "Search...",
     "status": "Status",
-    "role": "Role"
+    "role": "Role",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "filter": "Filter",
+    "import": "Import",
+    "export": "Export",
+    "actions": "Actions",
+    "loading": "Loading...",
+    "noData": "No data found",
+    "confirm": "Confirm",
+    "move": "Move",
+    "refresh": "Refresh",
+    "expandAll": "Expand All",
+    "collapseAll": "Collapse All",
+    "upload": "Upload",
+    "preview": "Preview",
+    "finish": "Finish",
+    "next": "Next",
+    "previous": "Previous",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "selected": "{count} Selected",
+    "dash": "—",
+    "success": "Success",
+    "error": "Error",
+    "module": "Module {n}"
+  },
+  "auth": {
+    "title": "Sign in to your account",
+    "subtitle": "Access the student & faculty portal",
+    "email": "Email Address",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "rememberMe": "Remember me for 30 days",
+    "signIn": "Sign In",
+    "emailPlaceholder": "student@university.edu",
+    "passwordPlaceholder": "••••••••",
+    "welcomeTitle": "Welcome!",
+    "welcomeDetail": "You have successfully logged in."
   },
   "sidebar": {
     "dashboard": "Dashboard",
-    "users": "User Management",
+    "users": "Users",
     "organization": "Hierarchy",
+    "profile": "My profile",
+    "logout": "Log out"
+  },
+  "studentSidebar": {
+    "courses": "Courses",
     "profile": "Profile",
-    "logout": "Log Out"
-  },
-  "adminProfile": {
-    "title": "System Settings",
-    "generalConfig": "General Configuration",
-    "generalDesc": "Manage your administrative profile and monitor system integrity."
-  },
-  "adminUsers": {
-    "title": "Users",
-    "subtitle": "Manage access, roles, and status for all university members",
-    "statUsers": "Total Users"
-  },
-  "adminOrgUnitModal": {
-    "faculty": "Faculty / Institute",
-    "department": "Department",
-    "fieldOfStudy": "Field of Study",
-    "group": "Student Group"
+    "logout": "Log out"
   },
   "teacherSidebar": {
     "courses": "Courses",
     "questionBanks": "Question banks",
     "profile": "Profile",
-    "logout": "Log Out"
+    "logout": "Log out"
   },
   "roles": {
-    "all": "All Users",
-    "admin": "Admin",
-    "teacher": "Teacher",
-    "student": "Student"
+    "all": "All users",
+    "admin": "Admins",
+    "teacher": "Teachers",
+    "student": "Students"
+  },
+  "adminUsers": {
+    "title": "Users",
+    "subtitle": "Manage access, roles, and status for all university members",
+    "statUsers": "Total users",
+    "noUsers": "No users found.",
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "department": "Department",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "adminProfile": {
+    "title": "System settings",
+    "generalConfig": "General configuration",
+    "generalDesc": "Manage your administrative profile and system parameters.",
+    "saved": "System settings have been updated."
+  },
+  "adminOrg": {
+    "title": "Hierarchy",
+    "subtitle": "Manage the organizational structure of the university, including groups, departments, and institutes",
+    "academicStructure": "Academic structure",
+    "administrativeStructure": "Administrative structure",
+    "selectUnitHint": "Select a unit to view details...",
+    "refreshTree": "Refresh tree",
+    "students": "Students",
+    "teachers": "Teachers",
+    "databaseId": "Database ID",
+    "shortName": "Short name",
+    "programCode": "Program code",
+    "quickActions": "Quick actions",
+    "editDetails": "Edit details",
+    "assignStudents": "Assign students",
+    "deleteUnit": "Delete unit",
+    "namePlaceholder": "Enter name...",
+    "codePlaceholder": "e.g. ENG",
+    "rootOrganization": "Root organization",
+    "addTitle": "Add new {type}",
+    "parentLabel": "Parent {type}",
+    "nameLabel": "{type} name",
+    "createLabel": "Create {type}",
+    "toastUpdated": "Hierarchy updated",
+    "toastUpdatedDetail": "{name} has been updated successfully.",
+    "toastDeleted": "Deleted",
+    "toastDeletedDetail": "{name} has been deleted successfully."
+  },
+  "adminOrgUnitModal": {
+    "faculty": "Faculty / Institute",
+    "department": "Department",
+    "fieldOfStudy": "Field of study",
+    "group": "Student group"
+  },
+  "addUser": {
+    "addUser": "Add user",
+    "modalTitle": "Add new user",
+    "saveUser": "Save user",
+    "fullName": "Full name",
+    "email": "Email address",
+    "selectRole": "Select a role",
+    "selectStatus": "Select a status",
+    "department": "Department",
+    "subDepartment": "Sub-department",
+    "namePlaceholder": "e.g. John Doe",
+    "emailPlaceholder": "john.doe@university.edu",
+    "deptPlaceholder": "e.g. Computer Science"
+  },
+  "importCsv": {
+    "label": "Import CSV"
+  },
+  "searchUser": {
+    "placeholder": "Search by name, email..."
+  },
+  "addPermission": {
+    "addPermission": "Add permission",
+    "modalTitle": "Add permission scope",
+    "subtitle": "Select organizations to grant access.",
+    "searchPlaceholder": "Search hierarchy...",
+    "addSelected": "Add selected",
+    "selectedCount": "{count} selected"
+  },
+  "profileCard": {
+    "title": "Profile information",
+    "editDetails": "Edit details",
+    "changeAvatar": "Change avatar",
+    "fullName": "Full name",
+    "email": "Email address",
+    "phone": "Phone number",
+    "department": "Main department",
+    "cohort": "Assigned cohort / group",
+    "notes": "Administrative notes",
+    "notesPlaceholder": "Internal notes about this account...",
+    "studentId": "Student ID",
+    "employeeId": "Employee ID"
+  },
+  "securityCard": {
+    "title": "Security & password",
+    "titleAccess": "Security & access",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordHint": "Password must be at least 8 characters and include a number.",
+    "passwordReset": "Password reset",
+    "generateNew": "Generate new",
+    "sendLink": "Send link",
+    "mfa": "Multi-factor authentication",
+    "enabled": "Enabled",
+    "disabled": "Disabled"
+  },
+  "teacherRoles": {
+    "title": "Roles & permissions",
+    "subtitle": "Access levels and administrative groups assigned to this user",
+    "assignedGroups": "Assigned groups",
+    "publishGrades": "Publish grades",
+    "publishGradesDesc": "Can finalize term grades",
+    "manageUsers": "Manage system users",
+    "manageUsersDesc": "Can add new students"
+  },
+  "teacherAssigned": {
+    "title": "Assigned courses",
+    "viewHistory": "View all history",
+    "courseCode": "Course code",
+    "courseName": "Course name",
+    "semester": "Semester"
+  },
+  "adminUserProfile": {
+    "users": "Users",
+    "teachers": "Teachers",
+    "students": "Students",
+    "permissions": "Permissions & account",
+    "notFoundTitle": "Not found",
+    "teacherNotFound": "Teacher not found.",
+    "studentNotFound": "Student not found.",
+    "teacherSaved": "Teacher profile updated successfully.",
+    "studentSaved": "Student profile updated successfully."
+  },
+  "teacherCourses": {
+    "title": "Courses",
+    "subtitle": "Manage your curriculum, track student progress, and organize assessments effectively.",
+    "totalStudents": "Total students",
+    "activeCourses": "Active courses",
+    "pendingGrading": "Pending grading",
+    "trendSemester": "+12% from last semester",
+    "syllabiUpdated": "All syllabi updated for current term",
+    "due48h": "Due within 48 hours",
+    "searchPlaceholder": "Search courses by name or code...",
+    "addCourse": "Add course",
+    "createCourse": "Create new course",
+    "loadingCourse": "Loading course...",
+    "backToCourses": "Back to courses",
+    "tabs": {
+      "mainInfo": "Main info",
+      "content": "Content",
+      "participants": "Participants",
+      "grades": "Grades"
+    },
+    "students": "Students",
+    "nextDue": "Next due",
+    "edit": "Edit",
+    "manage": "Manage"
+  },
+  "teacherQuestionBanks": {
+    "title": "Question banks",
+    "subtitle": "Create and manage reusable question collections for your assessments.",
+    "import": "Import",
+    "createBank": "Create new bank",
+    "banksBreadcrumb": "Question banks",
+    "addQuestion": "Add new question",
+    "listUpdated": "Bank list updated",
+    "allBanks": "All banks",
+    "noBankSelected": "No question bank selected",
+    "editBankDetails": "Edit bank details",
+    "bankTitle": "Bank title",
+    "description": "Description",
+    "showAllQuestions": "Show all questions",
+    "manageQuestions": "Manage questions: {name}"
+  },
+  "teacherQuiz": {
+    "courses": "Courses",
+    "editAssessment": "Edit assessment",
+    "newAssessment": "New assessment",
+    "saveDraft": "Save draft",
+    "subtitle": "Configure test parameters and question selection",
+    "generalInfo": "General information",
+    "assessmentTitle": "Assessment title",
+    "instructions": "Instructions for students",
+    "testConstructor": "Test constructor",
+    "drawRandomly": "Draw randomly",
+    "pointsPerQuestion": "Points per question",
+    "summary": "Assessment summary",
+    "totalQuestions": "Total questions",
+    "totalPoints": "Total points",
+    "parameters": "Parameters",
+    "dueDate": "Due date",
+    "shuffleQuestions": "Shuffle questions",
+    "showResults": "Show results instantly",
+    "publish": "Publish assessment",
+    "createBank": "Create new question bank"
+  },
+  "courseEditor": {
+    "courseTitle": "Course title",
+    "courseCode": "Course code",
+    "department": "Department / category",
+    "description": "Course description",
+    "titlePlaceholder": "e.g. Advanced Data Structures",
+    "codePlaceholder": "e.g. CS-301",
+    "deptPlaceholder": "Select department",
+    "descPlaceholder": "Provide a detailed overview of what students will learn in this course...",
+    "markdownSupported": "Markdown supported",
+    "makePrivate": "Make this course private",
+    "createCourse": "Create course",
+    "uploadCover": "Upload cover image",
+    "cardPreview": "Course card preview",
+    "instructorTips": "Instructor tips",
+    "addTopic": "Add new topic",
+    "lastSaved": "Last saved: 2 mins ago",
+    "quickAdd": "Quick add",
+    "quickAddHint": "Drag these items into your topics to create new content.",
+    "contentSummary": "Content summary",
+    "needHelp": "Need help?",
+    "viewGuide": "View guide",
+    "editTopic": "Edit topic",
+    "deleteTopic": "Delete topic",
+    "editMaterial": "Edit material",
+    "deleteMaterial": "Delete material",
+    "topicCreated": "Topic has been created.",
+    "topicUpdated": "Topic has been updated.",
+    "video": "Video",
+    "fileReading": "File / reading",
+    "assignment": "Assignment"
+  },
+  "courseParticipants": {
+    "title": "Enrolled students",
+    "enroll": "Enroll new student",
+    "selectInstitute": "Select institute",
+    "selectGroup": "Select group",
+    "searchDb": "Type to search database...",
+    "columns": {
+      "name": "Student name (F.I.O.)",
+      "group": "Group",
+      "institute": "Institute",
+      "enrolled": "Enrollment date"
+    }
+  },
+  "courseGrades": {
+    "searchStudent": "Search student...",
+    "allGroups": "All groups",
+    "allStatuses": "All statuses",
+    "exportCsv": "Export CSV",
+    "addColumn": "Add column",
+    "columns": {
+      "name": "Student name",
+      "group": "Group",
+      "total": "Total %"
+    }
+  },
+  "bankQuestions": {
+    "search": "Search question text...",
+    "type": "Type",
+    "difficulty": "Difficulty",
+    "columns": {
+      "text": "Question text",
+      "type": "Type",
+      "difficulty": "Difficulty",
+      "actions": "Actions"
+    },
+    "editQuestion": "Edit question",
+    "types": {
+      "multipleChoice": "Multiple choice",
+      "trueFalse": "True / false",
+      "shortAnswer": "Short answer",
+      "essay": "Essay"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    }
+  },
+  "teacherProfile": {
+    "title": "Profile settings",
+    "profileInfo": "Profile information",
+    "emailConfig": "Email configuration",
+    "security": "Security & password",
+    "lastName": "Last name",
+    "firstName": "First name",
+    "patronymic": "Patronymic",
+    "editAvatar": "Edit avatar",
+    "newEmail": "Enter new email address",
+    "confirmEmail": "Confirm new email address",
+    "institute": "Institute",
+    "major": "Major",
+    "group": "Group",
+    "studentId": "Student ID",
+    "currentEmail": "Current email"
+  },
+  "studentCourses": {
+    "title": "My courses",
+    "searchPlaceholder": "Search courses by name or code...",
+    "sortBy": "Sort by",
+    "current": "Current courses",
+    "past": "Past courses",
+    "sortTitle": "Title (A–Z)",
+    "sortCode": "Code"
+  },
+  "studentCourse": {
+    "back": "Back to my courses",
+    "grade": "Grade",
+    "progress": "Progress",
+    "tabs": {
+      "content": "Course content",
+      "grades": "My grades",
+      "discussion": "Discussion"
+    },
+    "unlockHint": "Unlock by completing previous modules",
+    "overallProgress": "Overall course progress",
+    "resume": "Resume",
+    "instructor": "Instructor",
+    "syllabus": "Syllabus"
+  },
+  "studentProfile": {
+    "title": "Profile"
+  },
+  "assessment": {
+    "courses": "Courses",
+    "academicAssessment": "Academic assessment",
+    "timeLimit": "Time limit",
+    "totalQuestions": "Total questions",
+    "dueDate": "Due date",
+    "instructions": "Instructions for candidates",
+    "startTest": "Start test",
+    "returnCourse": "Return to course",
+    "questionMap": "Question map",
+    "progress": "Progress",
+    "flagReview": "Flag for review",
+    "removeFlag": "Remove flag",
+    "markdownActive": "Markdown support active",
+    "essayPlaceholder": "Type your answer here...",
+    "words": "Words",
+    "characters": "Characters",
+    "saving": "Saving...",
+    "draftSaved": "Draft saved",
+    "prevQuestion": "Previous question",
+    "nextQuestion": "Next question",
+    "finishSubmit": "Finish and submit",
+    "submitTitle": "Submit assessment",
+    "submitBody": "You have unanswered questions. Are you sure you want to submit?",
+    "returnTest": "Return to test",
+    "yesSubmit": "Yes, submit",
+    "submittedTitle": "Assessment submitted!",
+    "submittedDetail": "Your answers have been saved successfully.",
+    "submitAllAnswered": "You have answered all questions. Submit your assessment now?"
+  },
+  "modals": {
+    "topic": {
+      "add": "Add new topic",
+      "edit": "Edit topic",
+      "namePlaceholder": "e.g. Introduction to Algorithms",
+      "create": "Create topic"
+    },
+    "element": {
+      "add": "Add material",
+      "edit": "Edit material",
+      "goQuiz": "Go to quiz builder",
+      "addMaterial": "Add material",
+      "contentType": "Content type",
+      "advancedConfig": "Advanced configuration required",
+      "titleRequired": "Title",
+      "requiredMark": "*"
+    },
+    "questionBank": {
+      "create": "Create new question bank",
+      "createBtn": "Create bank",
+      "titlePlaceholder": "e.g. Midterm Exam Pool",
+      "descPlaceholder": "Brief description of this question bank..."
+    },
+    "importBank": {
+      "title": "Import question bank",
+      "upload": "Upload file",
+      "preview": "Preview & map",
+      "complete": "Complete",
+      "uploadHint": "Drag and drop your CSV file here, or click to browse.",
+      "uploadTitle": "Click or drag file to this area to upload",
+      "parsing": "Parsing file contents...",
+      "importData": "Import data",
+      "totalFound": "Total questions found",
+      "multipleChoice": "Multiple choice",
+      "formatErrors": "Formatting errors",
+      "formatAiken": "Aiken"
+    },
+    "questionEditor": {
+      "title": "Edit question",
+      "type": "Question type",
+      "points": "Points",
+      "pointsValue": "Point value",
+      "difficulty": "Difficulty",
+      "prompt": "Question prompt",
+      "answerOptions": "Answer options",
+      "addOption": "Add option",
+      "promptPlaceholder": "Type your question here...",
+      "correctAnswer": "Correct answer",
+      "exactMatchHint": "Students must match this answer exactly",
+      "submissionSettings": "Submission settings",
+      "submissionHint": "Configure how students should submit their answer",
+      "textEntry": "Text entry",
+      "minWords": "Minimum word count",
+      "maxWords": "Maximum word count",
+      "fileUploads": "File uploads",
+      "maxFiles": "Max files allowed",
+      "acceptedTypes": "Accepted file types",
+      "deleteOption": "Delete option"
+    }
+  },
+  "aria": {
+    "notifications": "Notifications",
+    "help": "Help",
+    "options": "Options",
+    "darkMode": "Switch to dark mode",
+    "lightMode": "Switch to light mode",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "editAvatar": "Edit avatar",
+    "editGrade": "Edit grade",
+    "deleteStudent": "Delete student",
+    "deleteBank": "Delete bank"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "subtitle": "The address you requested does not exist or has been moved. Check the link or return to the home page.",
+    "goHome": "Go to home",
+    "goBack": "Go back"
   },
   "primevue": {
     "emptyMessage": "No available options",
@@ -83,11 +550,5 @@
     "weak": "Weak",
     "medium": "Medium",
     "strong": "Strong"
-  },
-  "notFound": {
-    "title": "Page not found",
-    "subtitle": "The address you requested does not exist or has been moved. Check the link or return to the home page.",
-    "goHome": "Go to home",
-    "goBack": "Go back"
   }
 }

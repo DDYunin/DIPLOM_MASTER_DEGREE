@@ -30,7 +30,7 @@ const toggleSidebar = () => {
       <div class="brand-header">
         <div class="logo">
           <i class="pi pi-graduation-cap logo-icon"></i>
-          <span v-if="!collapsed" class="logo-text">StudLearn</span>
+          <span v-if="!collapsed" class="logo-text">{{ t('brand.name') }}</span>
         </div>
         <Button
           :icon="collapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"
@@ -46,14 +46,14 @@ const toggleSidebar = () => {
         <RouterLink to="/student/courses" class="nav-item" active-class="active">
           <i class="pi pi-book nav-icon"></i>
           <span v-if="!collapsed" class="nav-text">{{
-            t('studentSidebar.courses', 'Courses')
+            t('studentSidebar.courses')
           }}</span>
         </RouterLink>
 
         <RouterLink to="/student/profile" class="nav-item" active-class="active">
           <i class="pi pi-user nav-icon"></i>
           <span v-if="!collapsed" class="nav-text">{{
-            t('studentSidebar.profile', 'Profile')
+            t('studentSidebar.profile')
           }}</span>
         </RouterLink>
       </nav>
@@ -64,11 +64,11 @@ const toggleSidebar = () => {
       <button
         class="logout-btn"
         @click="handleLogout"
-        :title="t('studentSidebar.logout', 'Log Out')"
+        :title="t('studentSidebar.logout')"
       >
         <i class="pi pi-sign-out logout-icon"></i>
         <span v-if="!collapsed" class="logout-text">{{
-          t('studentSidebar.logout', 'Log Out')
+          t('studentSidebar.logout')
         }}</span>
       </button>
     </div>

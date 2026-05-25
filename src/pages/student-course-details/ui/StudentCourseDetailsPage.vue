@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
@@ -8,6 +9,7 @@ import Skeleton from 'primevue/skeleton'
 import { useStudentCourseStore } from '@/entities/course'
 import { StudentCourseDetails } from '@/widgets/student-course-details'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const store = useStudentCourseStore()
@@ -38,7 +40,7 @@ const goBack = () => {
       <header class="course-header">
         <Button 
           icon="pi pi-arrow-left" 
-          label="Back to My Courses" 
+          :label="t('studentCourse.back')" 
           text 
           class="back-btn" 
           @click="goBack" 
@@ -60,12 +62,12 @@ const goBack = () => {
 
           <div class="header-stats">
             <div class="stat-box">
-              <span class="stat-label">GRADE</span>
+              <span class="stat-label">{{ t('studentCourse.grade') }}</span>
               <span class="stat-value text-primary">{{ store.currentCourseDetails.gradePercentage }}%</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-box">
-              <span class="stat-label">PROGRESS</span>
+              <span class="stat-label">{{ t('studentCourse.progress') }}</span>
               <span class="stat-value">{{ store.currentCourseDetails.completedElements }}/{{ store.currentCourseDetails.totalElements }}</span>
             </div>
           </div>
@@ -77,19 +79,19 @@ const goBack = () => {
             :class="['tab-btn', { active: activeTab === 'content' }]" 
             @click="activeTab = 'content'"
           >
-            Course Content
+            {{ t('studentCourse.tabs.content') }}
           </button>
           <button 
             :class="['tab-btn', { active: activeTab === 'grades' }]" 
             @click="activeTab = 'grades'"
           >
-            My Grades
+            {{ t('studentCourse.tabs.grades') }}
           </button>
           <button 
             :class="['tab-btn', { active: activeTab === 'discussion' }]" 
             @click="activeTab = 'discussion'"
           >
-            Discussion
+            {{ t('studentCourse.tabs.discussion') }}
           </button>
         </nav>
       </header>

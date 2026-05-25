@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCourseParticipantStore } from '@/entities/course-participant'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -9,6 +10,7 @@ import InputIcon from 'primevue/inputicon'
 import Button from 'primevue/button'
 import Select from 'primevue/select'
 
+const { t } = useI18n()
 const participantStore = useCourseParticipantStore()
 const searchQuery = ref('')
 
@@ -50,7 +52,7 @@ const groups = [
     <!-- Основная таблица студентов -->
     <div class="table-section">
       <div class="table-header-custom">
-        <h3 class="section-title">Enrolled Students</h3>
+        <h3 class="section-title">{{ t('courseParticipants.title') }}</h3>
         <IconField iconPosition="left" class="search-field">
           <InputIcon class="pi pi-search" />
           <InputText v-model="searchQuery" placeholder="Search by name or group..." />
@@ -66,7 +68,7 @@ const groups = [
         pt:headerRow:style="background-color: var(--surface-ground);"
       >
         <!-- Колонка: Студент -->
-        <Column field="name" header="STUDENT NAME (F.I.O.)" style="width: 30%">
+        <Column field="name" :header="t('courseParticipants.columns.name')" style="width: 30%">
           <template #body="{ data }">
             <div class="student-cell">
               <div
@@ -87,28 +89,32 @@ const groups = [
         </Column>
 
         <!-- Колонка: Группа -->
-        <Column field="group" header="GROUP" style="width: 20%">
+        <Column field="group" :header="t('courseParticipants.columns.group')" style="width: 20%">
           <template #body="{ data }">
             <span class="text-muted">{{ data.group }}</span>
           </template>
         </Column>
 
         <!-- Колонка: Институт -->
-        <Column field="institute" header="INSTITUTE" style="width: 20%">
+        <Column field="institute" :header="t('courseParticipants.columns.institute')" style="width: 20%">
           <template #body="{ data }">
             <span class="text-muted">{{ data.institute }}</span>
           </template>
         </Column>
 
         <!-- Колонка: Дата зачисления -->
-        <Column field="enrollmentDate" header="ENROLLMENT DATE" style="width: 20%">
+        <Column
+          field="enrollmentDate"
+          :header="t('courseParticipants.columns.enrolled')"
+          style="width: 20%"
+        >
           <template #body="{ data }">
             <span class="text-muted">{{ data.enrollmentDate }}</span>
           </template>
         </Column>
 
         <!-- Колонка: Действия -->
-        <Column header="ACTIONS" style="width: 10%; text-align: center">
+        <Column :header="t('common.actions')" style="width: 10%; text-align: center">
           <template #body="{ data }">
             <Button
               icon="pi pi-trash"
@@ -135,7 +141,7 @@ const groups = [
             v-model="selectedInstitute"
             :options="institutes"
             optionLabel="label"
-            placeholder="Select Institute"
+            :placeholder="t('courseParticipants.selectInstitute')"
             class="w-full"
           />
         </div>
@@ -145,7 +151,7 @@ const groups = [
             v-model="selectedGroup"
             :options="groups"
             optionLabel="label"
-            placeholder="Select Group"
+            :placeholder="t('courseParticipants.selectGroup')"
             class="w-full"
           />
         </div>
@@ -153,11 +159,11 @@ const groups = [
           <label>STUDENT NAME (F.I.O.)</label>
           <IconField iconPosition="left">
             <InputIcon class="pi pi-user" />
-            <InputText placeholder="Type to search database..." class="w-full" />
+            <InputText :placeholder="t('courseParticipants.searchDb')" class="w-full" />
           </IconField>
         </div>
         <div class="form-group submit-group">
-          <Button label="Add" icon="pi pi-plus" class="w-full" />
+          <Button :label="t('courseParticipants.enroll')" icon="pi pi-plus" class="w-full" />
         </div>
       </div>
     </div>

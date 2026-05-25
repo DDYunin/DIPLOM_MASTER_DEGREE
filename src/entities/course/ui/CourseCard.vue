@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import type { Course } from '../model/types'
+
+const { t } = useI18n()
 
 defineProps<{
   course: Course
@@ -37,7 +40,7 @@ const getStatusSeverity = (status: string) => {
           rounded
           severity="secondary"
           size="small"
-          aria-label="Options"
+          :aria-label="t('aria.options')"
         />
       </div>
 
@@ -47,19 +50,23 @@ const getStatusSeverity = (status: string) => {
       <div class="course-meta-bottom">
         <span class="meta-item"><i class="pi pi-calendar"></i> {{ course.term }}</span>
         <span class="meta-item"
-          ><i class="pi pi-users"></i> {{ course.studentsCount }} Students</span
+          ><i class="pi pi-users"></i> {{ course.studentsCount }} {{ t('teacherCourses.students') }}</span
         >
       </div>
     </div>
 
     <div class="course-footer">
       <div class="due-info">
-        <span class="due-label">NEXT DUE</span>
+        <span class="due-label">{{ t('teacherCourses.nextDue') }}</span>
         <span class="due-value">{{ course.nextDueLabel }}: {{ course.nextDueDate }}</span>
       </div>
 
       <Button
-        :label="course.status === 'Draft' || course.status === 'Unpublished' ? 'Edit' : 'Manage'"
+        :label="
+          course.status === 'Draft' || course.status === 'Unpublished'
+            ? t('teacherCourses.edit')
+            : t('teacherCourses.manage')
+        "
         :severity="
           course.status === 'Draft' || course.status === 'Unpublished' ? 'secondary' : 'info'
         "

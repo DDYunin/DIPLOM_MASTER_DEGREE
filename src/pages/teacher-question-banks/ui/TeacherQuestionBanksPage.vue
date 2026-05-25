@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import Button from 'primevue/button'
 
@@ -11,6 +12,7 @@ import { ImportQuestionBankModal } from '@/features/import-question-bank'
 import { CreateQuestionBankModal } from '@/features/create-question-bank'
 import { useNotifications } from '@/shared/model'
 
+const { t } = useI18n()
 const widgetStore = useQuestionBanksManagerStore()
 const notifications = useNotifications()
 
@@ -28,7 +30,7 @@ const handleCreateBank = (data: { title: string; description: string }) => {
   widgetStore.createNewBank(data)
 
   // При желании здесь можно вызвать Toast "Bank created successfully"
-  notifications.showToast('success', 'Bank list updated', `Bank created successfully`)
+  notifications.showToast('success', t('teacherQuestionBanks.listUpdated'), t('common.save'))
 }
 
 onMounted(async () => {
@@ -46,19 +48,23 @@ onMounted(async () => {
     <!-- HEADER -->
     <header class="page-header">
       <div class="header-info">
-        <h1 class="page-title">Question Banks</h1>
-        <p class="page-subtitle">Manage your assessment categories and questions</p>
+        <h1 class="page-title">{{ t('teacherQuestionBanks.title') }}</h1>
+        <p class="page-subtitle">{{ t('teacherQuestionBanks.subtitle') }}</p>
       </div>
 
       <div class="header-actions">
         <Button
-          label="Import"
+          :label="t('teacherQuestionBanks.import')"
           icon="pi pi-upload"
           severity="secondary"
           outlined
           @click="isImportModalVisible = true"
         />
-        <Button label="Create New Bank" icon="pi pi-plus" @click="isCreateModalVisible = true" />
+        <Button
+          :label="t('teacherQuestionBanks.createBank')"
+          icon="pi pi-plus"
+          @click="isCreateModalVisible = true"
+        />
       </div>
     </header>
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useQuestionBankEntityStore } from '@/entities/question-bank'
 import { useQuizBuilderStore } from '../model/store'
 
@@ -12,6 +13,8 @@ import ToggleSwitch from 'primevue/toggleswitch'
 import InputNumber from 'primevue/inputnumber'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
+
+const { t } = useI18n()
 
 const emit = defineEmits<{
   (e: 'save-draft', data: any): void
@@ -60,12 +63,12 @@ const collectFormData = () => {
       <section class="builder-card">
         <div class="card-header">
           <i class="pi pi-list header-icon"></i>
-          <h3 class="card-title">General Information</h3>
+          <h3 class="card-title">{{ t('teacherQuiz.generalInfo') }}</h3>
         </div>
 
         <div class="card-body">
           <div class="field-group">
-            <label class="field-label">Assessment Title</label>
+            <label class="field-label">{{ t('teacherQuiz.assessmentTitle') }}</label>
             <InputText
               v-model="builderStore.title"
               placeholder="e.g. Midterm Exam: Data Structures"
@@ -74,7 +77,7 @@ const collectFormData = () => {
           </div>
 
           <div class="field-group mt-4">
-            <label class="field-label">Instructions for Students</label>
+            <label class="field-label">{{ t('teacherQuiz.instructions') }}</label>
             <Textarea
               v-model="builderStore.instructions"
               rows="4"
@@ -91,9 +94,9 @@ const collectFormData = () => {
         <div class="card-header flex-between">
           <div class="flex-align-center">
             <i class="pi pi-question-circle header-icon text-blue"></i>
-            <h3 class="card-title">Test Constructor</h3>
+            <h3 class="card-title">{{ t('teacherQuiz.testConstructor') }}</h3>
           </div>
-          <Button label="Create New Question Bank" icon="pi pi-plus" text size="small" />
+          <Button :label="t('teacherQuiz.createBank')" icon="pi pi-plus" text size="small" />
         </div>
 
         <div class="card-body">
@@ -121,7 +124,7 @@ const collectFormData = () => {
               <div v-if="bank.isSelected" class="bank-item-settings">
                 <div class="settings-inputs">
                   <div class="setting-field">
-                    <label>Draw Randomly</label>
+                    <label>{{ t('teacherQuiz.drawRandomly') }}</label>
                     <div class="flex-align-center gap-2">
                       <InputNumber
                         v-model="bank.drawCount"
@@ -133,7 +136,7 @@ const collectFormData = () => {
                     </div>
                   </div>
                   <div class="setting-field">
-                    <label>Points per Question</label>
+                    <label>{{ t('teacherQuiz.pointsPerQuestion') }}</label>
                     <div class="flex-align-center gap-2">
                       <InputNumber v-model="bank.pointsPerQ" :min="0" inputClass="w-20" />
                       <span class="text-muted">pts</span>
@@ -155,15 +158,15 @@ const collectFormData = () => {
       <!-- Summary Card -->
       <section class="builder-card">
         <div class="card-header">
-          <h3 class="card-title">Assessment Summary</h3>
+          <h3 class="card-title">{{ t('teacherQuiz.summary') }}</h3>
         </div>
         <div class="card-body summary-body">
           <div class="summary-row">
-            <span>Total Questions</span>
+            <span>{{ t('teacherQuiz.totalQuestions') }}</span>
             <strong class="text-xl">{{ builderStore.totalQuestions }}</strong>
           </div>
           <div class="summary-row">
-            <span>Total Points</span>
+            <span>{{ t('teacherQuiz.totalPoints') }}</span>
             <strong class="text-xl text-blue">{{ builderStore.totalPoints }}</strong>
           </div>
           <div class="summary-row">
@@ -173,7 +176,7 @@ const collectFormData = () => {
 
           <div class="summary-actions mt-4">
             <Button
-              label="Publish Assessment"
+              :label="t('teacherQuiz.publish')"
               class="w-full"
               @click="$emit('publish', collectFormData())"
             />
@@ -184,11 +187,13 @@ const collectFormData = () => {
       <!-- Parameters Card -->
       <section class="builder-card mt-5">
         <div class="card-header">
-          <h3 class="card-title text-sm text-muted uppercase tracking-wide">Parameters</h3>
+          <h3 class="card-title text-sm text-muted uppercase tracking-wide">{{
+            t('teacherQuiz.parameters')
+          }}</h3>
         </div>
         <div class="card-body params-body">
           <div class="field-group">
-            <label class="field-label">Due Date</label>
+            <label class="field-label">{{ t('teacherQuiz.dueDate') }}</label>
             <DatePicker v-model="builderStore.dueDate" showIcon placeholder="mm/dd/yyyy, --:--" class="w-full" />
           </div>
 
@@ -208,12 +213,12 @@ const collectFormData = () => {
           <div class="divider"></div>
 
           <div class="toggle-row">
-            <label>Shuffle Questions</label>
+            <label>{{ t('teacherQuiz.shuffleQuestions') }}</label>
             <ToggleSwitch v-model="builderStore.shuffleQuestions" />
           </div>
 
           <div class="toggle-row mt-4">
-            <label>Show Results Instantly</label>
+            <label>{{ t('teacherQuiz.showResults') }}</label>
             <ToggleSwitch v-model="builderStore.showResults" />
           </div>
         </div>

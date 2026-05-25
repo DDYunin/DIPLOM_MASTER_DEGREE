@@ -1,10 +1,56 @@
 {
+  "brand": {
+    "name": "StudLearn"
+  },
   "common": {
     "saveChanges": "Сохранить изменения",
+    "save": "Сохранить",
     "cancel": "Отмена",
     "search": "Поиск...",
     "status": "Статус",
-    "role": "Роль"
+    "role": "Роль",
+    "create": "Создать",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "close": "Закрыть",
+    "back": "Назад",
+    "filter": "Фильтр",
+    "import": "Импорт",
+    "export": "Экспорт",
+    "actions": "Действия",
+    "loading": "Загрузка...",
+    "noData": "Данные не найдены",
+    "confirm": "Подтвердить",
+    "move": "Переместить",
+    "refresh": "Обновить",
+    "expandAll": "Развернуть всё",
+    "collapseAll": "Свернуть всё",
+    "upload": "Загрузить",
+    "preview": "Предпросмотр",
+    "finish": "Готово",
+    "next": "Далее",
+    "previous": "Назад",
+    "yes": "Да",
+    "no": "Нет",
+    "all": "Все",
+    "selected": "Выбрано: {count}",
+    "dash": "—",
+    "success": "Успешно",
+    "error": "Ошибка",
+    "module": "Модуль {n}"
+  },
+  "auth": {
+    "title": "Вход в аккаунт",
+    "subtitle": "Портал для студентов и преподавателей",
+    "email": "Email",
+    "password": "Пароль",
+    "forgotPassword": "Забыли пароль?",
+    "rememberMe": "Запомнить меня на 30 дней",
+    "signIn": "Войти",
+    "emailPlaceholder": "student@university.edu",
+    "passwordPlaceholder": "••••••••",
+    "welcomeTitle": "Добро пожаловать!",
+    "welcomeDetail": "Вы успешно вошли в систему."
   },
   "sidebar": {
     "dashboard": "Дашборд",
@@ -13,26 +59,15 @@
     "profile": "Мой профиль",
     "logout": "Выйти"
   },
-  "adminProfile": {
-    "title": "Настройки системы",
-    "generalConfig": "Общие настройки",
-    "generalDesc": "Управление профилем администратора и системными параметрами."
-  },
-  "adminUsers": {
-    "title": "Пользователи",
-    "subtitle": "Управляйте доступом, ролями и статусом всех членов университета",
-    "statUsers": "Всего пользователей"
-  },
-  "adminOrgUnitModal": {
-    "faculty": "Факультет / Институт",
-    "department": "Кафедра",
-    "fieldOfStudy": "Направление обучения",
-    "group": "Группа"
+  "studentSidebar": {
+    "courses": "Курсы",
+    "profile": "Профиль",
+    "logout": "Выйти"
   },
   "teacherSidebar": {
     "courses": "Курсы",
     "questionBanks": "Банки вопросов",
-    "profile": "Мой профиль",
+    "profile": "Профиль",
     "logout": "Выйти"
   },
   "roles": {
@@ -40,6 +75,438 @@
     "admin": "Админы",
     "teacher": "Преподаватели",
     "student": "Студенты"
+  },
+  "adminUsers": {
+    "title": "Пользователи",
+    "subtitle": "Управляйте доступом, ролями и статусом всех членов университета",
+    "statUsers": "Всего пользователей",
+    "noUsers": "Пользователи не найдены.",
+    "columns": {
+      "user": "Пользователь",
+      "role": "Роль",
+      "department": "Подразделение",
+      "status": "Статус",
+      "actions": "Действия"
+    }
+  },
+  "adminProfile": {
+    "title": "Настройки системы",
+    "generalConfig": "Общие настройки",
+    "generalDesc": "Управление профилем администратора и системными параметрами.",
+    "saved": "Настройки системы обновлены."
+  },
+  "adminOrg": {
+    "title": "Структура",
+    "subtitle": "Управление организационной структурой университета: группы, кафедры и институты",
+    "academicStructure": "Учебная структура",
+    "administrativeStructure": "Административная структура",
+    "selectUnitHint": "Выберите подразделение для просмотра...",
+    "refreshTree": "Обновить дерево",
+    "students": "Студенты",
+    "teachers": "Преподаватели",
+    "databaseId": "ID в базе",
+    "shortName": "Краткое название",
+    "programCode": "Код программы",
+    "quickActions": "Быстрые действия",
+    "editDetails": "Редактировать",
+    "assignStudents": "Назначить студентов",
+    "deleteUnit": "Удалить подразделение",
+    "namePlaceholder": "Введите название...",
+    "codePlaceholder": "напр. ENG",
+    "rootOrganization": "Корень организации",
+    "addTitle": "Добавить: {type}",
+    "parentLabel": "Родитель: {type}",
+    "nameLabel": "Название ({type})",
+    "createLabel": "Создать: {type}",
+    "toastUpdated": "Структура обновлена",
+    "toastUpdatedDetail": "{name} успешно обновлено.",
+    "toastDeleted": "Удалено",
+    "toastDeletedDetail": "{name} успешно удалено."
+  },
+  "adminOrgUnitModal": {
+    "faculty": "Факультет / Институт",
+    "department": "Кафедра",
+    "fieldOfStudy": "Направление обучения",
+    "group": "Группа"
+  },
+  "addUser": {
+    "addUser": "Добавить пользователя",
+    "modalTitle": "Новый пользователь",
+    "saveUser": "Сохранить",
+    "fullName": "ФИО",
+    "email": "Email",
+    "selectRole": "Выберите роль",
+    "selectStatus": "Выберите статус",
+    "department": "Подразделение",
+    "subDepartment": "Кафедра / отдел",
+    "namePlaceholder": "напр. Иванов Иван",
+    "emailPlaceholder": "ivanov@university.edu",
+    "deptPlaceholder": "напр. Информатика"
+  },
+  "importCsv": {
+    "label": "Импорт CSV"
+  },
+  "searchUser": {
+    "placeholder": "Поиск по имени, email..."
+  },
+  "addPermission": {
+    "addPermission": "Добавить доступ",
+    "modalTitle": "Область доступа",
+    "subtitle": "Выберите подразделения для предоставления доступа.",
+    "searchPlaceholder": "Поиск в структуре...",
+    "addSelected": "Добавить выбранные",
+    "selectedCount": "Выбрано: {count}"
+  },
+  "profileCard": {
+    "title": "Информация профиля",
+    "editDetails": "Редактировать",
+    "changeAvatar": "Сменить аватар",
+    "fullName": "ФИО",
+    "email": "Email",
+    "phone": "Телефон",
+    "department": "Основное подразделение",
+    "cohort": "Группа / поток",
+    "notes": "Заметки администратора",
+    "notesPlaceholder": "Внутренние заметки об аккаунте...",
+    "studentId": "ID студента",
+    "employeeId": "ID сотрудника"
+  },
+  "securityCard": {
+    "title": "Безопасность и пароль",
+    "titleAccess": "Безопасность и доступ",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтвердите пароль",
+    "passwordHint": "Пароль не менее 8 символов, включая цифру.",
+    "passwordReset": "Сброс пароля",
+    "generateNew": "Сгенерировать",
+    "sendLink": "Отправить ссылку",
+    "mfa": "Двухфакторная аутентификация",
+    "enabled": "Включена",
+    "disabled": "Отключена"
+  },
+  "teacherRoles": {
+    "title": "Роли и права",
+    "subtitle": "Уровни доступа и группы, назначенные пользователю",
+    "assignedGroups": "Назначенные группы",
+    "publishGrades": "Публикация оценок",
+    "publishGradesDesc": "Может утверждать итоговые оценки",
+    "manageUsers": "Управление пользователями",
+    "manageUsersDesc": "Может добавлять студентов"
+  },
+  "teacherAssigned": {
+    "title": "Назначенные курсы",
+    "viewHistory": "Вся история",
+    "courseCode": "Код курса",
+    "courseName": "Название курса",
+    "semester": "Семестр"
+  },
+  "adminUserProfile": {
+    "users": "Пользователи",
+    "teachers": "Преподаватели",
+    "students": "Студенты",
+    "permissions": "Права и аккаунт",
+    "notFoundTitle": "Не найдено",
+    "teacherNotFound": "Преподаватель не найден.",
+    "studentNotFound": "Студент не найден.",
+    "teacherSaved": "Профиль преподавателя обновлён.",
+    "studentSaved": "Профиль студента обновлён."
+  },
+  "teacherCourses": {
+    "title": "Курсы",
+    "subtitle": "Управляйте учебными планами, отслеживайте прогресс студентов и организуйте оценивание.",
+    "totalStudents": "Всего студентов",
+    "activeCourses": "Активные курсы",
+    "pendingGrading": "Ожидают проверки",
+    "trendSemester": "+12% к прошлому семестру",
+    "syllabiUpdated": "Все программы обновлены на текущий семестр",
+    "due48h": "Срок в течение 48 часов",
+    "searchPlaceholder": "Поиск курса по названию или коду...",
+    "addCourse": "Добавить курс",
+    "createCourse": "Создать курс",
+    "loadingCourse": "Загрузка курса...",
+    "backToCourses": "К списку курсов",
+    "tabs": {
+      "mainInfo": "Основное",
+      "content": "Содержание",
+      "participants": "Участники",
+      "grades": "Оценки"
+    },
+    "students": "Студенты",
+    "nextDue": "Ближайший дедлайн",
+    "edit": "Редактировать",
+    "manage": "Управление"
+  },
+  "teacherQuestionBanks": {
+    "title": "Банки вопросов",
+    "subtitle": "Создавайте и управляйте наборами вопросов для тестов и заданий.",
+    "import": "Импорт",
+    "createBank": "Создать банк",
+    "banksBreadcrumb": "Банки вопросов",
+    "addQuestion": "Добавить вопрос",
+    "listUpdated": "Список банков обновлён",
+    "allBanks": "Все банки",
+    "noBankSelected": "Банк не выбран",
+    "editBankDetails": "Редактировать банк",
+    "bankTitle": "Название банка",
+    "description": "Описание",
+    "showAllQuestions": "Все вопросы",
+    "manageQuestions": "Вопросы: {name}"
+  },
+  "teacherQuiz": {
+    "courses": "Курсы",
+    "editAssessment": "Редактировать тест",
+    "newAssessment": "Новый тест",
+    "saveDraft": "Сохранить черновик",
+    "subtitle": "Настройте параметры теста и подбор вопросов",
+    "generalInfo": "Общая информация",
+    "assessmentTitle": "Название теста",
+    "instructions": "Инструкции для студентов",
+    "testConstructor": "Конструктор теста",
+    "drawRandomly": "Случайный набор",
+    "pointsPerQuestion": "Баллы за вопрос",
+    "summary": "Сводка по тесту",
+    "totalQuestions": "Всего вопросов",
+    "totalPoints": "Всего баллов",
+    "parameters": "Параметры",
+    "dueDate": "Срок сдачи",
+    "shuffleQuestions": "Перемешать вопросы",
+    "showResults": "Показать результаты сразу",
+    "publish": "Опубликовать тест",
+    "createBank": "Создать банк вопросов"
+  },
+  "courseEditor": {
+    "courseTitle": "Название курса",
+    "courseCode": "Код курса",
+    "department": "Подразделение / категория",
+    "description": "Описание курса",
+    "titlePlaceholder": "напр. Продвинутые структуры данных",
+    "codePlaceholder": "напр. CS-301",
+    "deptPlaceholder": "Выберите подразделение",
+    "descPlaceholder": "Опишите, чему научатся студенты на этом курсе...",
+    "markdownSupported": "Поддерживается Markdown",
+    "makePrivate": "Сделать курс приватным",
+    "createCourse": "Создать курс",
+    "uploadCover": "Загрузить обложку",
+    "cardPreview": "Превью карточки",
+    "instructorTips": "Советы преподавателю",
+    "addTopic": "Добавить тему",
+    "lastSaved": "Сохранено: 2 мин. назад",
+    "quickAdd": "Быстрое добавление",
+    "quickAddHint": "Перетащите элементы в темы для создания материалов.",
+    "contentSummary": "Сводка по содержанию",
+    "needHelp": "Нужна помощь?",
+    "viewGuide": "Открыть руководство",
+    "editTopic": "Редактировать тему",
+    "deleteTopic": "Удалить тему",
+    "editMaterial": "Редактировать материал",
+    "deleteMaterial": "Удалить материал",
+    "topicCreated": "Тема создана.",
+    "topicUpdated": "Тема обновлена.",
+    "video": "Видео",
+    "fileReading": "Файл / материал",
+    "assignment": "Задание"
+  },
+  "courseParticipants": {
+    "title": "Зачисленные студенты",
+    "enroll": "Зачислить студента",
+    "selectInstitute": "Выберите институт",
+    "selectGroup": "Выберите группу",
+    "searchDb": "Поиск в базе...",
+    "columns": {
+      "name": "ФИО студента",
+      "group": "Группа",
+      "institute": "Институт",
+      "enrolled": "Дата зачисления"
+    }
+  },
+  "courseGrades": {
+    "searchStudent": "Поиск студента...",
+    "allGroups": "Все группы",
+    "allStatuses": "Все статусы",
+    "exportCsv": "Экспорт CSV",
+    "addColumn": "Добавить столбец",
+    "columns": {
+      "name": "ФИО",
+      "group": "Группа",
+      "total": "Итого %"
+    }
+  },
+  "bankQuestions": {
+    "search": "Поиск по тексту вопроса...",
+    "type": "Тип",
+    "difficulty": "Сложность",
+    "columns": {
+      "text": "Текст вопроса",
+      "type": "Тип",
+      "difficulty": "Сложность",
+      "actions": "Действия"
+    },
+    "editQuestion": "Редактировать вопрос",
+    "types": {
+      "multipleChoice": "Множественный выбор",
+      "trueFalse": "Верно / неверно",
+      "shortAnswer": "Краткий ответ",
+      "essay": "Развёрнутый ответ"
+    },
+    "difficulty": {
+      "easy": "Лёгкий",
+      "medium": "Средний",
+      "hard": "Сложный"
+    }
+  },
+  "teacherProfile": {
+    "title": "Настройки профиля",
+    "profileInfo": "Информация профиля",
+    "emailConfig": "Настройка email",
+    "security": "Безопасность и пароль",
+    "lastName": "Фамилия",
+    "firstName": "Имя",
+    "patronymic": "Отчество",
+    "editAvatar": "Изменить аватар",
+    "newEmail": "Новый email",
+    "confirmEmail": "Подтвердите email",
+    "institute": "Институт",
+    "major": "Направление",
+    "group": "Группа",
+    "studentId": "ID студента",
+    "currentEmail": "Текущий email"
+  },
+  "studentCourses": {
+    "title": "Мои курсы",
+    "searchPlaceholder": "Поиск курса по названию или коду...",
+    "sortBy": "Сортировка",
+    "current": "Текущие курсы",
+    "past": "Прошедшие курсы",
+    "sortTitle": "По названию (А–Я)",
+    "sortCode": "По коду"
+  },
+  "studentCourse": {
+    "back": "К моим курсам",
+    "grade": "Оценка",
+    "progress": "Прогресс",
+    "tabs": {
+      "content": "Содержание курса",
+      "grades": "Мои оценки",
+      "discussion": "Обсуждение"
+    },
+    "unlockHint": "Откроется после прохождения предыдущих модулей",
+    "overallProgress": "Общий прогресс по курсу",
+    "resume": "Продолжить",
+    "instructor": "Преподаватель",
+    "syllabus": "Программа"
+  },
+  "studentProfile": {
+    "title": "Профиль"
+  },
+  "assessment": {
+    "courses": "Курсы",
+    "academicAssessment": "Академическое тестирование",
+    "timeLimit": "Лимит времени",
+    "totalQuestions": "Всего вопросов",
+    "dueDate": "Срок сдачи",
+    "instructions": "Инструкции для участников",
+    "startTest": "Начать тест",
+    "returnCourse": "Вернуться к курсу",
+    "questionMap": "Карта вопросов",
+    "progress": "Прогресс",
+    "flagReview": "Отметить для проверки",
+    "removeFlag": "Снять отметку",
+    "markdownActive": "Поддержка Markdown",
+    "essayPlaceholder": "Введите ответ здесь...",
+    "words": "Слов",
+    "characters": "Символов",
+    "saving": "Сохранение...",
+    "draftSaved": "Черновик сохранён",
+    "prevQuestion": "Предыдущий вопрос",
+    "nextQuestion": "Следующий вопрос",
+    "finishSubmit": "Завершить и отправить",
+    "submitTitle": "Отправить тест",
+    "submitBody": "Есть вопросы без ответа. Вы уверены, что хотите отправить работу?",
+    "returnTest": "Вернуться к тесту",
+    "yesSubmit": "Да, отправить",
+    "submittedTitle": "Тест отправлен!",
+    "submittedDetail": "Ваши ответы успешно сохранены.",
+    "submitAllAnswered": "На все вопросы есть ответы. Отправить работу?"
+  },
+  "modals": {
+    "topic": {
+      "add": "Новая тема",
+      "edit": "Редактировать тему",
+      "namePlaceholder": "напр. Введение в алгоритмы",
+      "create": "Создать тему"
+    },
+    "element": {
+      "add": "Добавить материал",
+      "edit": "Редактировать материал",
+      "goQuiz": "К конструктору теста",
+      "addMaterial": "Добавить материал",
+      "contentType": "Тип материала",
+      "advancedConfig": "Требуется расширенная настройка",
+      "titleRequired": "Название",
+      "requiredMark": "*"
+    },
+    "questionBank": {
+      "create": "Создать банк вопросов",
+      "createBtn": "Создать банк",
+      "titlePlaceholder": "напр. Вопросы к midterm",
+      "descPlaceholder": "Краткое описание банка вопросов..."
+    },
+    "importBank": {
+      "title": "Импорт банка вопросов",
+      "upload": "Загрузка файла",
+      "preview": "Предпросмотр и сопоставление",
+      "complete": "Готово",
+      "uploadHint": "Перетащите CSV сюда или нажмите для выбора файла.",
+      "uploadTitle": "Нажмите или перетащите файл в эту область",
+      "parsing": "Разбор файла...",
+      "importData": "Импортировать",
+      "totalFound": "Всего вопросов",
+      "multipleChoice": "Множественный выбор",
+      "formatErrors": "Ошибки формата",
+      "formatAiken": "Aiken"
+    },
+    "questionEditor": {
+      "title": "Редактировать вопрос",
+      "type": "Тип вопроса",
+      "points": "Баллы",
+      "pointsValue": "Баллы за вопрос",
+      "difficulty": "Сложность",
+      "prompt": "Текст вопроса",
+      "answerOptions": "Варианты ответа",
+      "addOption": "Добавить вариант",
+      "promptPlaceholder": "Введите текст вопроса...",
+      "correctAnswer": "Правильный ответ",
+      "exactMatchHint": "Ответ должен совпадать точно",
+      "submissionSettings": "Настройки ответа",
+      "submissionHint": "Как студент должен отправить ответ",
+      "textEntry": "Текстовый ввод",
+      "minWords": "Мин. количество слов",
+      "maxWords": "Макс. количество слов",
+      "fileUploads": "Загрузка файлов",
+      "maxFiles": "Макс. файлов",
+      "acceptedTypes": "Допустимые типы файлов",
+      "deleteOption": "Удалить вариант"
+    }
+  },
+  "aria": {
+    "notifications": "Уведомления",
+    "help": "Справка",
+    "options": "Действия",
+    "darkMode": "Тёмная тема",
+    "lightMode": "Светлая тема",
+    "collapseSidebar": "Свернуть панель",
+    "expandSidebar": "Развернуть панель",
+    "editAvatar": "Изменить аватар",
+    "editGrade": "Редактировать оценку",
+    "deleteStudent": "Удалить студента",
+    "deleteBank": "Удалить банк"
+  },
+  "notFound": {
+    "title": "Страница не найдена",
+    "subtitle": "Запрашиваемый адрес не существует или был перемещён. Проверьте ссылку или вернитесь на главную.",
+    "goHome": "На главную",
+    "goBack": "Назад"
   },
   "primevue": {
     "emptyMessage": "Нет доступных опций",
@@ -82,12 +549,6 @@
     "passwordPrompt": "Введите пароль",
     "weak": "Слабый",
     "medium": "Средний",
-    "strong": "Надежный"
-  },
-  "notFound": {
-    "title": "Страница не найдена",
-    "subtitle": "Запрашиваемый адрес не существует или был перемещён. Проверьте ссылку или вернитесь на главную.",
-    "goHome": "На главную",
-    "goBack": "Назад"
+    "strong": "Надёжный"
   }
 }

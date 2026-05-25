@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import Select from 'primevue/select' // В PrimeVue v4 Dropdown переименован в Select
@@ -8,6 +9,8 @@ import Button from 'primevue/button'
 
 import { CourseCard } from '@/entities/course'
 import type { Course } from '@/entities/course'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   initialData?: Partial<Course>
@@ -67,12 +70,12 @@ const handleSave = () => {
       <div class="form-card">
         <div class="field-group">
           <label for="title" class="field-label"
-            >Course Title <span class="required">*</span></label
+            >{{ t('courseEditor.courseTitle') }} <span class="required">*</span></label
           >
           <InputText
             id="title"
             v-model="formData.title"
-            placeholder="e.g. Advanced Data Structures"
+            :placeholder="t('courseEditor.titlePlaceholder')"
             class="w-full"
           />
         </div>
@@ -80,35 +83,40 @@ const handleSave = () => {
         <div class="field-row">
           <div class="field-group flex-1">
             <label for="code" class="field-label"
-              >Course Code <span class="required">*</span></label
+              >{{ t('courseEditor.courseCode') }} <span class="required">*</span></label
             >
-            <InputText id="code" v-model="formData.code" placeholder="e.g. CS-301" class="w-full" />
+            <InputText
+              id="code"
+              v-model="formData.code"
+              :placeholder="t('courseEditor.codePlaceholder')"
+              class="w-full"
+            />
           </div>
           <div class="field-group flex-1">
-            <label for="department" class="field-label">Department / Category</label>
+            <label for="department" class="field-label">{{ t('courseEditor.department') }}</label>
             <Select
               id="department"
               v-model="formData.department"
               :options="departments"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select Department"
+              :placeholder="t('courseEditor.deptPlaceholder')"
               class="w-full"
             />
           </div>
         </div>
 
         <div class="field-group">
-          <label for="description" class="field-label">Course Description</label>
+          <label for="description" class="field-label">{{ t('courseEditor.description') }}</label>
           <Textarea
             id="description"
             v-model="formData.description"
             rows="6"
-            placeholder="Provide a detailed overview of what students will learn in this course..."
+            :placeholder="t('courseEditor.descPlaceholder')"
             class="w-full textarea-field"
           />
           <div class="field-hint">
-            <span>Markdown supported</span>
+            <span>{{ t('courseEditor.markdownSupported') }}</span>
             <span>{{ formData.description.length }}/500 characters</span>
           </div>
         </div>
@@ -116,14 +124,17 @@ const handleSave = () => {
         <div class="field-group checkbox-group">
           <Checkbox v-model="formData.isPrivate" inputId="isPrivate" binary />
           <div class="checkbox-label-wrapper">
-            <label for="isPrivate" class="checkbox-title">Make this course private</label>
+            <label for="isPrivate" class="checkbox-title">{{ t('courseEditor.makePrivate') }}</label>
             <span class="checkbox-desc">Only enrolled students can view course materials.</span>
           </div>
         </div>
 
         <div class="form-actions">
-          <Button label="Cancel" severity="secondary" outlined @click="emit('cancel')" />
-          <Button :label="isEditMode ? 'Save Changes' : 'Create Course'" @click="handleSave" />
+          <Button :label="t('common.cancel')" severity="secondary" outlined @click="emit('cancel')" />
+          <Button
+            :label="isEditMode ? t('common.saveChanges') : t('courseEditor.createCourse')"
+            @click="handleSave"
+          />
         </div>
       </div>
     </div>
@@ -131,13 +142,13 @@ const handleSave = () => {
     <!-- ПРАВАЯ КОЛОНКА: Сайдбар -->
     <aside class="editor-sidebar">
       <div class="sidebar-section">
-        <h4 class="sidebar-title">COURSE CARD PREVIEW</h4>
+        <h4 class="sidebar-title">{{ t('courseEditor.cardPreview') }}</h4>
         <!-- Используем готовую карточку из entities -->
         <CourseCard :course="previewCourse" class="preview-card" />
 
         <Button
           icon="pi pi-image"
-          label="Upload Cover Image"
+          :label="t('courseEditor.uploadCover')"
           outlined
           severity="secondary"
           class="upload-btn w-full mt-3"
@@ -147,7 +158,7 @@ const handleSave = () => {
       <div class="tips-card">
         <div class="tips-header">
           <i class="pi pi-lightbulb tips-icon"></i>
-          <span class="tips-title">Instructor Tips</span>
+          <span class="tips-title">{{ t('courseEditor.instructorTips') }}</span>
         </div>
         <ul class="tips-list">
           <li>Keep titles concise and descriptive.</li>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 
@@ -11,6 +12,7 @@ import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
@@ -29,7 +31,7 @@ onMounted(async () => {
   if (studentData) {
     profileDraft.value = { ...studentData }
   } else {
-    notifications.showToast('error', 'Not Found', 'Student not found.')
+    notifications.showToast('error', t('adminUserProfile.notFoundTitle'), t('adminUserProfile.studentNotFound'))
     router.push('/admin/users')
   }
 })
@@ -38,17 +40,16 @@ const handleSaveChanges = async () => {
   if (!profileDraft.value) return
   // Стор отправит патч на API, а клиент API перехватит ошибки
   await userStore.updateUser(profileDraft.value.id, profileDraft.value)
-  notifications.showToast('success', 'Success', 'Student profile updated successfully.')
+  notifications.showToast('success', t('common.save'), t('adminUserProfile.studentSaved'))
 }
 </script>
 
 <template>
   <div class="profile-page">
     <div class="breadcrumbs">
-      <span class="crumb">Users</span> <span class="separator">/</span>
-      <span class="crumb">Students</span> <span class="separator">/</span>
-      <!-- ИСПОЛЬЗУЕМ fullName -->
-      <span class="crumb active">{{ profileDraft?.fullName || 'Loading...' }}</span>
+      <span class="crumb">{{ t('adminUserProfile.users') }}</span> <span class="separator">/</span>
+      <span class="crumb">{{ t('adminUserProfile.students') }}</span> <span class="separator">/</span>
+      <span class="crumb active">{{ profileDraft?.fullName || t('common.loading') }}</span>
     </div>
 
     <div class="profile-container">
@@ -64,8 +65,8 @@ const handleSaveChanges = async () => {
         <SecuritySettingsCard v-model="profileDraft" />
 
         <div class="form-actions">
-          <Button label="Cancel" outlined @click="router.back()" />
-          <Button label="Save Changes" icon="pi pi-check" @click="handleSaveChanges" />
+          <Button :label="t('common.cancel')" outlined @click="router.back()" />
+          <Button :label="t('common.saveChanges')" icon="pi pi-check" @click="handleSaveChanges" />
         </div>
       </div>
     </div>

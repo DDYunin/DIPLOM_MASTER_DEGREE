@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -14,6 +15,7 @@ import { SearchUser } from '@/features/search-user'
 import { FilterUsersByRole } from '@/features/filter-users-by-role'
 import { useAdminUsersTable } from '../model/store';
 
+const { t } = useI18n()
 const router = useRouter()
 const adminUsersTableStore = useAdminUsersTable();
 
@@ -82,10 +84,10 @@ const getInitials = (user: User) => {
       :rowClass="getRowClass"
     >
       <template #empty>
-        <div class="p-4 text-center text-gray-500">No users found.</div>
+        <div class="p-4 text-center text-gray-500">{{ t('adminUsers.noUsers') }}</div>
       </template>
 
-      <Column field="fullName" header="USER">
+      <Column field="fullName" :header="t('adminUsers.columns.user')">
         <template #body="{ data }">
           <div style="display: flex; gap: 1rem; align-items: center">
             <Avatar
@@ -104,17 +106,17 @@ const getInitials = (user: User) => {
         </template>
       </Column>
 
-      <Column field="role" header="ROLE">
+      <Column field="role" :header="t('adminUsers.columns.role')">
         <template #body="{ data }">
           <Tag :severity="getRoleSeverity(data.role)" :value="data.role" rounded />
         </template>
       </Column>
 
-      <Column field="department" header="DEPARTMENT">
+      <Column field="department" :header="t('adminUsers.columns.department')">
         <template #body="{ data }">
           <div style="display: flex; flex-direction: column">
             <span style="font-weight: 500; color: var(--text-color)">{{
-              data.department || '—'
+              data.department || t('common.dash')
             }}</span>
             <span style="font-size: 0.8rem; color: var(--text-color-secondary)">{{
               data.subDepartment || ''
@@ -123,13 +125,13 @@ const getInitials = (user: User) => {
         </template>
       </Column>
 
-      <Column field="status" header="STATUS">
+      <Column field="status" :header="t('adminUsers.columns.status')">
         <template #body="{ data }">
           <Tag :severity="getStatusSeverity(data.status)" :value="data.status" rounded />
         </template>
       </Column>
 
-      <Column header="ACTIONS">
+      <Column :header="t('adminUsers.columns.actions')">
         <template #body>
           <Button icon="pi pi-ellipsis-v" text rounded @click.stop />
         </template>

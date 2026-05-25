@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 import { useAssessmentStore } from '@/entities/assessment'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const store = useAssessmentStore()
@@ -43,7 +45,7 @@ const handleStartTest = () => {
     <template v-else>
       <!-- Breadcrumbs -->
       <nav class="breadcrumbs">
-        <span>Courses</span>
+        <span>{{ t('assessment.courses') }}</span>
         <i class="pi pi-angle-right"></i>
         <span>{{ store.currentAssessment.courseCode }}</span>
         <i class="pi pi-angle-right"></i>
@@ -52,7 +54,7 @@ const handleStartTest = () => {
 
       <!-- Header Section -->
       <header class="header-section">
-        <Tag value="ACADEMIC ASSESSMENT" severity="success" rounded class="assessment-tag" />
+        <Tag :value="t('assessment.academicAssessment')" severity="success" rounded class="assessment-tag" />
         <h1 class="title">{{ store.currentAssessment.title }}</h1>
         <p class="description">{{ store.currentAssessment.description }}</p>
       </header>
@@ -64,7 +66,7 @@ const handleStartTest = () => {
             <i class="pi pi-stopwatch text-blue-600"></i>
           </div>
           <div class="stat-content">
-            <span class="stat-label">TIME LIMIT</span>
+            <span class="stat-label">{{ t('assessment.timeLimit') }}</span>
             <span class="stat-value">{{ store.currentAssessment.timeLimit }} Minutes</span>
           </div>
         </div>
@@ -74,7 +76,7 @@ const handleStartTest = () => {
             <i class="pi pi-check-square text-green-600"></i>
           </div>
           <div class="stat-content">
-            <span class="stat-label">TOTAL QUESTIONS</span>
+            <span class="stat-label">{{ t('assessment.totalQuestions') }}</span>
             <span class="stat-value">{{ store.currentAssessment.totalQuestions }} Tasks</span>
           </div>
         </div>
@@ -84,7 +86,7 @@ const handleStartTest = () => {
             <i class="pi pi-calendar text-orange-600"></i>
           </div>
           <div class="stat-content">
-            <span class="stat-label">DUE DATE</span>
+            <span class="stat-label">{{ t('assessment.dueDate') }}</span>
             <span class="stat-value">{{ store.currentAssessment.dueDate }}</span>
           </div>
         </div>
@@ -92,7 +94,7 @@ const handleStartTest = () => {
 
       <!-- Instructions Section -->
       <section class="instructions-section">
-        <h2 class="instructions-title">Instructions for Candidates</h2>
+        <h2 class="instructions-title">{{ t('assessment.instructions') }}</h2>
 
         <div class="instructions-list">
           <div
@@ -103,7 +105,12 @@ const handleStartTest = () => {
             <div class="instruction-number">{{ index + 1 }}</div>
             <p
               class="instruction-text"
-              v-html="instruction.replace('Start Test', '<strong>Start Test</strong>')"
+              v-html="
+                instruction.replace(
+                  'Start Test',
+                  `<strong>${t('assessment.startTest')}</strong>`
+                )
+              "
             ></p>
           </div>
         </div>
@@ -112,7 +119,7 @@ const handleStartTest = () => {
       <!-- Actions -->
       <div class="actions-section">
         <Button
-          label="Start Test"
+          :label="t('assessment.startTest')"
           icon="pi pi-play"
           iconPos="right"
           size="large"
@@ -120,7 +127,7 @@ const handleStartTest = () => {
           @click="handleStartTest"
         />
         <Button
-          label="Return to Course"
+          :label="t('assessment.returnCourse')"
           icon="pi pi-arrow-left"
           severity="secondary"
           outlined

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 
@@ -9,6 +10,7 @@ import { useNotifications } from '@/shared/model/useNotifications'
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
 import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 
+const { t } = useI18n()
 const userStore = useUserStore()
 const notifications = useNotifications()
 
@@ -38,20 +40,20 @@ const handleSaveChanges = async () => {
   await userStore.updateUser(profileDraft.value.id, profileDraft.value)
 
   // Если код дошел сюда, значит запрос успешен! Показываем Toast.
-  notifications.showToast('success', 'Success', 'System settings have been updated.')
+  notifications.showToast('success', t('common.save'), t('adminProfile.saved'))
 }
 </script>
 
 <template>
   <div class="settings-page">
     <div class="page-header">
-      <h1 class="page-title">System Settings</h1>
+      <h1 class="page-title">{{ t('adminProfile.title') }}</h1>
     </div>
 
     <div class="profile-container">
       <div class="sub-header">
-        <h2 class="sub-title">General Configuration</h2>
-        <p class="sub-desc">Manage your administrative profile and monitor system integrity.</p>
+        <h2 class="sub-title">{{ t('adminProfile.generalConfig') }}</h2>
+        <p class="sub-desc">{{ t('adminProfile.generalDesc') }}</p>
       </div>
 
       <div v-if="userStore.isLoading || !profileDraft" class="content-column">
@@ -66,9 +68,9 @@ const handleSaveChanges = async () => {
         <SecuritySettingsCard v-model="profileDraft" mode="self" />
 
         <div class="form-actions">
-          <Button label="Cancel" outlined class="btn-cancel" />
+          <Button :label="t('common.cancel')" outlined class="btn-cancel" />
           <Button
-            label="Save Changes"
+            :label="t('common.saveChanges')"
             class="btn-save"
             icon="pi pi-check"
             @click="handleSaveChanges"

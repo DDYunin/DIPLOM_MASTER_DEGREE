@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useCourseContentStore, type ElementType } from '@/entities/course-content'
 import Button from 'primevue/button'
@@ -10,6 +11,7 @@ import { useNotifications } from '@/shared/model/useNotifications'
 import { CreateTopicModal } from '@/features/create-course-topic'
 import { CreateElementModal } from '@/features/create-course-element'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
@@ -36,10 +38,10 @@ const openEditTopic = (topic: any) => {
 const handleTopicSave = (data: any) => {
   if (data.id) {
     contentStore.updateTopic(data.id, data)
-    notifications.showToast('success', 'Success', 'Topic have been updated.')
+    notifications.showToast('success', t('common.success'), t('courseEditor.topicUpdated'))
   } else {
     contentStore.createTopic(data)
-    notifications.showToast('success', 'Success', 'Topic have been created.')
+    notifications.showToast('success', t('common.success'), t('courseEditor.topicCreated'))
   }
 }
 
@@ -124,7 +126,7 @@ const getElementConfig = (type: ElementType) => {
       <!-- Тулбар -->
       <div class="toolbar">
         <div class="toolbar-left">
-          <Button label="Add New Topic" icon="pi pi-plus" @click="openCreateTopic" />
+          <Button :label="t('courseEditor.addTopic')" icon="pi pi-plus" @click="openCreateTopic" />
           <div class="toolbar-actions">
             <Button
               icon="pi pi-angle-up"
@@ -132,7 +134,7 @@ const getElementConfig = (type: ElementType) => {
               rounded
               severity="secondary"
               @click="contentStore.collapseAll"
-              aria-label="Collapse All"
+              :aria-label="t('common.collapseAll')"
             />
             <Button
               icon="pi pi-angle-down"
@@ -140,13 +142,13 @@ const getElementConfig = (type: ElementType) => {
               rounded
               severity="secondary"
               @click="contentStore.expandAll"
-              aria-label="Expand All"
+              :aria-label="t('common.expandAll')"
             />
           </div>
         </div>
         <div class="toolbar-right">
-          <span class="last-saved">Last saved: 2 mins ago</span>
-          <Button label="Save" icon="pi pi-save" outlined severity="secondary" />
+          <span class="last-saved">{{ t('courseEditor.lastSaved') }}</span>
+          <Button :label="t('common.save')" icon="pi pi-save" outlined severity="secondary" />
         </div>
       </div>
 
@@ -171,7 +173,7 @@ const getElementConfig = (type: ElementType) => {
                 rounded
                 severity="secondary"
                 @click.stop="openEditTopic(topic)"
-                aria-label="Edit Topic"
+                :aria-label="t('courseEditor.editTopic')"
               />
               <Button
                 icon="pi pi-trash"
@@ -179,7 +181,7 @@ const getElementConfig = (type: ElementType) => {
                 rounded
                 severity="danger"
                 @click.stop="contentStore.deleteTopic(topic.id)"
-                aria-label="Delete Topic"
+                :aria-label="t('courseEditor.deleteTopic')"
               />
               <i
                 class="pi chevron-icon ml-2"
@@ -226,7 +228,7 @@ const getElementConfig = (type: ElementType) => {
                   rounded
                   severity="secondary"
                   @click="openEditElement(topic.id, element)"
-                  aria-label="Edit Material"
+                  :aria-label="t('courseEditor.editMaterial')"
                 />
                 <Button
                   icon="pi pi-trash"
@@ -234,7 +236,7 @@ const getElementConfig = (type: ElementType) => {
                   rounded
                   severity="danger"
                   @click="contentStore.deleteElement(topic.id, element.id)"
-                  aria-label="Delete Material"
+                  :aria-label="t('courseEditor.deleteMaterial')"
                 />
               </div>
             </div>
@@ -267,13 +269,13 @@ const getElementConfig = (type: ElementType) => {
     <aside class="editor-sidebar">
       <!-- Quick Add -->
       <div class="sidebar-card">
-        <h4 class="card-title">Quick Add</h4>
-        <p class="card-subtitle">Drag these items into your topics to create new content.</p>
+        <h4 class="card-title">{{ t('courseEditor.quickAdd') }}</h4>
+        <p class="card-subtitle">{{ t('courseEditor.quickAddHint') }}</p>
 
         <div class="quick-add-grid">
           <div class="quick-add-item">
             <i class="pi pi-play-circle" style="color: var(--color-primary)"></i>
-            <span>Video</span>
+            <span>{{ t('courseEditor.video') }}</span>
           </div>
           <div class="quick-add-item">
             <i class="pi pi-question-circle" style="color: var(--color-accent-purple)"></i>
@@ -281,11 +283,11 @@ const getElementConfig = (type: ElementType) => {
           </div>
           <div class="quick-add-item">
             <i class="pi pi-file" style="color: var(--color-warning)"></i>
-            <span>File/Reading</span>
+            <span>{{ t('courseEditor.fileReading') }}</span>
           </div>
           <div class="quick-add-item">
             <i class="pi pi-clipboard" style="color: var(--color-success)"></i>
-            <span>Assignment</span>
+            <span>{{ t('courseEditor.assignment') }}</span>
           </div>
         </div>
       </div>
@@ -293,7 +295,7 @@ const getElementConfig = (type: ElementType) => {
       <!-- Content Summary -->
       <div class="sidebar-card">
         <div class="summary-header">
-          <h4 class="card-title mb-0">Content Summary</h4>
+          <h4 class="card-title mb-0">{{ t('courseEditor.contentSummary') }}</h4>
           <Tag value="Draft" severity="success" class="bg-green-100 text-green-700" />
         </div>
 
@@ -327,9 +329,8 @@ const getElementConfig = (type: ElementType) => {
       <!-- Help Banner -->
       <div class="help-banner">
         <div class="help-content">
-          <h4 class="help-title">Need help?</h4>
-          <p class="help-desc">Check our guide on how to structure an effective course.</p>
-          <Button label="View Guide" outlined class="help-btn" />
+          <h4 class="help-title">{{ t('courseEditor.needHelp') }}</h4>
+          <Button :label="t('courseEditor.viewGuide')" outlined class="help-btn" />
         </div>
         <i class="pi pi-graduation-cap help-bg-icon"></i>
       </div>

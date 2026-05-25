@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCourseGradeStore } from '@/entities/course-grade'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -10,6 +11,7 @@ import Button from 'primevue/button'
 import Select from 'primevue/select'
 import Tag from 'primevue/tag'
 
+const { t } = useI18n()
 const gradeStore = useCourseGradeStore()
 const searchQuery = ref('')
 
@@ -39,26 +41,35 @@ const getTotalColor = (percent: number) => {
       <div class="toolbar-left">
         <IconField iconPosition="left" class="search-field">
           <InputIcon class="pi pi-search" />
-          <InputText v-model="searchQuery" placeholder="Search student..." class="w-full" />
+          <InputText
+            v-model="searchQuery"
+            :placeholder="t('courseGrades.searchStudent')"
+            class="w-full"
+          />
         </IconField>
         <Select
           v-model="selectedGroup"
           :options="groups"
           optionLabel="label"
-          placeholder="All Groups"
+          :placeholder="t('courseGrades.allGroups')"
           class="filter-dropdown"
         />
         <Select
           v-model="selectedStatus"
           :options="statuses"
           optionLabel="label"
-          placeholder="All Statuses"
+          :placeholder="t('courseGrades.allStatuses')"
           class="filter-dropdown"
         />
       </div>
       <div class="toolbar-right">
-        <Button label="Export CSV" icon="pi pi-download" outlined severity="secondary" />
-        <Button label="Add Column" icon="pi pi-plus" />
+        <Button
+          :label="t('courseGrades.exportCsv')"
+          icon="pi pi-download"
+          outlined
+          severity="secondary"
+        />
+        <Button :label="t('courseGrades.addColumn')" icon="pi pi-plus" />
       </div>
     </div>
 
@@ -118,7 +129,7 @@ const getTotalColor = (percent: number) => {
         class="grades-table"
       >
         <!-- STUDENT NAME -->
-        <Column field="student.name" header="STUDENT NAME" style="width: 25%">
+        <Column field="student.name" :header="t('courseGrades.columns.name')" style="width: 25%">
           <template #body="{ data }">
             <div class="student-cell">
               <div
@@ -147,7 +158,7 @@ const getTotalColor = (percent: number) => {
         </Column>
 
         <!-- GROUP -->
-        <Column field="group" header="GROUP" style="width: 15%">
+        <Column field="group" :header="t('courseGrades.columns.group')" style="width: 15%">
           <template #body="{ data }">
             <Tag :value="data.group" class="group-tag" />
           </template>
@@ -207,7 +218,11 @@ const getTotalColor = (percent: number) => {
         </Column>
 
         <!-- TOTAL % -->
-        <Column field="totalPercent" header="TOTAL %" style="width: 10%; text-align: center">
+        <Column
+          field="totalPercent"
+          :header="t('courseGrades.columns.total')"
+          style="width: 10%; text-align: center"
+        >
           <template #body="{ data }">
             <strong :style="{ color: getTotalColor(data.totalPercent) }">
               {{ data.totalPercent }}%
@@ -216,7 +231,7 @@ const getTotalColor = (percent: number) => {
         </Column>
 
         <!-- ACTIONS -->
-        <Column header="ACTIONS" style="width: 10%; text-align: center">
+        <Column :header="t('common.actions')" style="width: 10%; text-align: center">
           <template #body>
             <Button icon="pi pi-pencil" text rounded severity="secondary" aria-label="Edit Grade" />
           </template>

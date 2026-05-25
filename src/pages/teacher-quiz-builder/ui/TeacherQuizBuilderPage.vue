@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import { QuizBuilderForm, useQuizBuilderStore } from '@/widgets/quiz-builder-form'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const builderStore = useQuizBuilderStore() // Подключаем локальный стор формы
@@ -49,24 +51,26 @@ const save = () => {}
       <div class="header-left">
         <!-- Хлебные крошки -->
         <nav class="breadcrumbs">
-          <a href="#" class="crumb">Courses</a>
+          <a href="#" class="crumb">{{ t('teacherQuiz.courses') }}</a>
           <span class="separator">/</span>
           <a href="#" class="crumb" @click.prevent="goBack">CS-101</a>
           <span class="separator">/</span>
           <span class="crumb active">{{
-            isEditMode ? 'Edit Assessment' : 'Create Assessment'
+            isEditMode ? t('teacherQuiz.editAssessment') : t('teacherQuiz.newAssessment')
           }}</span>
         </nav>
 
         <div class="title-row">
-          <h1 class="page-title">{{ isEditMode ? 'Edit Assessment' : 'New Assessment' }}</h1>
+          <h1 class="page-title">{{
+            isEditMode ? t('teacherQuiz.editAssessment') : t('teacherQuiz.newAssessment')
+          }}</h1>
           <Tag value="Draft" severity="warning" class="status-badge" />
         </div>
-        <p class="page-subtitle">Configure test details and select questions from the bank.</p>
+        <p class="page-subtitle">{{ t('teacherQuiz.subtitle') }}</p>
       </div>
 
       <div class="header-right">
-        <Button label="Save Draft" icon="pi pi-save" @click="save" />
+        <Button :label="t('teacherQuiz.saveDraft')" icon="pi pi-save" @click="save" />
       </div>
     </header>
 

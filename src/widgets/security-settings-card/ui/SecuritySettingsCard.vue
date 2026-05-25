@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import Password from 'primevue/password'
 import ToggleSwitch from 'primevue/toggleswitch'
@@ -19,6 +20,8 @@ const props = withDefaults(
     mode: 'manage' // По умолчанию считаем, что мы управляем кем-то
   }
 )
+
+const { t } = useI18n()
 
 const emit = defineEmits(['update:modelValue'])
 const notifications = useNotifications()
@@ -57,7 +60,7 @@ const handleGeneratePassword = () => {
 
 <template>
   <WidgetCard
-    :title="mode === 'self' ? 'Security & Password' : 'Security & Access'"
+    :title="mode === 'self' ? t('securityCard.title') : t('securityCard.titleAccess')"
     :icon="mode === 'self' ? 'pi-lock' : 'pi-shield'"
     iconColorClass="text-blue-500"
   >
@@ -67,7 +70,7 @@ const handleGeneratePassword = () => {
     <div v-if="mode === 'self'" class="security-layout">
       <div class="password-grid">
         <div class="form-field full-width">
-          <label>CURRENT PASSWORD</label>
+          <label>{{ t('securityCard.currentPassword') }}</label>
           <Password
             v-model="passwords.current"
             :feedback="false"
@@ -78,7 +81,7 @@ const handleGeneratePassword = () => {
         </div>
 
         <div class="form-field">
-          <label>NEW PASSWORD</label>
+          <label>{{ t('securityCard.newPassword') }}</label>
           <Password
             v-model="passwords.new"
             :feedback="true"
@@ -89,7 +92,7 @@ const handleGeneratePassword = () => {
         </div>
 
         <div class="form-field">
-          <label>CONFIRM NEW PASSWORD</label>
+          <label>{{ t('securityCard.confirmPassword') }}</label>
           <Password
             v-model="passwords.confirm"
             :feedback="false"
@@ -101,7 +104,7 @@ const handleGeneratePassword = () => {
       </div>
 
       <Message severity="info" :closable="false" class="custom-message">
-        Password must be at least 8 characters long and contain one special character.
+        {{ t('securityCard.passwordHint') }}
       </Message>
     </div>
 
@@ -115,18 +118,17 @@ const handleGeneratePassword = () => {
         <div class="security-box">
           <div class="box-icon bg-blue"><i class="pi pi-key"></i></div>
           <div class="box-content">
-            <span class="box-title">Password Reset</span>
-            <span class="box-desc">Send a password reset link to the user's email address.</span>
+            <span class="box-title">{{ t('securityCard.passwordReset') }}</span>
             <div class="actions-row mt-3">
               <Button
-                label="Generate New"
+                :label="t('securityCard.generateNew')"
                 icon="pi pi-refresh"
                 severity="secondary"
                 size="small"
                 @click="handleGeneratePassword"
               />
               <Button
-                label="Send Link"
+                :label="t('securityCard.sendLink')"
                 icon="pi pi-envelope"
                 outlined
                 size="small"
@@ -140,13 +142,11 @@ const handleGeneratePassword = () => {
         <div class="security-box">
           <div class="box-icon bg-blue"><i class="pi pi-mobile"></i></div>
           <div class="box-content">
-            <span class="box-title">Multi-Factor Auth</span>
-            <span class="box-desc">Enforce 2FA on next login.</span>
+            <span class="box-title">{{ t('securityCard.mfa') }}</span>
             <div class="toggle-row mt-3">
-              <!-- Тумблер напрямую мутирует profile.twoFactorEnabled -->
               <ToggleSwitch v-model="profile.twoFactorEnabled" />
               <span class="toggle-label">{{
-                profile.twoFactorEnabled ? 'Enabled' : 'Disabled'
+                profile.twoFactorEnabled ? t('securityCard.enabled') : t('securityCard.disabled')
               }}</span>
             </div>
           </div>

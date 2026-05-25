@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 import { useCourseStore, CourseCard } from '@/entities/course'
 
@@ -14,6 +15,7 @@ import InputIcon from 'primevue/inputicon'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 
+const { t } = useI18n()
 const courseStore = useCourseStore()
 const router = useRouter()
 const searchQuery = ref('')
@@ -55,42 +57,46 @@ const goToCourseDetails = (courseId: string) => {
     <!-- Секция приветствия -->
     <header class="page-header">
       <!-- Имя можно брать из userStore, пока хардкод по макету -->
-      <h1 class="welcome-title">Courses</h1>
-      <p class="welcome-subtitle">
-        Manage your curriculum, track student progress, and organize assessments effectively.
-      </p>
+      <h1 class="welcome-title">{{ t('teacherCourses.title') }}</h1>
+      <p class="welcome-subtitle">{{ t('teacherCourses.subtitle') }}</p>
     </header>
 
     <!-- TODO: Возможно лишние карточки -->
     <!-- Секция статистики (используем твой WidgetCard) -->
     <section class="stats-grid">
       <!-- Карточка 1: Total Students -->
-      <WidgetCard title="Total Students" icon="pi-users" iconColorClass="stat-icon-blue">
+      <WidgetCard
+        :title="t('teacherCourses.totalStudents')"
+        icon="pi-users"
+        iconColorClass="stat-icon-blue"
+      >
         <div class="stat-content">
           <div class="stat-value">{{ totalStudentsCount }}</div>
           <div class="stat-trend trend-up">
-            <i class="pi pi-arrow-up-right"></i> +12% from last semester
+            <i class="pi pi-arrow-up-right"></i> {{ t('teacherCourses.trendSemester') }}
           </div>
         </div>
       </WidgetCard>
 
-      <!-- Карточка 2: Active Courses -->
-      <WidgetCard title="Active Courses" icon="pi-book" iconColorClass="stat-icon-purple">
+      <WidgetCard
+        :title="t('teacherCourses.activeCourses')"
+        icon="pi-book"
+        iconColorClass="stat-icon-purple"
+      >
         <div class="stat-content">
           <div class="stat-value">{{ activeCoursesCount }}</div>
-          <div class="stat-desc">All syllabi updated for current term</div>
+          <div class="stat-desc">{{ t('teacherCourses.syllabiUpdated') }}</div>
         </div>
       </WidgetCard>
 
-      <!-- Карточка 3: Pending Grading -->
       <WidgetCard
-        title="Pending Grading"
+        :title="t('teacherCourses.pendingGrading')"
         icon="pi-exclamation-circle"
         iconColorClass="stat-icon-orange"
       >
         <div class="stat-content">
           <div class="stat-value">{{ pendingGradingCount }}</div>
-          <div class="stat-desc text-warning">Due within 48 hours</div>
+          <div class="stat-desc text-warning">{{ t('teacherCourses.due48h') }}</div>
         </div>
       </WidgetCard>
     </section>
@@ -101,14 +107,14 @@ const goToCourseDetails = (courseId: string) => {
         <InputIcon class="pi pi-search" />
         <InputText
           v-model="searchQuery"
-          placeholder="Search courses by name or code..."
+          :placeholder="t('teacherCourses.searchPlaceholder')"
           class="full-width-input"
         />
       </IconField>
 
       <div class="toolbar-actions">
-        <Button label="Filter" icon="pi pi-filter" severity="secondary" outlined />
-        <Button label="Add Course" icon="pi pi-plus" @click="goToAddCourse" />
+        <Button :label="t('common.filter')" icon="pi pi-filter" severity="secondary" outlined />
+        <Button :label="t('teacherCourses.addCourse')" icon="pi pi-plus" @click="goToAddCourse" />
       </div>
     </section>
 
@@ -118,7 +124,7 @@ const goToCourseDetails = (courseId: string) => {
         <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
       </div>
 
-      <div v-else-if="filteredCourses.length === 0" class="empty-state">No courses found.</div>
+      <div v-else-if="filteredCourses.length === 0" class="empty-state">{{ t('common.noData') }}</div>
 
       <CourseCard
         v-for="course in filteredCourses"

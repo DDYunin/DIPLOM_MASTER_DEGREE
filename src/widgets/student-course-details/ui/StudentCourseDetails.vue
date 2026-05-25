@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
@@ -6,6 +7,7 @@ import ProgressBar from 'primevue/progressbar'
 import type { StudentCourseDetails, CourseElement } from '@/entities/course'
 import { useRouter } from 'vue-router'
 
+const { t } = useI18n()
 const router = useRouter()
 
 const props = defineProps<{
@@ -83,7 +85,7 @@ const handleElementClick = (element: CourseElement) => {
         </div>
 
         <div v-if="module.status === 'locked'" class="module-locked-state">
-          <p>Unlock by completing previous modules</p>
+          <p>{{ t('studentCourse.unlockHint') }}</p>
         </div>
 
         <div v-else class="module-elements">
@@ -116,7 +118,7 @@ const handleElementClick = (element: CourseElement) => {
               <i v-if="element.status === 'completed'" class="pi pi-check-circle text-primary"></i>
               <Button
                 v-else-if="element.status === 'current'"
-                label="Resume"
+                :label="t('studentCourse.resume')"
                 size="small"
                 rounded
                 @click="handleElementClick(element)"

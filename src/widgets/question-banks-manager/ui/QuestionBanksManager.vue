@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { type QuestionType, type Difficulty } from '@/entities/question-bank'
 import { useQuestionBanksManagerStore } from '../model/store'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 
+const { t } = useI18n()
 const widgetStore = useQuestionBanksManagerStore()
 const router = useRouter()
 
@@ -56,7 +58,7 @@ const goToAllQuestions = () => {
     <!-- ЛЕВАЯ ПАНЕЛЬ: Список банков -->
     <aside class="banks-sidebar">
       <div class="sidebar-header">
-        <h3 class="sidebar-title">All Banks</h3>
+        <h3 class="sidebar-title">{{ t('teacherQuestionBanks.allBanks') }}</h3>
         <span class="total-badge">{{ widgetStore.totalBanks }} Total</span>
       </div>
 
@@ -87,13 +89,17 @@ const goToAllQuestions = () => {
         <div class="empty-icon-wrapper">
           <i class="pi pi-copy empty-icon"></i>
         </div>
-        <h2 class="empty-title">No Question Bank Selected</h2>
+        <h2 class="empty-title">{{ t('teacherQuestionBanks.noBankSelected') }}</h2>
         <p class="empty-desc">
           Select a bank from the list on the left to view its details<br />
           and manage questions, or create a new one to start<br />
           building your assessment.
         </p>
-        <Button label="Create New Bank" icon="pi pi-plus" @click="emit('create-bank')" />
+        <Button
+          :label="t('teacherQuestionBanks.createBank')"
+          icon="pi pi-plus"
+          @click="emit('create-bank')"
+        />
       </div>
 
       <!-- SELECTED STATE (Редактор банка) -->
@@ -101,7 +107,7 @@ const goToAllQuestions = () => {
         <!-- Секция: Детали банка -->
         <section class="editor-section">
           <div class="section-header">
-            <h2 class="section-title">Edit Bank Details</h2>
+            <h2 class="section-title">{{ t('teacherQuestionBanks.editBankDetails') }}</h2>
             <div class="header-actions">
               <Button
                 icon="pi pi-trash"
@@ -110,18 +116,18 @@ const goToAllQuestions = () => {
                 severity="secondary"
                 aria-label="Delete Bank"
               />
-              <Button label="Save Changes" icon="pi pi-save" text />
+              <Button :label="t('common.saveChanges')" icon="pi pi-save" text />
             </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Bank Title</label>
+            <label class="form-label">{{ t('teacherQuestionBanks.bankTitle') }}</label>
             <!-- Спец. класс filled-input для имитации серого фона как на макете -->
             <InputText v-model="widgetStore.selectedBank.title" class="w-full filled-input" />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Description</label>
+            <label class="form-label">{{ t('teacherQuestionBanks.description') }}</label>
             <InputText v-model="widgetStore.selectedBank.description" class="w-full filled-input" />
           </div>
         </section>
@@ -133,9 +139,9 @@ const goToAllQuestions = () => {
               Questions in this Bank ({{ widgetStore.selectedBank.questionsCount }})
             </h3>
             <div class="header-actions text-sm">
-              <a href="#" class="action-link">Expand All</a>
+              <a href="#" class="action-link">{{ t('common.expandAll') }}</a>
               <span class="divider">|</span>
-              <a href="#" class="action-link">Collapse All</a>
+              <a href="#" class="action-link">{{ t('common.collapseAll') }}</a>
             </div>
           </div>
 
@@ -188,7 +194,7 @@ const goToAllQuestions = () => {
           </div>
 
           <div class="load-more">
-            <Button label="Show all questions" text @click="goToAllQuestions" />
+            <Button :label="t('teacherQuestionBanks.showAllQuestions')" text @click="goToAllQuestions" />
           </div>
         </section>
       </div>

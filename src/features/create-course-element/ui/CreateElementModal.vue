@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
 import FileUpload from 'primevue/fileupload'
+
+const { t } = useI18n()
 
 const visible = defineModel<boolean>('visible', { default: false })
 
@@ -107,7 +110,7 @@ watch(visible, (newVal) => {
   <Dialog
     v-model:visible="visible"
     modal
-    :header="initialData ? 'Edit Material' : 'Add New Material'"
+    :header="initialData ? t('modals.element.edit') : t('modals.element.add')"
     :style="{ width: '450px' }"
   >
     <div class="form-content">
@@ -192,17 +195,17 @@ watch(visible, (newVal) => {
     </div>
 
     <template #footer>
-      <Button label="Cancel" text severity="secondary" @click="close" />
+      <Button :label="t('common.cancel')" text severity="secondary" @click="close" />
       <Button
         v-if="selectedType === 'quiz' && !initialData"
-        label="Go to Quiz Builder"
+        :label="t('modals.element.goQuiz')"
         icon="pi pi-arrow-right"
         iconPos="right"
         @click="handlePrimaryAction"
       />
       <Button
         v-else
-        :label="initialData ? 'Save Changes' : 'Add Material'"
+        :label="initialData ? t('common.saveChanges') : t('modals.element.addMaterial')"
         icon="pi pi-check"
         @click="handlePrimaryAction"
       />

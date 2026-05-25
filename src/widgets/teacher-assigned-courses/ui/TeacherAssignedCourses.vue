@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
 import type { TeacherProfile } from '@/entities/user'
 
 import { WidgetCard } from '@/shared/ui/'
+
+const { t } = useI18n()
 
 defineProps<{ profile: TeacherProfile }>()
 
@@ -16,16 +19,16 @@ const getStatusSeverity = (status: string) => {
 </script>
 
 <template>
-  <WidgetCard icon="pi-book" title="Assigned Courses" iconColorToken="var(--color-primary)">
+  <WidgetCard icon="pi-book" :title="t('teacherAssigned.title')" iconColorToken="var(--color-primary)">
     <template #header-actions>
-      <a href="#" class="history-link">View All History</a>
+      <a href="#" class="history-link">{{ t('teacherAssigned.viewHistory') }}</a>
     </template>
     <template #default>
       <DataTable :value="profile.courses" class="courses-table">
-        <Column field="code" header="Course Code"></Column>
-        <Column field="name" header="Course Name"></Column>
-        <Column field="semester" header="Semester"></Column>
-        <Column field="status" header="Status">
+        <Column field="code" :header="t('teacherAssigned.courseCode')"></Column>
+        <Column field="name" :header="t('teacherAssigned.courseName')"></Column>
+        <Column field="semester" :header="t('teacherAssigned.semester')"></Column>
+        <Column field="status" :header="t('common.status')">
           <template #body="slotProps">
             <Tag
               :value="slotProps.data.status"

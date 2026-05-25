@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import { OrgTreeBuilder } from '@/widgets/org-tree-builder'
 import { OrgUnitDetails } from '@/widgets/org-unit-details'
@@ -8,6 +9,7 @@ import { useOrgStore, type TreeHierarchyType } from '@/entities/organization'
 import { useNotifications } from '@/shared/model'
 import type { OrgTreeNode } from '@/entities/organization'
 
+const { t } = useI18n()
 const orgStore = useOrgStore()
 const notifications = useNotifications()
 
@@ -41,8 +43,8 @@ const handleSaveDetails = async (updatedNode: OrgTreeNode) => {
     // 4. Показываем красивый Toast
     notifications.showToast(
       'success',
-      'Hierarchy Updated',
-      `${updatedNode.label} has been updated successfully.`
+      t('adminOrg.toastUpdated'),
+      t('adminOrg.toastUpdatedDetail', { name: updatedNode.label })
     )
   } catch (error) {
     // Если произошла сетевая ошибка, наш apiClient сам покажет Toast 'error'.
@@ -63,8 +65,8 @@ const handleDeleteDetails = async (nodeToDelete: OrgTreeNode) => {
     // Уведомление об успехе
     notifications.showToast(
       'success',
-      'Deleted',
-      `${nodeToDelete.label} has been deleted successfully.`
+      t('adminOrg.toastDeleted'),
+      t('adminOrg.toastDeletedDetail', { name: nodeToDelete.label })
     )
   } catch (error) {
     console.error('Failed to delete node:', error)
@@ -82,8 +84,8 @@ const closePanel = () => {
     <!-- TODO: лишнее -->
     <div class="page-header">
       <div>
-        <h1 class="page-title">Hierarchy</h1>
-        <p class="page-subtitle">Manage the organizational structure of the university, including groups, departments, and institutes</p>
+        <h1 class="page-title">{{ t('adminOrg.title') }}</h1>
+        <p class="page-subtitle">{{ t('adminOrg.subtitle') }}</p>
       </div>
     </div>
 

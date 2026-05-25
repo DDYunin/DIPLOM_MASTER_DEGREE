@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
-import Select from 'primevue/select' // В PrimeVue v4 Dropdown переименован в Select
+import Select from 'primevue/select'
 
-// Импортируем нашу сущность и мок-данные
 import type { User } from '@/entities/user/model/types'
 
-// Состояние модального окна
+const { t } = useI18n()
+
 const isVisible = ref(false)
 
-// Справочники для селектов
 const roles = ['Admin', 'Teacher', 'Student', 'Moderator']
 const statuses = ['Active', 'Offline', 'Blocked']
 
-// Состояние формы
 const initialFormState = {
   name: '',
   email: '',
@@ -25,114 +24,116 @@ const initialFormState = {
   status: 'Active'
 }
 
-// TODO: Видимо сделано просто для удобства, так как не нужно будет везде писать value, хотя, можно же лишь однажды написать value и всё
-// TODO: переписать на value
 const formData = reactive({ ...initialFormState })
 
-// Методы
 const openModal = () => {
-  Object.assign(formData, initialFormState) // Сбрасываем форму при открытии
+  Object.assign(formData, initialFormState)
   isVisible.value = true
 }
 
 const handleSave = () => {
-  // Базовая валидация (можно расширить)
   if (!formData.name || !formData.email) return
 
-  // Создаем нового пользователя
   const newUser: User = {
-    id: Date.now().toString(), // Генерируем фейковый ID
+    id: Date.now().toString(),
     name: formData.name,
     email: formData.email,
-    avatar: `https://i.pravatar.cc/150?u=${Date.now()}`, // Случайная аватарка
+    avatar: `https://i.pravatar.cc/150?u=${Date.now()}`,
     role: formData.role as User['role'],
     department: formData.department || 'General',
     subDepartment: formData.subDepartment || 'Main',
     status: formData.status as User['status']
   }
 
-  // Добавляем в начало списка моковых данных
-  // mockUsers.value.unshift(newUser)
-
-  // Закрываем модалку
   isVisible.value = false
 }
 </script>
 
 <template>
-  <!-- Кнопка, которая снаружи выглядит как часть страницы -->
-  <Button label="Add User" icon="pi pi-plus" class="btn-add" @click="openModal" />
+  <Button
+    :label="t('addUser.addUser')"
+    icon="pi pi-plus"
+    class="btn-add"
+    @click="openModal"
+  />
 
-  <!-- Модальное окно -->
   <Dialog
     v-model:visible="isVisible"
     modal
-    header="Add New User"
+    :header="t('addUser.modalTitle')"
     :style="{ width: '450px' }"
     class="add-user-dialog"
   >
     <div class="form-container">
       <div class="field">
-        <label for="name">Full Name</label>
-        <InputText id="name" v-model="formData.name" placeholder="e.g. John Doe" />
+        <label for="name">{{ t('addUser.fullName') }}</label>
+        <InputText
+          id="name"
+          v-model="formData.name"
+          :placeholder="t('addUser.namePlaceholder')"
+        />
       </div>
 
       <div class="field">
-        <label for="email">Email Address</label>
+        <label for="email">{{ t('addUser.email') }}</label>
         <InputText
           id="email"
           type="email"
           v-model="formData.email"
-          placeholder="john.doe@university.edu"
+          :placeholder="t('addUser.emailPlaceholder')"
         />
       </div>
 
       <div class="field-row">
         <div class="field w-half">
-          <label for="role">Role</label>
-          <Select id="role" v-model="formData.role" :options="roles" placeholder="Select a Role" />
+          <label for="role">{{ t('common.role') }}</label>
+          <Select
+            id="role"
+            v-model="formData.role"
+            :options="roles"
+            :placeholder="t('addUser.selectRole')"
+          />
         </div>
         <div class="field w-half">
-          <label for="status">Status</label>
+          <label for="status">{{ t('common.status') }}</label>
           <Select
             id="status"
             v-model="formData.status"
             :options="statuses"
-            placeholder="Select Status"
+            :placeholder="t('addUser.selectStatus')"
           />
         </div>
       </div>
 
       <div class="field-row">
         <div class="field w-half">
-          <label for="department">Department</label>
+          <label for="department">{{ t('addUser.department') }}</label>
           <InputText
             id="department"
             v-model="formData.department"
-            placeholder="e.g. Computer Science"
+            :placeholder="t('addUser.deptPlaceholder')"
           />
         </div>
         <div class="field w-half">
-          <label for="subDepartment">Sub-department</label>
+          <label for="subDepartment">{{ t('addUser.subDepartment') }}</label>
           <InputText
             id="subDepartment"
             v-model="formData.subDepartment"
-            placeholder="e.g. Engineering"
+            :placeholder="t('addUser.deptPlaceholder')"
           />
         </div>
       </div>
     </div>
 
-    <!-- Футер модалки -->
     <template #footer>
       <Button
-        label="Cancel"
+        :label="t('common.cancel')"
         icon="pi pi-times"
         text
         class="cancel-btn"
         @click="isVisible = false"
       />
-      <Button label="Save User" icon="pi pi-check" @click="handleSave" />
+      <Button :label="t('addUser.saveUser')" icon="pi pi-check" @click="handleSave" />
     </template>
   </Dialog>
 </template>
@@ -175,7 +176,6 @@ label {
   color: var(--text-color-secondary);
 }
 
-/* Фикс ширины для PrimeVue компонентов внутри флекс-контейнеров */
 :deep(.p-inputtext),
 :deep(.p-select) {
   width: 100%;

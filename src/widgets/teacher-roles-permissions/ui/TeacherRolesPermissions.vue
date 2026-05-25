@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Chip from 'primevue/chip'
 import ToggleSwitch from 'primevue/toggleswitch'
 import type { TeacherProfile } from '@/entities/user'
 import { AddPermissionScope } from '@/features/add-permission-scope'
 
 import { WidgetCard } from '@/shared/ui/'
+
+const { t } = useI18n()
 
 const props = defineProps<{ profile: TeacherProfile }>()
 
@@ -32,16 +35,16 @@ const removeGroup = (groupToRemove: string) => {
 <template>
   <WidgetCard
     icon="pi-check-circle"
-    title="Roles & Permissions"
+    :title="t('teacherRoles.title')"
     iconColorToken="var(--color-primary)"
-    subtitle="Access levels and administrative groups assigned to this user"
+    :subtitle="t('teacherRoles.subtitle')"
   >
     <template #header-actions>
       <AddPermissionScope @add="handleAddGroups" />
     </template>
     <template #default>
       <div class="groups-section">
-        <label class="section-label">ASSIGNED GROUPS</label>
+        <label class="section-label">{{ t('teacherRoles.assignedGroups') }}</label>
         <div class="chips-container">
           <!-- Отрисовываем группы. У Chip есть событие @remove для крестика -->
           <Chip
@@ -58,16 +61,16 @@ const removeGroup = (groupToRemove: string) => {
       <div class="permissions-grid">
         <div class="permission-item">
           <div class="perm-text">
-            <span class="perm-name">Publish Grades</span>
-            <span class="perm-desc">Can finalize term grades</span>
+            <span class="perm-name">{{ t('teacherRoles.publishGrades') }}</span>
+            <span class="perm-desc">{{ t('teacherRoles.publishGradesDesc') }}</span>
           </div>
           <ToggleSwitch v-model="permissions.publishGrades" />
         </div>
 
         <div class="permission-item">
           <div class="perm-text">
-            <span class="perm-name">Manage System Users</span>
-            <span class="perm-desc">Can add new students</span>
+            <span class="perm-name">{{ t('teacherRoles.manageUsers') }}</span>
+            <span class="perm-desc">{{ t('teacherRoles.manageUsersDesc') }}</span>
           </div>
           <ToggleSwitch v-model="permissions.manageUsers" />
         </div>

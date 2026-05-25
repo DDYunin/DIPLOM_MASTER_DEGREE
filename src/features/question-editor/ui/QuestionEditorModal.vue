@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import Select from 'primevue/select'
 import InputText from 'primevue/inputtext'
@@ -7,6 +8,8 @@ import Textarea from 'primevue/textarea'
 import Checkbox from 'primevue/checkbox'
 import RadioButton from 'primevue/radiobutton'
 import Button from 'primevue/button'
+
+const { t } = useI18n()
 
 const visible = defineModel<boolean>('visible', { default: false })
 
@@ -131,11 +134,11 @@ const handleClose = () => {
     <template #header>
       <div class="editor-header">
         <div class="header-titles">
-          <h2 class="editor-title">Edit Question</h2>
+          <h2 class="editor-title">{{ t('modals.questionEditor.title') }}</h2>
           <span class="editor-subtitle">{{ bankName || 'Question Bank' }}</span>
         </div>
         <Button
-          label="Close"
+          :label="t('common.close')"
           severity="secondary"
           text
           class="bg-surface-100"
@@ -148,7 +151,7 @@ const handleClose = () => {
       <!-- TOP ROW: Type, Points, Difficulty -->
       <div class="top-row">
         <div class="field-group flex-2">
-          <label>Question Type</label>
+          <label>{{ t('modals.questionEditor.type') }}</label>
           <Select
             v-model="type"
             :options="questionTypes"
@@ -158,11 +161,11 @@ const handleClose = () => {
           />
         </div>
         <div class="field-group flex-1">
-          <label>Points</label>
+          <label>{{ t('modals.questionEditor.points') }}</label>
           <InputText v-model="points" class="w-full text-center" />
         </div>
         <div class="field-group flex-2">
-          <label>Difficulty</label>
+          <label>{{ t('modals.questionEditor.difficulty') }}</label>
           <Select
             v-model="difficulty"
             :options="difficulties"
@@ -176,8 +179,8 @@ const handleClose = () => {
       <!-- PROMPT (Rich Text Editor Mock) -->
       <div class="field-group">
         <div class="field-header">
-          <label>Question Prompt</label>
-          <a href="#" class="preview-link">Preview</a>
+          <label>{{ t('modals.questionEditor.prompt') }}</label>
+          <a href="#" class="preview-link">{{ t('common.preview') }}</a>
         </div>
         <div class="fake-editor">
           <div class="editor-toolbar">
@@ -193,7 +196,7 @@ const handleClose = () => {
             v-model="prompt"
             rows="5"
             class="editor-textarea"
-            placeholder="Type your question here..."
+            :placeholder="t('modals.questionEditor.promptPlaceholder')"
           />
         </div>
       </div>
@@ -203,7 +206,7 @@ const handleClose = () => {
       <!-- 1. MULTIPLE CHOICE (Single / Multi) -->
       <div v-if="type === 'single' || type === 'multi'" class="dynamic-section">
         <div class="section-header">
-          <label>Answer Options</label>
+          <label>{{ t('modals.questionEditor.answerOptions') }}</label>
           <span class="section-hint">
             {{
               type === 'single'
@@ -239,7 +242,7 @@ const handleClose = () => {
             />
           </div>
           <Button
-            label="Add Option"
+            :label="t('modals.questionEditor.addOption')"
             icon="pi pi-plus"
             text
             severity="secondary"
@@ -338,8 +341,8 @@ const handleClose = () => {
     <!-- ФУТЕР -->
     <template #footer>
       <div class="editor-footer">
-        <Button label="Cancel" severity="secondary" outlined @click="handleClose" />
-        <Button label="Save Changes" @click="handleSave" />
+        <Button :label="t('common.cancel')" severity="secondary" outlined @click="handleClose" />
+        <Button :label="t('common.saveChanges')" @click="handleSave" />
       </div>
     </template>
   </Dialog>

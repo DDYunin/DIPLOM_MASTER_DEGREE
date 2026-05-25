@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Tree from 'primevue/tree'
 import Skeleton from 'primevue/skeleton'
 import Button from 'primevue/button'
@@ -15,6 +16,7 @@ const emit = defineEmits<{
   (e: 'tab-change', tab: TreeHierarchyType): void
 }>()
 
+const { t } = useI18n()
 const orgStore = useOrgStore()
 const notifications = useNotifications()
 const addModalRef = ref<InstanceType<typeof AddOrgUnitModal> | null>(null)
@@ -104,8 +106,8 @@ const handleAddNewNode = async (newNode: OrgTreeNode) => {
 
     notifications.showToast(
       'success',
-      'Hierarchy Updated',
-      `${newNode.label} has been updated successfully.`
+      t('adminOrg.toastUpdated'),
+      t('adminOrg.toastUpdatedDetail', { name: newNode.label })
     )
   } catch (error) {
     console.error('Failed to add node', error)
@@ -133,21 +135,21 @@ const getIcon = (type: string) => {
         :class="{ active: activeTab === 'academic' }"
         @click="handleTabChange('academic')"
       >
-        <i class="pi pi-book"></i> Academic Structure
+        <i class="pi pi-book"></i> {{ t('adminOrg.academicStructure') }}
       </button>
       <button
         class="tab-btn"
         :class="{ active: activeTab === 'administrative' }"
         @click="handleTabChange('administrative')"
       >
-        <i class="pi pi-sitemap"></i> Administrative Structure
+        <i class="pi pi-sitemap"></i> {{ t('adminOrg.administrativeStructure') }}
       </button>
     </div>
 
     <!-- ТУЛБАР (Информационный) -->
     <div class="toolbar">
       <span class="toolbar-info">
-        <i class="pi pi-info-circle"></i> Select a unit to view details or add new ones.
+        <i class="pi pi-info-circle"></i> {{ t('adminOrg.selectUnitHint') }}
       </span>
       <div class="toolbar-actions">
         <!-- Кнопка обновления дерева (полезно при ленивой загрузке) -->
@@ -158,7 +160,7 @@ const getIcon = (type: string) => {
           size="small"
           @click="loadTreeData(activeTab)"
           :disabled="isEditing"
-          title="Refresh Tree"
+          :title="t('adminOrg.refreshTree')"
         />
       </div>
     </div>
@@ -194,14 +196,16 @@ const getIcon = (type: string) => {
                   v-if="selectedKey[slotProps.node.key]"
                   :class="['selected-text', isEditing ? 'text-editing' : 'text-selected']"
                 >
-                  ({{ isEditing ? 'Editing' : 'Selected' }})
+                  ({{ isEditing ? t('common.edit') : t('common.selected', { count: 1 }) }})
                 </span>
               </span>
 
               <!-- Подпись типа узла и кода/шортнейма -->
               <span class="node-sub">
                 <span class="text-capitalize">{{
-                  slotProps.node.type === 'fieldOfStudy' ? 'Field of Study' : slotProps.node.type
+                  slotProps.node.type === 'fieldOfStudy'
+                    ? t('adminOrgUnitModal.fieldOfStudy')
+                    : slotProps.node.type
                 }}</span>
                 <template v-if="slotProps.node.data?.shortName || slotProps.node.data?.code">
                   • {{ slotProps.node.data.shortName || slotProps.node.data.code }}
@@ -215,7 +219,7 @@ const getIcon = (type: string) => {
       <!-- Кнопка вызова модалки добавления -->
       <button class="add-unit-btn" :disabled="isEditing" @click="addModalRef?.openModal()">
         <i class="pi pi-plus-circle"></i>
-        {{ 'Add Unit' }}
+        {{ t('common.create') }}
       </button>
     </div>
 

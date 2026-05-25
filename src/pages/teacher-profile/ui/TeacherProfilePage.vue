@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Skeleton from 'primevue/skeleton'
 
@@ -13,6 +14,7 @@ import { TeacherAssignedCourses } from '@/widgets/teacher-assigned-courses'
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
 import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
@@ -28,7 +30,7 @@ onMounted(async () => {
   if (teacherData) {
     profileDraft.value = { ...teacherData }
   } else {
-    notifications.showToast('error', 'Not Found', 'Teacher not found.')
+    notifications.showToast('error', t('adminUserProfile.notFoundTitle'), t('adminUserProfile.teacherNotFound'))
     router.push('/admin/users')
   }
 })
@@ -36,23 +38,20 @@ onMounted(async () => {
 const handleSaveChanges = async () => {
   if (!profileDraft.value) return
   await userStore.updateUser(profileDraft.value.id, profileDraft.value)
-  notifications.showToast('success', 'Success', 'Teacher profile updated successfully.')
+  notifications.showToast('success', t('common.save'), t('adminUserProfile.teacherSaved'))
 }
 </script>
 
 <template>
   <div class="profile-page">
     <div class="breadcrumbs">
-      <span class="crumb">Users</span> <span class="separator">/</span>
-      <span class="crumb">Teachers</span> <span class="separator">/</span>
-      <span class="crumb active">Dr. {{ profileDraft?.fullName || 'Loading...' }}</span>
+      <span class="crumb">{{ t('adminUserProfile.users') }}</span> <span class="separator">/</span>
+      <span class="crumb">{{ t('adminUserProfile.teachers') }}</span> <span class="separator">/</span>
+      <span class="crumb active">{{ profileDraft?.fullName || t('common.loading') }}</span>
     </div>
 
     <div class="page-title-section">
-      <h1 class="page-title">Permissions & Account</h1>
-      <p class="page-desc">
-        Manage profile details, access rights, and security for Dr. {{ profileDraft?.fullName }}.
-      </p>
+      <h1 class="page-title">{{ t('adminUserProfile.permissions') }}</h1>
     </div>
 
     <div class="profile-container">
@@ -74,8 +73,8 @@ const handleSaveChanges = async () => {
         <SecuritySettingsCard v-model="profileDraft" />
 
         <div class="form-actions">
-          <Button label="Cancel" outlined @click="router.back()" />
-          <Button label="Save Changes" icon="pi pi-check" @click="handleSaveChanges" />
+          <Button :label="t('common.cancel')" outlined @click="router.back()" />
+          <Button :label="t('common.saveChanges')" icon="pi pi-check" @click="handleSaveChanges" />
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import ru from './locales/ru.json'
 const savedLocale = localStorage.getItem('app-locale') || 'en'
 
 export const i18n = createI18n({
-  legacy: false, // Обязательно false для Composition API
+  legacy: false,
   locale: savedLocale,
   fallbackLocale: 'en',
   messages: {
@@ -13,3 +13,5 @@ export const i18n = createI18n({
     ru
   }
 })
+
+export type MessageSchema = typeof en

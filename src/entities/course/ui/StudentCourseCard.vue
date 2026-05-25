@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import AvatarGroup from 'primevue/avatargroup'
 import type { StudentCourse } from '../model/types'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   course: StudentCourse
@@ -52,7 +55,7 @@ const mainInstructor = computed(() => props.course.instructors[0])
             shape="circle"
           />
           <div class="instructor-info">
-            <span class="instructor-label">INSTRUCTOR</span>
+            <span class="instructor-label">{{ t('studentCourse.instructor') }}</span>
             <span class="instructor-name">{{ mainInstructor.name }}</span>
           </div>
         </div>
@@ -61,9 +64,14 @@ const mainInstructor = computed(() => props.course.instructors[0])
 
     <!-- Футер карточки -->
     <div class="course-footer">
-      <Button label="Resume" size="small" @click="emit('resume', course.id)" class="footer-btn" />
       <Button
-        label="Syllabus"
+        :label="t('studentCourse.resume')"
+        size="small"
+        @click="emit('resume', course.id)"
+        class="footer-btn"
+      />
+      <Button
+        :label="t('studentCourse.syllabus')"
         severity="secondary"
         outlined
         size="small"

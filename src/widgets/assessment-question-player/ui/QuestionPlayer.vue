@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
 import RadioButton from 'primevue/radiobutton'
 import Textarea from 'primevue/textarea'
 import { useAssessmentSessionStore } from '@/entities/assessment-session'
 
+const { t } = useI18n()
 const store = useAssessmentSessionStore()
 
 const currentQ = computed(() => store.currentQuestion)
@@ -96,20 +98,20 @@ const handlePrev = () => {
             <button class="tool-btn"><i class="pi pi-list"></i></button>
             <button class="tool-btn"><i class="pi pi-link"></i></button>
           </div>
-          <span class="toolbar-hint">MARKDOWN SUPPORT ACTIVE</span>
+          <span class="toolbar-hint">{{ t('assessment.markdownActive') }}</span>
         </div>
 
         <Textarea
           v-model="answerValue"
           rows="12"
           class="essay-textarea"
-          placeholder="Type your detailed response here... Use markdown for structure."
+          :placeholder="t('assessment.essayPlaceholder')"
         />
 
         <div class="editor-footer">
           <div class="word-counts">
-            <span>Words: {{ wordCount }}</span>
-            <span>Characters: {{ charCount }}</span>
+            <span>{{ t('assessment.words') }}: {{ wordCount }}</span>
+            <span>{{ t('assessment.characters') }}: {{ charCount }}</span>
           </div>
           <div class="save-status">
             <span v-if="store.isSaving" class="text-muted"
@@ -124,7 +126,7 @@ const handlePrev = () => {
     <!-- Навигация (Prev / Next) -->
     <div class="player-footer">
       <Button
-        label="Previous Question"
+        :label="t('assessment.prevQuestion')"
         icon="pi pi-arrow-left"
         text
         severity="secondary"
@@ -141,7 +143,7 @@ const handlePrev = () => {
       </div>
 
       <Button
-        label="Next Question"
+        :label="t('assessment.nextQuestion')"
         icon="pi pi-arrow-right"
         iconPos="right"
         :disabled="currentIndex === store.totalQuestions - 1"

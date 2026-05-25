@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useCourseStore } from '@/entities/course'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const courseStore = useCourseStore()
@@ -48,14 +50,14 @@ const getStatusSeverity = (status: string) => {
           rounded
           severity="secondary"
           @click="goBack"
-          aria-label="Back to courses"
+          :aria-label="t('teacherCourses.backToCourses')"
         />
         <div v-if="course" class="title-wrapper">
           <h1 class="page-title">{{ course.code }}: {{ course.title }}</h1>
           <Tag :value="course.status" :severity="getStatusSeverity(course.status)" />
         </div>
         <div v-else class="title-wrapper">
-          <h1 class="page-title">Loading course...</h1>
+          <h1 class="page-title">{{ t('teacherCourses.loadingCourse') }}</h1>
         </div>
       </div>
     </header>
@@ -67,24 +69,24 @@ const getStatusSeverity = (status: string) => {
         class="tab-link"
         active-class="tab-link--active"
       >
-        <i class="pi pi-info-circle"></i> Main Info
+        <i class="pi pi-info-circle"></i> {{ t('teacherCourses.tabs.mainInfo') }}
       </router-link>
       <router-link
         :to="{ name: 'course-content' }"
         class="tab-link"
         active-class="tab-link--active"
       >
-        <i class="pi pi-file-edit"></i> Content
+        <i class="pi pi-file-edit"></i> {{ t('teacherCourses.tabs.content') }}
       </router-link>
       <router-link
         :to="{ name: 'course-participants' }"
         class="tab-link"
         active-class="tab-link--active"
       >
-        <i class="pi pi-users"></i> Participants
+        <i class="pi pi-users"></i> {{ t('teacherCourses.tabs.participants') }}
       </router-link>
       <router-link :to="{ name: 'course-grades' }" class="tab-link" active-class="tab-link--active">
-        <i class="pi pi-chart-bar"></i> Grades
+        <i class="pi pi-chart-bar"></i> {{ t('teacherCourses.tabs.grades') }}
       </router-link>
     </nav>
 

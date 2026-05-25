@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
@@ -13,6 +14,8 @@ import { WidgetCard } from '@/shared/ui'
 import type { User } from '@/entities/user'
 
 // Используем v-model для удобного связывания с черновиком на странице
+const { t } = useI18n()
+
 const props = defineProps<{ modelValue: User }>()
 const emit = defineEmits(['update:modelValue'])
 
@@ -55,10 +58,9 @@ const deptOptions = [
 
 <template>
   <!-- Используем нашу универсальную обертку -->
-  <WidgetCard title="Profile Information" icon="pi-user" iconColorClass="text-blue-500">
-    <!-- Слот шапки -->
+  <WidgetCard :title="t('profileCard.title')" icon="pi-user" iconColorClass="text-blue-500">
     <template #header-actions>
-      <a href="#" class="edit-link">Edit Details</a>
+      <a href="#" class="edit-link">{{ t('profileCard.editDetails') }}</a>
     </template>
 
     <div class="profile-content">
@@ -68,7 +70,7 @@ const deptOptions = [
       <div class="avatar-section">
         <div class="avatar-wrapper">
           <Avatar :label="initials" size="xlarge" shape="circle" class="custom-avatar" />
-          <button class="camera-btn" title="Change Avatar">
+          <button class="camera-btn" :title="t('profileCard.changeAvatar')">
             <i class="pi pi-camera"></i>
           </button>
         </div>
@@ -80,12 +82,12 @@ const deptOptions = [
       <div class="form-grid">
         <!-- 1. ОБЩИЕ ПОЛЯ -->
         <div class="form-field">
-          <label>FULL NAME</label>
+          <label>{{ t('profileCard.fullName') }}</label>
           <InputText v-model="profile.fullName" />
         </div>
 
         <div class="form-field">
-          <label>ROLE</label>
+          <label>{{ t('common.role') }}</label>
           <div class="role-display">
             <!-- Роль нельзя менять текстом, выводим как Tag -->
             <Tag :severity="getRoleSeverity(profile.role)" :value="profile.role" rounded />
@@ -93,7 +95,7 @@ const deptOptions = [
         </div>
 
         <div class="form-field">
-          <label>EMAIL ADDRESS</label>
+          <label>{{ t('profileCard.email') }}</label>
           <IconField iconPosition="left">
             <InputIcon class="pi pi-envelope" />
             <InputText v-model="profile.email" class="w-full" />
@@ -105,7 +107,7 @@ const deptOptions = [
           v-if="['Super Admin', 'Moderator'].includes(profile.role) || profile.phone !== undefined"
           class="form-field"
         >
-          <label>PHONE NUMBER</label>
+          <label>{{ t('profileCard.phone') }}</label>
           <IconField iconPosition="left">
             <InputIcon class="pi pi-phone" />
             <InputText v-model="profile.phone" class="w-full" />
@@ -120,13 +122,13 @@ const deptOptions = [
         </div>
 
         <div v-if="['Student', 'Teacher'].includes(profile.role)" class="form-field">
-          <label>MAIN DEPARTMENT</label>
+          <label>{{ t('profileCard.department') }}</label>
           <Select v-model="profile.department" :options="deptOptions" class="w-full" />
         </div>
 
         <!-- 4. СПЕЦИФИЧНЫЕ ПОЛЯ: ТОЛЬКО СТУДЕНТ -->
         <div v-if="profile.role === 'Student'" class="form-field">
-          <label>ASSIGNED COHORT / GROUP</label>
+          <label>{{ t('profileCard.cohort') }}</label>
           <Select v-model="profile.cohort" :options="cohortOptions" class="w-full" />
         </div>
 
@@ -135,12 +137,12 @@ const deptOptions = [
           v-if="profile.role === 'Student' || profile.notes !== undefined"
           class="form-field full-width mt-2"
         >
-          <label>ADMINISTRATIVE NOTES</label>
+          <label>{{ t('profileCard.notes') }}</label>
           <Textarea
             v-model="profile.notes"
             rows="3"
             autoResize
-            placeholder="Internal notes about this account..."
+            :placeholder="t('profileCard.notesPlaceholder')"
           />
         </div>
       </div>

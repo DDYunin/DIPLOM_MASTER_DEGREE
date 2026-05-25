@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Question, Difficulty } from '@/entities/question-bank'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -8,6 +9,8 @@ import IconField from 'primevue/iconfield'
 import InputIcon from 'primevue/inputicon'
 import Select from 'primevue/select'
 import Button from 'primevue/button'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   questions: Question[]
@@ -41,13 +44,29 @@ const difficulties = [
 const getTypeStyles = (type: string) => {
   switch (type) {
     case 'multiple-choice':
-      return { bg: 'var(--color-primary-muted)', color: 'var(--color-primary-text-on-subtle)', label: 'Multiple Choice' }
+      return {
+        bg: 'var(--color-primary-muted)',
+        color: 'var(--color-primary-text-on-subtle)',
+        label: t('bankQuestions.types.multipleChoice')
+      }
     case 'true-false':
-      return { bg: 'var(--color-accent-indigo-muted)', color: 'var(--color-accent-indigo-text)', label: 'True / False' }
+      return {
+        bg: 'var(--color-accent-indigo-muted)',
+        color: 'var(--color-accent-indigo-text)',
+        label: t('bankQuestions.types.trueFalse')
+      }
     case 'short-answer':
-      return { bg: 'var(--color-warning-muted)', color: 'var(--color-warning-text)', label: 'Short Answer' }
+      return {
+        bg: 'var(--color-warning-muted)',
+        color: 'var(--color-warning-text)',
+        label: t('bankQuestions.types.shortAnswer')
+      }
     case 'essay':
-      return { bg: 'var(--color-accent-purple-muted)', color: 'var(--color-accent-purple-text)', label: 'Essay' }
+      return {
+        bg: 'var(--color-accent-purple-muted)',
+        color: 'var(--color-accent-purple-text)',
+        label: t('bankQuestions.types.essay')
+      }
     default:
       return { bg: 'var(--surface-subtle)', color: 'var(--text-color)', label: type }
   }
@@ -85,14 +104,18 @@ const filteredQuestions = computed(() => {
       <div class="toolbar-left">
         <IconField iconPosition="left" class="search-field">
           <InputIcon class="pi pi-search" />
-          <InputText v-model="searchQuery" placeholder="Search question text..." class="w-full" />
+          <InputText
+            v-model="searchQuery"
+            :placeholder="t('bankQuestions.search')"
+            class="w-full"
+          />
         </IconField>
         <Select
           v-model="selectedType"
           :options="types"
           optionLabel="label"
           optionValue="value"
-          placeholder="Type"
+          :placeholder="t('bankQuestions.type')"
           class="filter-dropdown"
         />
         <Select
@@ -100,7 +123,7 @@ const filteredQuestions = computed(() => {
           :options="difficulties"
           optionLabel="label"
           optionValue="value"
-          placeholder="Difficulty"
+          :placeholder="t('bankQuestions.difficulty')"
           class="filter-dropdown"
         />
       </div>
@@ -110,14 +133,14 @@ const filteredQuestions = computed(() => {
         <div v-if="selectedQuestions.length > 0" class="bulk-actions">
           <span class="selected-count">{{ selectedQuestions.length }} Selected</span>
           <Button
-            label="Delete"
+            :label="t('common.delete')"
             icon="pi pi-trash"
             severity="danger"
             outlined
             class="bulk-btn bg-red-50"
           />
           <Button
-            label="Move"
+            :label="t('common.move')"
             icon="pi pi-file-export"
             severity="secondary"
             outlined
@@ -141,7 +164,7 @@ const filteredQuestions = computed(() => {
         <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
 
         <!-- Текст вопроса -->
-        <Column field="text" header="QUESTION TEXT" style="width: 50%">
+        <Column field="text" :header="t('bankQuestions.columns.text')" style="width: 50%">
           <template #body="{ data }">
             <div class="question-text-cell">
               <!-- Иконка картинки, если вопрос содержит медиа (фейковая логика для макета) -->
@@ -152,7 +175,7 @@ const filteredQuestions = computed(() => {
         </Column>
 
         <!-- Тип вопроса -->
-        <Column field="type" header="TYPE" style="width: 20%">
+        <Column field="type" :header="t('bankQuestions.columns.type')" style="width: 20%">
           <template #body="{ data }">
             <span
               class="type-badge"
@@ -167,7 +190,7 @@ const filteredQuestions = computed(() => {
         </Column>
 
         <!-- Сложность -->
-        <Column field="difficulty" header="DIFFICULTY" style="width: 15%">
+        <Column field="difficulty" :header="t('bankQuestions.columns.difficulty')" style="width: 15%">
           <template #body="{ data }">
             <div class="difficulty-cell" :style="{ color: getDifficultyColor(data.difficulty) }">
               <i class="pi pi-signal"></i>
@@ -177,14 +200,14 @@ const filteredQuestions = computed(() => {
         </Column>
 
         <!-- Действия -->
-        <Column header="ACTIONS" style="width: 10%; text-align: right">
+        <Column :header="t('bankQuestions.columns.actions')" style="width: 10%; text-align: right">
           <template #body="{ data }">
             <Button
               icon="pi pi-pencil"
               text
               rounded
               severity="secondary"
-              aria-label="Edit Question"
+              :aria-label="t('bankQuestions.editQuestion')"
               @click="emit('edit', data)"
             />
           </template>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import { useCourseStore } from '@/entities/course'
 import { CourseInfoEditor } from '@/widgets/course-info-editor'
 
+const { t } = useI18n()
 const router = useRouter()
 const courseStore = useCourseStore()
 
@@ -30,11 +32,8 @@ const handleCreate = async (courseData: any) => {
 <template>
   <div class="add-course-page">
     <div class="page-intro-card">
-      <h1 class="page-title">Create New Course</h1>
-      <p class="page-subtitle">
-        Fill in the details below to create a new course structure. You can add content and enroll
-        students later.
-      </p>
+      <h1 class="page-title">{{ t('teacherCourses.createCourse') }}</h1>
+      <p class="page-subtitle">{{ t('teacherCourses.subtitle') }}</p>
     </div>
 
     <!-- Внедряем наш переиспользуемый виджет -->

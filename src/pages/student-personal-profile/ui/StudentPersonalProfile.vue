@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { StudentProfileInfo } from '@/widgets/student-profile-info'
+
+const { t } = useI18n()
 </script>
 
 <template>
   <div class="student-profile-page">
     <header class="page-header">
-      <h1 class="page-title">Profile</h1>
-      <p class="page-subtitle">Manage your personal information, email, and security settings.</p>
+      <h1 class="page-title">{{ t('studentProfile.title') }}</h1>
     </header>
 
     <main class="page-content">

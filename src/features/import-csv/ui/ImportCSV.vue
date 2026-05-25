@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 
+const { t } = useI18n()
+
 const handleImport = () => {
-  // Здесь будет логика загрузки файла
   alert('Открытие диалога импорта CSV...')
 }
 </script>
 
 <template>
   <Button
-    label="Import CSV"
+    :label="t('importCsv.label')"
     icon="pi pi-file-excel"
     outlined
     class="btn-import"

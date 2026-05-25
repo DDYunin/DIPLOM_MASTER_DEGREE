@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import { useThemeStore } from '@/shared/model'
 
+const { t } = useI18n()
 const themeStore = useThemeStore()
 </script>
 
@@ -12,13 +14,12 @@ const themeStore = useThemeStore()
     rounded
     class="theme-toggler-btn"
     @click="themeStore.toggleMode"
-    :aria-label="themeStore.mode === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'"
+    :aria-label="themeStore.mode === 'light' ? t('aria.darkMode') : t('aria.lightMode')"
   />
 </template>
 
 <style scoped>
 .theme-toggler-btn {
-  /* Используем токен цвета текста, чтобы иконка органично смотрелась в хедере */
   color: var(--text-color-secondary);
   transition:
     color 0.2s,
@@ -27,6 +28,6 @@ const themeStore = useThemeStore()
 
 .theme-toggler-btn:hover {
   color: var(--text-color);
-  transform: rotate(15deg); /* Добавим легкую анимацию при наведении */
+  transform: rotate(15deg);
 }
 </style>

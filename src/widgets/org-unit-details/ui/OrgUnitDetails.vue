@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
@@ -15,7 +16,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'update:isEditing', 'save', 'delete'])
 
-const confirm = useConfirm() // Инициализация
+const { t } = useI18n()
+const confirm = useConfirm()
 
 // Локальный черновик (только те поля, которые поддерживает наш бэкенд)
 const draft = ref({
@@ -60,16 +62,16 @@ const confirmDelete = () => {
   }
 
   confirm.require({
-    header: 'Delete Confirmation',
-    message: `Are you sure you want to delete "${props.selectedNode.label}"? All nested units will also be removed.`,
+    header: t('common.confirm'),
+    message: `${t('adminOrg.deleteUnit')}: "${props.selectedNode.label}"`,
     icon: 'pi pi-exclamation-triangle',
     rejectProps: {
-      label: 'Cancel',
+      label: t('common.cancel'),
       severity: 'secondary',
       outlined: true
     },
     acceptProps: {
-      label: 'Delete',
+      label: t('common.delete'),
       severity: 'danger'
     },
     accept: () => {
@@ -107,11 +109,9 @@ const getIconData = (type?: string) => {
 }
 
 const formatType = (type?: string) => {
-  if (!type) {
-    return ''
-  }
-  if (type === 'fieldOfStudy') {
-    return 'Field of Study'
+  if (!type) return ''
+  if (type === 'faculty' || type === 'department' || type === 'fieldOfStudy' || type === 'group') {
+    return t(`adminOrgUnitModal.${type}`)
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
@@ -141,11 +141,11 @@ const formatType = (type?: string) => {
       <div class="stats-grid">
         <div class="stat-box">
           <span class="stat-value">0</span>
-          <span class="stat-label">Students</span>
+          <span class="stat-label">{{ t('adminOrg.students') }}</span>
         </div>
         <div class="stat-box">
           <span class="stat-value">0</span>
-          <span class="stat-label">Teachers</span>
+          <span class="stat-label">{{ t('adminOrg.teachers') }}</span>
         </div>
       </div>
 
@@ -153,25 +153,25 @@ const formatType = (type?: string) => {
       <div class="meta-list">
         <!-- Настоящий ID из базы данных (Очень полезно для админов) -->
         <div class="meta-item">
-          <span class="meta-label">DATABASE ID</span>
+          <span class="meta-label">{{ t('adminOrg.databaseId') }}</span>
           <span class="meta-value font-mono">#{{ selectedNode.data.originalId }}</span>
         </div>
 
         <div v-if="selectedNode.data.shortName" class="meta-item">
-          <span class="meta-label">SHORT NAME</span>
+          <span class="meta-label">{{ t('adminOrg.shortName') }}</span>
           <span class="meta-value">{{ selectedNode.data.shortName }}</span>
         </div>
 
         <div v-if="selectedNode.data.code" class="meta-item">
-          <span class="meta-label">PROGRAM CODE</span>
+          <span class="meta-label">{{ t('adminOrg.programCode') }}</span>
           <span class="meta-value">{{ selectedNode.data.code }}</span>
         </div>
       </div>
 
       <div class="actions-section">
-        <span class="actions-title">Quick Actions</span>
+        <span class="actions-title">{{ t('adminOrg.quickActions') }}</span>
         <Button
-          label="Edit Details"
+          :label="t('adminOrg.editDetails')"
           icon="pi pi-pencil"
           outlined
           class="action-btn"
@@ -180,12 +180,12 @@ const formatType = (type?: string) => {
         <!-- TODO: мне кажется лишней -->
         <Button
           v-if="selectedNode.type === 'group'"
-          label="Assign Students"
+          :label="t('adminOrg.assignStudents')"
           icon="pi pi-user-plus"
           class="action-btn btn-primary"
         />
         <Button
-          label="Delete Unit"
+          :label="t('adminOrg.deleteUnit')"
           icon="pi pi-trash"
           severity="danger"
           outlined
@@ -208,33 +208,33 @@ const formatType = (type?: string) => {
 
         <!-- Поле только для факультета -->
         <div v-if="selectedNode.type === 'faculty'" class="form-field mt-3">
-          <label>SHORT NAME</label>
-          <InputText v-model="draft.shortName" placeholder="e.g. ENG" />
+          <label>{{ t('adminOrg.shortName') }}</label>
+          <InputText v-model="draft.shortName" :placeholder="t('adminOrg.codePlaceholder')" />
         </div>
 
         <!-- Поле только для направления -->
         <div v-if="selectedNode.type === 'fieldOfStudy'" class="form-field mt-3">
-          <label>PROGRAM CODE</label>
-          <InputText v-model="draft.code" placeholder="e.g. SE-09" />
+          <label>{{ t('adminOrg.programCode') }}</label>
+          <InputText v-model="draft.code" :placeholder="t('adminOrg.codePlaceholder')" />
         </div>
       </div>
 
       <div class="edit-actions-section">
-        <span class="actions-title">Save Changes?</span>
+        <span class="actions-title">{{ t('common.saveChanges') }}</span>
         <Button
-          label="Save Changes"
+          :label="t('common.saveChanges')"
           icon="pi pi-check"
           class="action-btn btn-success"
           @click="saveChanges"
         />
-        <button class="cancel-link" @click="cancelEditing">Cancel</button>
+        <button class="cancel-link" @click="cancelEditing">{{ t('common.cancel') }}</button>
       </div>
     </template>
   </div>
 
   <div v-else class="empty-panel">
     <i class="pi pi-sitemap empty-icon"></i>
-    <p>Select an organization unit to view details.</p>
+    <p>{{ t('adminOrg.selectUnitHint') }}</p>
   </div>
 </template>
 

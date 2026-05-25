@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+
+const { t } = useI18n()
 
 const visible = defineModel<boolean>('visible', { default: false })
 
@@ -52,7 +55,7 @@ watch(visible, (newVal) => {
   <Dialog
     v-model:visible="visible"
     modal
-    :header="initialData ? 'Edit Topic' : 'Add New Topic'"
+    :header="initialData ? t('modals.topic.edit') : t('modals.topic.add')"
     :style="{ width: '400px' }"
   >
     <div class="form-content">
@@ -65,7 +68,7 @@ watch(visible, (newVal) => {
         <InputText
           id="topicTitle"
           v-model="title"
-          placeholder="e.g. Week 1: Introduction"
+          :placeholder="t('modals.topic.namePlaceholder')"
           class="w-full"
           :invalid="submitted && !title.trim()"
           autofocus
@@ -85,9 +88,9 @@ watch(visible, (newVal) => {
     </div>
 
     <template #footer>
-      <Button label="Cancel" text severity="secondary" @click="close" />
+      <Button :label="t('common.cancel')" text severity="secondary" @click="close" />
       <Button
-        :label="initialData ? 'Save Changes' : 'Create Topic'"
+        :label="initialData ? t('common.saveChanges') : t('modals.topic.create')"
         icon="pi pi-check"
         @click="handleSave"
       />
