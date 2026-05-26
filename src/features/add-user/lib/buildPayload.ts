@@ -1,8 +1,8 @@
 import type { CreateAdminUserRequest } from '@/entities/user'
 import { ROLES } from '@/shared/config/roles'
-import type { AddUserFormState } from './form'
+import type { AddUserFormValues } from './schema'
 
-export const buildCreateAdminUserPayload = (form: AddUserFormState): CreateAdminUserRequest => {
+export const buildCreateAdminUserPayload = (form: AddUserFormValues): CreateAdminUserRequest => {
   const payload: CreateAdminUserRequest = {
     username: form.username.trim(),
     email: form.email.trim(),

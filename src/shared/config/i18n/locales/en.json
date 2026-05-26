@@ -151,7 +151,11 @@
     "emailPlaceholder": "student.petrov.university.edu",
     "success": "User created successfully",
     "errors": {
-      "userExists": "A user with this username or email already exists"
+      "userExists": "A user with this username or email already exists",
+      "required": "This field is required",
+      "invalidEmail": "Enter a valid email address",
+      "departmentRequired": "Department is required for teachers",
+      "groupRequired": "Group is required for students"
     }
   },
   "importCsv": {
