@@ -11,6 +11,9 @@ import 'primeicons/primeicons.css'
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
 
+// TanStack Query
+import { VueQueryPlugin } from '@tanstack/vue-query'
+
 // ИМПОРТИРУЕМ I18N
 import { i18n } from '@/shared/config/i18n'
 
@@ -22,6 +25,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(i18n)
+app.use(VueQueryPlugin)
 
 app.use(PrimeVue, {
   theme: {

@@ -47,7 +47,7 @@
     "forgotPassword": "Forgot password?",
     "rememberMe": "Remember me for 30 days",
     "signIn": "Sign In",
-    "emailPlaceholder": "student@university.edu",
+    "emailPlaceholder": "student.university.edu",
     "passwordPlaceholder": "••••••••",
     "welcomeTitle": "Welcome!",
     "welcomeDetail": "You have successfully logged in."
@@ -140,7 +140,7 @@
     "department": "Department",
     "subDepartment": "Sub-department",
     "namePlaceholder": "e.g. John Doe",
-    "emailPlaceholder": "john.doe@university.edu",
+    "emailPlaceholder": "john.doe.university.edu",
     "deptPlaceholder": "e.g. Computer Science"
   },
   "importCsv": {

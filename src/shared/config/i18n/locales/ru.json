@@ -47,7 +47,7 @@
     "forgotPassword": "Забыли пароль?",
     "rememberMe": "Запомнить меня на 30 дней",
     "signIn": "Войти",
-    "emailPlaceholder": "student@university.edu",
+    "emailPlaceholder": "student.university.edu",
     "passwordPlaceholder": "••••••••",
     "welcomeTitle": "Добро пожаловать!",
     "welcomeDetail": "Вы успешно вошли в систему."
@@ -140,7 +140,7 @@
     "department": "Подразделение",
     "subDepartment": "Кафедра / отдел",
     "namePlaceholder": "напр. Иванов Иван",
-    "emailPlaceholder": "ivanov@university.edu",
+    "emailPlaceholder": "ivanov.university.edu",
     "deptPlaceholder": "напр. Информатика"
   },
   "importCsv": {
