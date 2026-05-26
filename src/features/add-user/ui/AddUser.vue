@@ -1,52 +1,103 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useQuery } from '@tanstack/vue-query'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Select from 'primevue/select'
 
-import type { User } from '@/entities/user/model/types'
+import { organizationApi } from '@/entities/organization'
+import { ROLES } from '@/shared/config/roles'
+import { buildCreateAdminUserPayload } from '../lib/buildPayload'
+import { createInitialFormState } from '../lib/form'
+import { hasFormErrors, validateAddUserForm } from '../lib/validation'
+import { useAddAdminUser } from '../model/useAddAdminUser'
 
 const { t } = useI18n()
 
 const isVisible = ref(false)
+const submitted = ref(false)
+const formData = reactive(createInitialFormState())
 
-const roles = ['Admin', 'Teacher', 'Student', 'Moderator']
-const statuses = ['Active', 'Offline', 'Blocked']
+const addUserMutation = useAddAdminUser()
 
-const initialFormState = {
-  name: '',
-  email: '',
-  role: 'Student',
-  department: '',
-  subDepartment: '',
-  status: 'Active'
+const roleOptions = computed(() => [
+  { label: t('roles.admin'), value: ROLES.ADMIN },
+  { label: t('roles.teacher'), value: ROLES.TEACHER },
+  { label: t('roles.student'), value: ROLES.STUDENT }
+])
+
+const showDepartmentField = computed(
+  () => formData.role === ROLES.TEACHER || formData.role === ROLES.STUDENT
+)
+const showGroupField = computed(() => formData.role === ROLES.STUDENT)
+const isDepartmentRequired = computed(() => formData.role === ROLES.TEACHER)
+
+const fieldErrors = computed(() => (submitted.value ? validateAddUserForm(formData) : {}))
+
+const departmentsQuery = useQuery({
+  queryKey: ['hierarchy-departments-list'],
+  queryFn: () =>
+    organizationApi.fetchDepartmentsList({ page: 0, size: 500, sort: 'name,ASC' }),
+  enabled: computed(() => isVisible.value && showDepartmentField.value)
+})
+
+const groupsQuery = useQuery({
+  queryKey: ['hierarchy-student-groups-list'],
+  queryFn: () =>
+    organizationApi.fetchStudentGroupsList({ page: 0, size: 500, sort: 'name,ASC' }),
+  enabled: computed(() => isVisible.value && showGroupField.value)
+})
+
+const departmentOptions = computed(() => departmentsQuery.data.value?.items ?? [])
+const groupOptions = computed(() => groupsQuery.data.value?.items ?? [])
+
+const resetForm = () => {
+  Object.assign(formData, createInitialFormState())
+  submitted.value = false
 }
 
-const formData = reactive({ ...initialFormState })
-
 const openModal = () => {
-  Object.assign(formData, initialFormState)
+  resetForm()
   isVisible.value = true
 }
 
-const handleSave = () => {
-  if (!formData.name || !formData.email) return
-
-  const newUser: User = {
-    id: Date.now().toString(),
-    name: formData.name,
-    email: formData.email,
-    avatar: `https://i.pravatar.cc/150?u=${Date.now()}`,
-    role: formData.role as User['role'],
-    department: formData.department || 'General',
-    subDepartment: formData.subDepartment || 'Main',
-    status: formData.status as User['status']
-  }
-
+const closeModal = () => {
   isVisible.value = false
 }
+
+watch(
+  () => formData.role,
+  () => {
+    formData.departmentId = null
+    formData.groupId = null
+  }
+)
+
+watch(isVisible, (visible) => {
+  if (!visible) {
+    resetForm()
+  }
+})
+
+const handleSave = async () => {
+  submitted.value = true
+
+  const errors = validateAddUserForm(formData)
+  if (hasFormErrors(errors)) {
+    return
+  }
+
+  try {
+    await addUserMutation.mutateAsync(buildCreateAdminUserPayload(formData))
+    closeModal()
+  } catch {
+    // Ошибка уже обработана в api client / mutation onError
+  }
+}
+
+const isFieldInvalid = (field: keyof typeof formData) => Boolean(fieldErrors.value[field])
 </script>
 
 <template>
@@ -61,16 +112,17 @@ const handleSave = () => {
     v-model:visible="isVisible"
     modal
     :header="t('addUser.modalTitle')"
-    :style="{ width: '450px' }"
+    :style="{ width: '520px' }"
     class="add-user-dialog"
   >
     <div class="form-container">
       <div class="field">
-        <label for="name">{{ t('addUser.fullName') }}</label>
+        <label for="username">{{ t('addUser.username') }}</label>
         <InputText
-          id="name"
-          v-model="formData.name"
-          :placeholder="t('addUser.namePlaceholder')"
+          id="username"
+          v-model="formData.username"
+          :placeholder="t('addUser.usernamePlaceholder')"
+          :invalid="isFieldInvalid('username')"
         />
       </div>
 
@@ -78,50 +130,88 @@ const handleSave = () => {
         <label for="email">{{ t('addUser.email') }}</label>
         <InputText
           id="email"
-          type="email"
           v-model="formData.email"
+          type="email"
           :placeholder="t('addUser.emailPlaceholder')"
+          :invalid="isFieldInvalid('email')"
         />
       </div>
 
       <div class="field-row">
         <div class="field w-half">
-          <label for="role">{{ t('common.role') }}</label>
-          <Select
-            id="role"
-            v-model="formData.role"
-            :options="roles"
-            :placeholder="t('addUser.selectRole')"
+          <label for="lastName">{{ t('addUser.lastName') }}</label>
+          <InputText
+            id="lastName"
+            v-model="formData.lastName"
+            :placeholder="t('addUser.lastNamePlaceholder')"
+            :invalid="isFieldInvalid('lastName')"
           />
         </div>
         <div class="field w-half">
-          <label for="status">{{ t('common.status') }}</label>
-          <Select
-            id="status"
-            v-model="formData.status"
-            :options="statuses"
-            :placeholder="t('addUser.selectStatus')"
+          <label for="firstName">{{ t('addUser.firstName') }}</label>
+          <InputText
+            id="firstName"
+            v-model="formData.firstName"
+            :placeholder="t('addUser.firstNamePlaceholder')"
+            :invalid="isFieldInvalid('firstName')"
           />
         </div>
       </div>
 
-      <div class="field-row">
-        <div class="field w-half">
-          <label for="department">{{ t('addUser.department') }}</label>
-          <InputText
-            id="department"
-            v-model="formData.department"
-            :placeholder="t('addUser.deptPlaceholder')"
-          />
-        </div>
-        <div class="field w-half">
-          <label for="subDepartment">{{ t('addUser.subDepartment') }}</label>
-          <InputText
-            id="subDepartment"
-            v-model="formData.subDepartment"
-            :placeholder="t('addUser.deptPlaceholder')"
-          />
-        </div>
+      <div class="field">
+        <label for="middleName">{{ t('addUser.middleName') }}</label>
+        <InputText
+          id="middleName"
+          v-model="formData.middleName"
+          :placeholder="t('addUser.middleNamePlaceholder')"
+        />
+      </div>
+
+      <div class="field">
+        <label for="role">{{ t('common.role') }}</label>
+        <Select
+          id="role"
+          v-model="formData.role"
+          :options="roleOptions"
+          option-label="label"
+          option-value="value"
+          :placeholder="t('addUser.selectRole')"
+          :invalid="isFieldInvalid('role')"
+        />
+      </div>
+
+      <div v-if="showDepartmentField" class="field">
+        <label for="department">
+          {{ t('addUser.department') }}
+          <span v-if="!isDepartmentRequired" class="optional-label">
+            ({{ t('addUser.optional') }})
+          </span>
+        </label>
+        <Select
+          id="department"
+          v-model="formData.departmentId"
+          :options="departmentOptions"
+          option-label="name"
+          option-value="id"
+          :placeholder="t('addUser.selectDepartment')"
+          :loading="departmentsQuery.isFetching.value"
+          :invalid="isFieldInvalid('departmentId')"
+          :show-clear="!isDepartmentRequired"
+        />
+      </div>
+
+      <div v-if="showGroupField" class="field">
+        <label for="group">{{ t('addUser.group') }}</label>
+        <Select
+          id="group"
+          v-model="formData.groupId"
+          :options="groupOptions"
+          option-label="name"
+          option-value="id"
+          :placeholder="t('addUser.selectGroup')"
+          :loading="groupsQuery.isFetching.value"
+          :invalid="isFieldInvalid('groupId')"
+        />
       </div>
     </div>
 
@@ -131,9 +221,15 @@ const handleSave = () => {
         icon="pi pi-times"
         text
         class="cancel-btn"
-        @click="isVisible = false"
+        :disabled="addUserMutation.isPending.value"
+        @click="closeModal"
       />
-      <Button :label="t('addUser.saveUser')" icon="pi pi-check" @click="handleSave" />
+      <Button
+        :label="t('addUser.saveUser')"
+        icon="pi pi-check"
+        :loading="addUserMutation.isPending.value"
+        @click="handleSave"
+      />
     </template>
   </Dialog>
 </template>
@@ -170,6 +266,11 @@ label {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-color-emphasis);
+}
+
+.optional-label {
+  font-weight: 400;
+  color: var(--text-color-secondary);
 }
 
 .cancel-btn {

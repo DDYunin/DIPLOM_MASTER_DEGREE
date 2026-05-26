@@ -133,15 +133,26 @@
     "addUser": "Добавить пользователя",
     "modalTitle": "Новый пользователь",
     "saveUser": "Сохранить",
-    "fullName": "ФИО",
+    "username": "Логин",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "middleName": "Отчество",
     "email": "Email",
+    "group": "Группа",
+    "optional": "необязательно",
     "selectRole": "Выберите роль",
-    "selectStatus": "Выберите статус",
-    "department": "Подразделение",
-    "subDepartment": "Кафедра / отдел",
-    "namePlaceholder": "напр. Иванов Иван",
-    "emailPlaceholder": "ivanov.university.edu",
-    "deptPlaceholder": "напр. Информатика"
+    "selectDepartment": "Выберите кафедру",
+    "selectGroup": "Выберите группу",
+    "department": "Кафедра",
+    "usernamePlaceholder": "напр. s102344",
+    "firstNamePlaceholder": "напр. Иван",
+    "lastNamePlaceholder": "напр. Петров",
+    "middleNamePlaceholder": "напр. Сергеевич",
+    "emailPlaceholder": "student.petrov.university.edu",
+    "success": "Пользователь успешно создан",
+    "errors": {
+      "userExists": "Такой пользователь уже есть"
+    }
   },
   "importCsv": {
     "label": "Импорт CSV"

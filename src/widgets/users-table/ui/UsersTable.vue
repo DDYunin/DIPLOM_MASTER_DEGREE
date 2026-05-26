@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -18,10 +17,6 @@ import { useAdminUsersTable } from '../model/store';
 const { t } = useI18n()
 const router = useRouter()
 const adminUsersTableStore = useAdminUsersTable();
-
-onMounted(() => {
-  adminUsersTableStore.loadUsers();
-})
 
 const onRowClick = (event: { data: User }) => {
   const user = event.data

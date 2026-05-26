@@ -1,42 +1,51 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { watchDebounced } from '@vueuse/core'
+import { keepPreviousData, useQuery } from '@tanstack/vue-query'
+
 import { USERS_TABLE_FILTERS, type usersTableFilters } from '@/features/filter-users-by-role'
 import {
-  type User,
   type AdminUsersListQueryParams,
-  useUserStore,
-  userApi,
-  mapAdminUserListItemsToUsers
+  type User,
+  mapAdminUserListItemsToUsers,
+  userApi
 } from '@/entities/user'
 
 export const useAdminUsersTable = defineStore('widget-admin-users-table', () => {
-  const usersStore = useUserStore()
-
-  const isLoading = ref(false)
-  const totalUsers = ref(0)
-  const userIds = ref<string[]>([])
-
   const searchQuery = ref('')
   const selectedRole = ref(USERS_TABLE_FILTERS.ALL)
   const page = ref(0)
-  const rowsPerPage = ref(5)
+  const rowsPerPage = ref(20)
 
-  const usersList = computed(() => {
-    return userIds.value
-      .map((id) => usersStore.getUserById(id))
-      .filter((user): user is User => Boolean(user))
-  })
-
-  const buildQueryParams = (): AdminUsersListQueryParams => {
-    const params: AdminUsersListQueryParams = {
-      page: page.value,
-      size: rowsPerPage.value
+  const buildSearchFilters = (rawSearch: string): Pick<
+    AdminUsersListQueryParams,
+    'firstName' | 'lastName' | 'email'
+  > => {
+    const trimmedSearch = rawSearch.trim()
+    if (!trimmedSearch) {
+      return {}
     }
 
-    const trimmedSearch = searchQuery.value.trim()
-    if (trimmedSearch) {
-      params.search = trimmedSearch
+    if (trimmedSearch.includes('@')) {
+      return { email: trimmedSearch }
+    }
+
+    const parts = trimmedSearch.split(/\s+/).filter(Boolean)
+    if (parts.length >= 2) {
+      return {
+        firstName: parts[0],
+        lastName: parts[1]
+      }
+    }
+
+    return { firstName: trimmedSearch }
+  }
+
+  const queryParams = computed<AdminUsersListQueryParams>(() => {
+    const params: AdminUsersListQueryParams = {
+      page: page.value,
+      size: rowsPerPage.value,
+      sort: 'lastName,ASC'
     }
 
     const apiRole = selectedRole.value
@@ -44,36 +53,36 @@ export const useAdminUsersTable = defineStore('widget-admin-users-table', () => 
       params.role = apiRole
     }
 
-    return params
-  }
+    return {
+      ...params,
+      ...buildSearchFilters(searchQuery.value)
+    }
+  })
+
+  const usersQuery = useQuery({
+    queryKey: computed(() => ['admin-users-list', queryParams.value]),
+    queryFn: ({ queryKey }) => userApi.fetchUsersList(queryKey[1] as AdminUsersListQueryParams),
+    placeholderData: keepPreviousData
+  })
+
+  const usersList = computed<User[]>(() => {
+    return mapAdminUserListItemsToUsers(usersQuery.data.value?.items ?? [])
+  })
+
+  const totalUsers = computed(() => usersQuery.data.value?.totalElements ?? 0)
+  const isLoading = computed(() => usersQuery.isFetching.value)
 
   const loadUsers = async () => {
-    isLoading.value = true
-    try {
-      const response = await userApi.fetchUsersList(buildQueryParams())
-      const users = mapAdminUserListItemsToUsers(response.items)
-
-      usersStore.upsertUsers(users)
-      userIds.value = users.map((user) => user.id)
-      totalUsers.value = response.totalElements
-      page.value = response.page
-      rowsPerPage.value = response.size || rowsPerPage.value
-    } catch (error) {
-      console.error(error)
-    } finally {
-      isLoading.value = false
-    }
+    await usersQuery.refetch()
   }
 
   const resetPageAndLoad = () => {
     page.value = 0
-    loadUsers()
   }
 
   const onPageChange = (event: { page: number; rows: number }) => {
     page.value = event.page
     rowsPerPage.value = event.rows
-    loadUsers()
   }
 
   watch(selectedRole, () => {

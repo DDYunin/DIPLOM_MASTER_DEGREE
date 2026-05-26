@@ -4,14 +4,11 @@ import type { User, UserRole, UserStatus } from '../model/types'
 
 const BACKEND_ROLE_TO_USER_ROLE: Record<string, UserRole> = {
   [ROLES.ADMIN]: 'Super Admin',
-  ROLE_ADMIN: 'Super Admin',
   ADMIN: 'Super Admin',
   [ROLES.TEACHER]: 'Teacher',
-  ROLE_TEACHER: 'Teacher',
   TEACHER: 'Teacher',
   Teacher: 'Teacher',
   [ROLES.STUDENT]: 'Student',
-  ROLE_STUDENT: 'Student',
   STUDENT: 'Student',
   Student: 'Student',
   ROLE_MODERATOR: 'Moderator',
@@ -21,14 +18,20 @@ const BACKEND_ROLE_TO_USER_ROLE: Record<string, UserRole> = {
 
 const ROLE_PRIORITY: string[] = [ROLES.ADMIN, ROLES.TEACHER, ROLES.STUDENT]
 
+const toUserRole = (backendRole: string | undefined): UserRole => {
+  if (!backendRole) {
+    return 'Student'
+  }
+  return BACKEND_ROLE_TO_USER_ROLE[backendRole] ?? 'Student'
+}
+
 const resolvePrimaryRole = (roles: string[]): UserRole => {
   const normalizedRole = ROLE_PRIORITY.find((priorityRole) => roles.includes(priorityRole))
-  if (normalizedRole) {
-    return BACKEND_ROLE_TO_USER_ROLE[normalizedRole]
+  if (normalizedRole !== undefined) {
+    return toUserRole(normalizedRole)
   }
 
-  const firstRole = roles[0]
-  return (firstRole && BACKEND_ROLE_TO_USER_ROLE[firstRole]) || 'Student'
+  return toUserRole(roles[0])
 }
 
 const buildFullName = (dto: AdminUserListItemDto): string => {

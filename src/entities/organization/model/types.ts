@@ -41,3 +41,18 @@ export interface OrgTreeNode {
 }
 
 export type TreeHierarchyType = 'academic' | 'administrative'
+
+export interface HierarchyListQueryParams {
+  page?: number
+  size?: number
+  sort?: string
+}
+
+export interface PageResponse<T> {
+  items: T[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+  hasNext: boolean
+}

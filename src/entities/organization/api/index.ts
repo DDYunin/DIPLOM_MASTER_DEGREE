@@ -1,22 +1,41 @@
 import { api } from '@/shared/api'
-import type { FacultyDTO, DepartmentDTO, FieldOfStudyDTO, StudentGroupDTO } from '../model/types'
+import type {
+  DepartmentDTO,
+  FacultyDTO,
+  FieldOfStudyDTO,
+  HierarchyListQueryParams,
+  PageResponse,
+  StudentGroupDTO
+} from '../model/types'
 
 // === GET (Ленивая загрузка) ===
 
 // Получить список факультетов
 export const fetchFaculties = () => api<FacultyDTO[]>('/hierarchy/faculties')
 
-// Получить список кафедр
+// Получить список кафедр по факультету (ленивая загрузка дерева)
 export const fetchDepartments = (facultyId: number) =>
   api<DepartmentDTO[]>(`/hierarchy/departments?facultyId=${facultyId}`)
+
+// Плоский paginated список кафедр
+export const fetchDepartmentsList = (queryParams: HierarchyListQueryParams = {}) =>
+  api<PageResponse<DepartmentDTO>>('/hierarchy/departments', {
+    queryParams: queryParams as Record<string, string | number | boolean | null | undefined>
+  })
 
 // Получить список учебных направлений
 export const fetchFieldsOfStudy = (facultyId: number) =>
   api<FieldOfStudyDTO[]>(`/hierarchy/fields-of-study?facultyId=${facultyId}`)
 
-// Получить список студеческих групп
+// Получить список студенческих групп по направлению (ленивая загрузка дерева)
 export const fetchStudentGroups = (fieldOfStudyId: number) =>
   api<StudentGroupDTO[]>(`/hierarchy/student-groups?fieldOfStudyId=${fieldOfStudyId}`)
+
+// Плоский paginated список студенческих групп
+export const fetchStudentGroupsList = (queryParams: HierarchyListQueryParams = {}) =>
+  api<PageResponse<StudentGroupDTO>>('/hierarchy/student-groups', {
+    queryParams: queryParams as Record<string, string | number | boolean | null | undefined>
+  })
 
 
 

@@ -133,15 +133,26 @@
     "addUser": "Add user",
     "modalTitle": "Add new user",
     "saveUser": "Save user",
-    "fullName": "Full name",
+    "username": "Username",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "middleName": "Middle name",
     "email": "Email address",
+    "group": "Student group",
+    "optional": "optional",
     "selectRole": "Select a role",
-    "selectStatus": "Select a status",
+    "selectDepartment": "Select a department",
+    "selectGroup": "Select a group",
     "department": "Department",
-    "subDepartment": "Sub-department",
-    "namePlaceholder": "e.g. John Doe",
-    "emailPlaceholder": "john.doe.university.edu",
-    "deptPlaceholder": "e.g. Computer Science"
+    "usernamePlaceholder": "e.g. s102344",
+    "firstNamePlaceholder": "e.g. Ivan",
+    "lastNamePlaceholder": "e.g. Petrov",
+    "middleNamePlaceholder": "e.g. Sergeevich",
+    "emailPlaceholder": "student.petrov.university.edu",
+    "success": "User created successfully",
+    "errors": {
+      "userExists": "A user with this username or email already exists"
+    }
   },
   "importCsv": {
     "label": "Import CSV"
