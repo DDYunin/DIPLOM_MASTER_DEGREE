@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
 
-import type { OrgTreeNode, OrgUnitType, TreeHierarchyType } from '@/entities/organization'
+import type { OrgTreeNode, TreeHierarchyType } from '@/entities/organization'
+import { useNotifications } from '@/shared/model'
 
-// TODO: добавить переводы
-const { t } = useI18n()
+import { canAddOrgUnit, resolveChildType } from '../lib/resolveChildType'
+import type { AddOrgUnitFormValues } from '../lib/schema'
+import { useCreateOrgUnit } from '../model/useCreateOrgUnit'
+import AddOrgUnitForm from './AddOrgUnitForm.vue'
 
 const props = defineProps<{
   parentNode: OrgTreeNode | null
@@ -17,51 +18,32 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'add', newNode: OrgTreeNode): void
+  created: [node: OrgTreeNode]
 }>()
 
+const { t } = useI18n()
+const notifications = useNotifications()
+const createOrgUnitMutation = useCreateOrgUnit()
+
 const isVisible = ref(false)
+const formRef = ref<InstanceType<typeof AddOrgUnitForm> | null>(null)
 
-const formData = ref({
-  name: '',
-  shortName: '',
-  code: ''
-})
+const childType = computed(() => resolveChildType(props.parentNode, props.hierarchyType))
 
-const childType = computed<OrgUnitType>(() => {
-  if (!props.parentNode) {
-    return 'faculty'
-  }
+const canCreate = computed(() => canAddOrgUnit(props.parentNode, props.hierarchyType))
 
-  if (props.hierarchyType === 'administrative') {
-    if (props.parentNode.type === 'faculty') {
-      return 'department'
-    }
-  } else {
-    if (props.parentNode.type === 'faculty') {
-      return 'fieldOfStudy'
-    }
-    if (props.parentNode.type === 'fieldOfStudy') {
-      return 'group'
-    }
-  }
-
-  return 'group'
-})
-
-const typeKey = (type: OrgUnitType) => `adminOrgUnitModal.${type}` as const
+const typeKey = (type: string) => `adminOrgUnitModal.${type}` as const
 
 const labels = computed(() => {
-  const cType = t(typeKey(childType.value))
-  const pType = props.parentNode
+  const unitType = t(typeKey(childType.value))
+  const parentType = props.parentNode
     ? t(typeKey(props.parentNode.type))
     : t('adminOrg.rootOrganization')
 
   return {
-    modalTitle: t('adminOrg.addTitle', { type: cType }),
-    parentLabel: t('adminOrg.parentLabel', { type: pType }),
-    nameLabel: t('adminOrg.nameLabel', { type: cType }),
-    btnLabel: t('adminOrg.createLabel', { type: cType })
+    modalTitle: t('adminOrg.addTitle', { type: unitType }),
+    parentLabel: t('adminOrg.parentLabel', { type: parentType }),
+    btnLabel: t('adminOrg.createLabel', { type: unitType })
   }
 })
 
@@ -69,42 +51,60 @@ const parentIcon = computed(() => {
   if (!props.parentNode) {
     return 'pi-building text-blue-500'
   }
+
   const icons: Record<string, string> = {
     faculty: 'pi-building text-blue-500',
-    institute: 'pi-home text-orange-500',
     department: 'pi-folder text-blue-400',
-    fieldOfStudy: 'pi-compass text-purple-500'
+    fieldOfStudy: 'pi-compass text-purple-500',
+    group: 'pi-users text-gray-500'
   }
+
   return icons[props.parentNode.type] || 'pi-folder'
 })
 
-// Открытие модалки (метод дергается из виджета OrgTreeBuilder)
 const openModal = () => {
-  formData.value = { name: '', shortName: '', code: '' } // Сброс формы
-  isVisible.value = true
-}
-
-defineExpose({ openModal })
-
-const handleCreate = () => {
-  if (!formData.value.name.trim()) {
+  if (!canCreate.value) {
     return
   }
 
-  const newNode: OrgTreeNode = {
-    key: `temp-${Date.now()}`, // Временный ключ, бэкенд (store) его заменит на настоящий ID
-    label: formData.value.name,
-    type: childType.value,
-    leaf: childType.value === 'department' || childType.value === 'group', // Кафедры и группы не имеют детей
-    data: {
-      // Передаем специфичные поля. Стор сам решит, какие из них отправить в DTO
-      shortName: formData.value.shortName,
-      code: formData.value.code
-    }
-  }
+  formRef.value?.reset()
+  isVisible.value = true
+}
 
-  emit('add', newNode)
+defineExpose({ openModal, canCreate })
+
+watch(isVisible, (visible) => {
+  if (!visible) {
+    formRef.value?.reset()
+  }
+})
+
+const closeModal = () => {
   isVisible.value = false
+}
+
+const handleSave = () => {
+  formRef.value?.submit()
+}
+
+const handleSubmit = async (form: AddOrgUnitFormValues) => {
+  try {
+    const createdNode = await createOrgUnitMutation.mutateAsync({
+      childType: childType.value,
+      form,
+      parentNode: props.parentNode
+    })
+
+    emit('created', createdNode)
+    notifications.showToast(
+      'success',
+      t('adminOrg.toastCreated'),
+      t('adminOrg.toastCreatedDetail', { name: createdNode.label })
+    )
+    closeModal()
+  } catch {
+    // api client already shows error toast
+  }
 }
 </script>
 
@@ -115,7 +115,6 @@ const handleCreate = () => {
     </template>
 
     <div class="form-layout">
-      <!-- Родительский узел (Read-only) -->
       <div class="form-field">
         <label>{{ labels.parentLabel }}</label>
         <div class="disabled-input">
@@ -124,29 +123,24 @@ const handleCreate = () => {
         </div>
       </div>
 
-      <!-- Общее поле: Имя -->
-      <div class="form-field mt-3">
-        <label>{{ labels.nameLabel }}</label>
-        <InputText v-model="formData.name" :placeholder="t('adminOrg.namePlaceholder')" autofocus />
-      </div>
-
-      <!-- Специфичное поле: Short Name (Только для Факультетов) -->
-      <div v-if="childType === 'faculty'" class="form-field mt-3">
-        <label>{{ t('adminOrg.shortName') }}</label>
-        <InputText v-model="formData.shortName" :placeholder="t('adminOrg.codePlaceholder')" />
-      </div>
-
-      <!-- Специфичное поле: Code (Только для Направлений) -->
-      <div v-if="childType === 'fieldOfStudy'" class="form-field mt-3">
-        <label>{{ t('adminOrg.programCode') }}</label>
-        <InputText v-model="formData.code" :placeholder="t('adminOrg.codePlaceholder')" />
-      </div>
+      <AddOrgUnitForm ref="formRef" :child-type="childType" @submit="handleSubmit" />
     </div>
 
     <template #footer>
       <div class="footer-actions">
-        <Button :label="t('common.cancel')" text class="cancel-btn" @click="isVisible = false" />
-        <Button :label="labels.btnLabel" class="submit-btn" @click="handleCreate" />
+        <Button
+          :label="t('common.cancel')"
+          text
+          class="cancel-btn"
+          :disabled="createOrgUnitMutation.isPending.value"
+          @click="closeModal"
+        />
+        <Button
+          :label="labels.btnLabel"
+          class="submit-btn"
+          :loading="createOrgUnitMutation.isPending.value"
+          @click="handleSave"
+        />
       </div>
     </template>
   </Dialog>
@@ -163,13 +157,15 @@ const handleCreate = () => {
 .form-layout {
   display: flex;
   flex-direction: column;
-  margin-top: 0.5rem;
 }
+
 .form-field {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 }
+
 .form-field label {
   font-size: 0.75rem;
   font-weight: 600;
@@ -178,11 +174,6 @@ const handleCreate = () => {
   letter-spacing: 0.05em;
 }
 
-.mt-3 {
-  margin-top: 1rem;
-}
-
-/* Имитация заблокированного инпута с иконкой */
 .disabled-input {
   display: flex;
   align-items: center;
@@ -194,7 +185,6 @@ const handleCreate = () => {
   color: var(--text-color-muted);
   font-size: 0.875rem;
   font-weight: 500;
-  cursor: not-allowed;
 }
 
 .footer-actions {
@@ -205,17 +195,14 @@ const handleCreate = () => {
   border-top: 1px solid var(--surface-border-subtle);
   width: 100%;
 }
+
 .cancel-btn {
   color: var(--text-color-muted);
 }
+
 .submit-btn {
   background: var(--color-primary);
   border: none;
   color: var(--color-on-primary);
-}
-
-/* Фикс ширины для PrimeVue */
-:deep(.p-inputtext) {
-  width: 100%;
 }
 </style>

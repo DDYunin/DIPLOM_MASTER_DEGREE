@@ -1,39 +1,49 @@
 import type {
-  FacultyDTO,
-  DepartmentDTO,
-  FieldOfStudyDTO,
-  StudentGroupDTO,
-  OrgTreeNode
-} from '../model/types'
+  DepartmentDto,
+  FacultyDto,
+  FieldOfStudyDto,
+  StudentGroupDto
+} from '../api/types'
+import type { OrgTreeNode } from '../model/types'
 
-export const mapFacultyToNode = (dto: FacultyDTO): OrgTreeNode => ({
+export const mapFacultyToNode = (dto: FacultyDto): OrgTreeNode => ({
   key: `faculty-${dto.id}`,
   label: dto.name,
   type: 'faculty',
-  leaf: false, // Факультет всегда можно развернуть (внутри кафедры или направления)
+  leaf: false,
   data: { originalId: dto.id, shortName: dto.shortName }
 })
 
-export const mapDepartmentToNode = (dto: DepartmentDTO): OrgTreeNode => ({
+export const mapDepartmentToNode = (dto: DepartmentDto): OrgTreeNode => ({
   key: `dept-${dto.id}`,
   label: dto.name,
   type: 'department',
-  leaf: true, // Кафедра — конечный узел
-  data: { originalId: dto.id, parentId: dto.facultyId }
+  leaf: true,
+  data: { originalId: dto.id, parentId: dto.facultyId, facultyId: dto.facultyId }
 })
 
-export const mapFieldOfStudyToNode = (dto: FieldOfStudyDTO): OrgTreeNode => ({
+export const mapFieldOfStudyToNode = (dto: FieldOfStudyDto): OrgTreeNode => ({
   key: `field-${dto.id}`,
   label: dto.name,
   type: 'fieldOfStudy',
-  leaf: false, // Внутри направления лежат группы
-  data: { originalId: dto.id, code: dto.code, parentId: dto.facultyId }
+  leaf: false,
+  data: { originalId: dto.id, parentId: dto.facultyId, facultyId: dto.facultyId }
 })
 
-export const mapStudentGroupToNode = (dto: StudentGroupDTO): OrgTreeNode => ({
+export const mapStudentGroupToNode = (dto: StudentGroupDto): OrgTreeNode => ({
   key: `group-${dto.id}`,
   label: dto.name,
   type: 'group',
-  leaf: true, // Группа — конечный узел
-  data: { originalId: dto.id, parentId: dto.fieldOfStudyId }
+  leaf: true,
+  data: {
+    originalId: dto.id,
+    parentId: dto.fieldOfStudyId,
+    facultyId: dto.facultyId,
+    fieldOfStudyId: dto.fieldOfStudyId
+  }
 })
+
+export const mapFacultyDtoToNode = mapFacultyToNode
+export const mapDepartmentDtoToNode = mapDepartmentToNode
+export const mapFieldOfStudyDtoToNode = mapFieldOfStudyToNode
+export const mapStudentGroupDtoToNode = mapStudentGroupToNode

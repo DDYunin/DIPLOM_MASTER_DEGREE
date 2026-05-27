@@ -28,14 +28,13 @@ describe('organization mappers', () => {
       label: 'Кафедра ПО',
       type: 'department',
       leaf: true,
-      data: { originalId: 10, parentId: 1 }
+      data: { originalId: 10, parentId: 1, facultyId: 1 }
     })
   })
 
   it('maps field of study to expandable node', () => {
     const node = mapFieldOfStudyToNode({
       id: 5,
-      code: '09.03.01',
       name: 'Информатика',
       facultyId: 1
     })
@@ -45,7 +44,7 @@ describe('organization mappers', () => {
       label: 'Информатика',
       type: 'fieldOfStudy',
       leaf: false,
-      data: { originalId: 5, code: '09.03.01', parentId: 1 }
+      data: { originalId: 5, parentId: 1, facultyId: 1 }
     })
   })
 
@@ -62,7 +61,7 @@ describe('organization mappers', () => {
       label: 'ИВТ-401',
       type: 'group',
       leaf: true,
-      data: { originalId: 42, parentId: 5 }
+      data: { originalId: 42, parentId: 5, facultyId: 1, fieldOfStudyId: 5 }
     })
   })
 })

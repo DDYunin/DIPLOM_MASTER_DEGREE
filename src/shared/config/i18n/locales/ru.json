@@ -118,10 +118,21 @@
     "parentLabel": "Родитель: {type}",
     "nameLabel": "Название ({type})",
     "createLabel": "Создать: {type}",
+    "toastCreated": "Подразделение создано",
+    "toastCreatedDetail": "{name} успешно создано.",
     "toastUpdated": "Структура обновлена",
     "toastUpdatedDetail": "{name} успешно обновлено.",
     "toastDeleted": "Удалено",
-    "toastDeletedDetail": "{name} успешно удалено."
+    "toastDeletedDetail": "{name} успешно удалено.",
+    "cannotAddHere": "Выберите родительский узел, которому можно добавить дочерний элемент",
+    "facultyId": "ID факультета",
+    "fieldOfStudyId": "ID направления",
+    "nameField": "название"
+  },
+  "addOrgUnit": {
+    "errors": {
+      "required": "Обязательное поле"
+    }
   },
   "adminOrgUnitModal": {
     "faculty": "Факультет / Институт",

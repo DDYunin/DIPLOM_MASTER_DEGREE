@@ -118,10 +118,21 @@
     "parentLabel": "Parent {type}",
     "nameLabel": "{type} name",
     "createLabel": "Create {type}",
+    "toastCreated": "Unit created",
+    "toastCreatedDetail": "{name} has been created successfully.",
     "toastUpdated": "Hierarchy updated",
     "toastUpdatedDetail": "{name} has been updated successfully.",
     "toastDeleted": "Deleted",
-    "toastDeletedDetail": "{name} has been deleted successfully."
+    "toastDeletedDetail": "{name} has been deleted successfully.",
+    "cannotAddHere": "Select a parent unit that can have children",
+    "facultyId": "Faculty ID",
+    "fieldOfStudyId": "Field of study ID",
+    "nameField": "name"
+  },
+  "addOrgUnit": {
+    "errors": {
+      "required": "This field is required"
+    }
   },
   "adminOrgUnitModal": {
     "faculty": "Faculty / Institute",
