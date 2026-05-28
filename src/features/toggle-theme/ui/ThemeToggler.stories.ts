@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
+import { withDarkTheme } from '@/shared/lib/storybook/decorators'
+
 import ThemeToggler from './ThemeToggler.vue'
 
 const meta: Meta<typeof ThemeToggler> = {
@@ -25,9 +27,5 @@ export const LightMode: Story = {
 
 export const DarkMode: Story = {
   name: 'Тёмная тема',
-  decorators: [
-    () => ({
-      template: '<div class="my-app-dark" style="padding: 1rem; background: #1a1a2e"><story /></div>'
-    })
-  ]
+  decorators: [withDarkTheme]
 }
