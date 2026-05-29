@@ -16,7 +16,15 @@ import type { User } from '@/entities/user'
 // Используем v-model для удобного связывания с черновиком на странице
 const { t } = useI18n()
 
-const props = defineProps<{ modelValue: User }>()
+const props = withDefaults(
+  defineProps<{
+    modelValue: User
+    variant?: 'default' | 'own-profile'
+  }>(),
+  {
+    variant: 'default'
+  }
+)
 const emit = defineEmits(['update:modelValue'])
 
 // Создаем двусторонне-связанный computed
@@ -59,7 +67,7 @@ const deptOptions = [
 <template>
   <!-- Используем нашу универсальную обертку -->
   <WidgetCard :title="t('profileCard.title')" icon="pi-user" iconColorClass="text-blue-500">
-    <template #header-actions>
+    <template v-if="variant === 'default'" #header-actions>
       <a href="#" class="edit-link">{{ t('profileCard.editDetails') }}</a>
     </template>
 
@@ -83,13 +91,17 @@ const deptOptions = [
         <!-- 1. ОБЩИЕ ПОЛЯ -->
         <div class="form-field">
           <label>{{ t('profileCard.fullName') }}</label>
-          <InputText v-model="profile.fullName" />
+          <InputText v-model="profile.fullName" :disabled="variant === 'own-profile'" />
+        </div>
+
+        <div v-if="variant === 'own-profile'" class="form-field">
+          <label>{{ t('profileCard.username') }}</label>
+          <InputText v-model="profile.identifier" disabled class="w-full" />
         </div>
 
         <div class="form-field">
           <label>{{ t('common.role') }}</label>
           <div class="role-display">
-            <!-- Роль нельзя менять текстом, выводим как Tag -->
             <Tag :severity="getRoleSeverity(profile.role)" :value="profile.role" rounded />
           </div>
         </div>
@@ -104,7 +116,10 @@ const deptOptions = [
 
         <!-- 2. СПЕЦИФИЧНЫЕ ПОЛЯ: АДМИН ИЛИ МОДЕРАТОР -->
         <div
-          v-if="['Super Admin', 'Moderator'].includes(profile.role) || profile.phone !== undefined"
+          v-if="
+            variant === 'default' &&
+            (['Super Admin', 'Moderator'].includes(profile.role) || profile.phone !== undefined)
+          "
           class="form-field"
         >
           <label>{{ t('profileCard.phone') }}</label>
@@ -115,26 +130,38 @@ const deptOptions = [
         </div>
 
         <!-- 3. СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ И УЧИТЕЛЬ -->
-        <div v-if="['Student', 'Teacher'].includes(profile.role)" class="form-field">
+        <div
+          v-if="variant === 'default' && ['Student', 'Teacher'].includes(profile.role)"
+          class="form-field"
+        >
           <!-- Динамический лейбл в зависимости от роли -->
           <label>{{ profile.role === 'Student' ? 'STUDENT ID' : 'EMPLOYEE ID' }}</label>
           <InputText v-model="profile.identifier" disabled class="w-full" />
         </div>
 
-        <div v-if="['Student', 'Teacher'].includes(profile.role)" class="form-field">
+        <div
+          v-if="variant === 'default' && ['Student', 'Teacher'].includes(profile.role)"
+          class="form-field"
+        >
           <label>{{ t('profileCard.department') }}</label>
           <Select v-model="profile.department" :options="deptOptions" class="w-full" />
         </div>
 
         <!-- 4. СПЕЦИФИЧНЫЕ ПОЛЯ: ТОЛЬКО СТУДЕНТ -->
-        <div v-if="profile.role === 'Student'" class="form-field">
+        <div
+          v-if="variant === 'default' && profile.role === 'Student'"
+          class="form-field"
+        >
           <label>{{ t('profileCard.cohort') }}</label>
           <Select v-model="profile.cohort" :options="cohortOptions" class="w-full" />
         </div>
 
         <!-- 5. ДОПОЛНИТЕЛЬНЫЕ ЗАМЕТКИ (на всю ширину) -->
         <div
-          v-if="profile.role === 'Student' || profile.notes !== undefined"
+          v-if="
+            variant === 'default' &&
+            (profile.role === 'Student' || profile.notes !== undefined)
+          "
           class="form-field full-width mt-2"
         >
           <label>{{ t('profileCard.notes') }}</label>

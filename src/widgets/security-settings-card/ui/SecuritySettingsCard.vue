@@ -14,16 +14,21 @@ import type { User } from '@/entities/user'
 const props = withDefaults(
   defineProps<{
     modelValue: User
-    mode?: 'self' | 'manage' // Режим отображения: 'self' (свой пароль) или 'manage' (управление чужим)
+    mode?: 'self' | 'manage'
+    passwordLoading?: boolean
   }>(),
   {
-    mode: 'manage' // По умолчанию считаем, что мы управляем кем-то
+    mode: 'manage',
+    passwordLoading: false
   }
 )
 
 const { t } = useI18n()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: User]
+  'update-password': [payload: { oldPassword: string; newPassword: string }]
+}>()
 const notifications = useNotifications()
 
 // Двухстороннее связывание профиля
@@ -56,6 +61,29 @@ const handleGeneratePassword = () => {
     'New temporary password generated and sent to user.'
   )
 }
+
+const handleUpdatePassword = () => {
+  if (!passwords.value.current || !passwords.value.new || !passwords.value.confirm) {
+    notifications.showToast('warn', t('common.error'), t('securityCard.passwordRequired'))
+    return
+  }
+
+  if (passwords.value.new !== passwords.value.confirm) {
+    notifications.showToast('warn', t('common.error'), t('securityCard.passwordMismatch'))
+    return
+  }
+
+  emit('update-password', {
+    oldPassword: passwords.value.current,
+    newPassword: passwords.value.new
+  })
+}
+
+const clearPasswordFields = () => {
+  passwords.value = { current: '', new: '', confirm: '' }
+}
+
+defineExpose({ clearPasswordFields })
 </script>
 
 <template>
@@ -106,6 +134,15 @@ const handleGeneratePassword = () => {
       <Message severity="info" :closable="false" class="custom-message">
         {{ t('securityCard.passwordHint') }}
       </Message>
+
+      <div class="password-actions">
+        <Button
+          :label="t('securityCard.updatePassword')"
+          icon="pi pi-lock"
+          :loading="passwordLoading"
+          @click="handleUpdatePassword"
+        />
+      </div>
     </div>
 
     <!-- ================================================== -->
@@ -192,6 +229,10 @@ const handleGeneratePassword = () => {
 }
 .custom-message {
   margin-top: 0.5rem;
+}
+.password-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Стили для управления доступом (Режим Manage) */

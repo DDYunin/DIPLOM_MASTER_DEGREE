@@ -1,10 +1,15 @@
 import { api } from '@/shared/api'
-import type { User } from '../model/types'
+
 import type {
-  AdminUserResponse,
+  AdminUserDetailsResponse,
   AdminUsersListQueryParams,
   AdminUsersPageDto,
-  CreateAdminUserRequest
+  AdminUserResponse,
+  ChangeAvatarRequestDto,
+  ChangePasswordRequest,
+  CreateAdminUserRequest,
+  UpdateOwnProfileRequest,
+  UserResponseDto
 } from './types'
 
 export const fetchUsersList = (queryParams: AdminUsersListQueryParams = {}) =>
@@ -12,17 +17,31 @@ export const fetchUsersList = (queryParams: AdminUsersListQueryParams = {}) =>
     queryParams: queryParams as Record<string, string | number | boolean | null | undefined>
   })
 
+export const fetchAdminUserDetails = (id: string) =>
+  api<AdminUserDetailsResponse>(`/admin/users/${id}`)
+
+export const fetchCurrentUserProfile = () => api<UserResponseDto>('/users/me')
+
 export const createAdminUser = (userData: CreateAdminUserRequest) =>
   api<AdminUserResponse>('/admin/users', {
     method: 'POST',
     body: JSON.stringify(userData)
   })
 
-export const updateUserById = (id: string, updates: Partial<User>) =>
-  api<User>(`/users/${id}`, {
+export const updateOwnProfileEmail = (payload: UpdateOwnProfileRequest) =>
+  api<UserResponseDto>('/users/me/email', {
     method: 'PATCH',
-    body: JSON.stringify(updates)
+    body: JSON.stringify(payload)
   })
 
-// НОВЫЙ МЕТОД: Получение профиля текущего пользователя
-export const fetchCurrentUser = () => api<User>('/users/me')
+export const changeOwnPassword = (payload: ChangePasswordRequest) =>
+  api<void>('/users/me/password', {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  })
+
+export const changeOwnAvatar = (payload: ChangeAvatarRequestDto) =>
+  api<void>('/users/me/avatar', {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  })

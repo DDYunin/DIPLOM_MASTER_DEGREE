@@ -6,7 +6,6 @@ import { router } from './providers/router'
 
 // PrimeVue
 import PrimeVue from 'primevue/config'
-import Aura from '@primeuix/themes/aura'
 import 'primeicons/primeicons.css'
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
@@ -16,6 +15,7 @@ import { VueQueryPlugin } from '@tanstack/vue-query'
 
 // ИМПОРТИРУЕМ I18N
 import { i18n } from '@/shared/config/i18n'
+import { primeVueThemeConfig } from '@/shared/config/theme'
 
 // Корневой компонент
 import App from './App.vue'
@@ -30,12 +30,7 @@ app.use(VueQueryPlugin, {
 })
 
 app.use(PrimeVue, {
-  theme: {
-    preset: Aura,
-    options: {
-      darkModeSelector: 'html.my-app-dark'
-    }
-  }
+  theme: primeVueThemeConfig
 })
 app.use(ToastService)
 app.use(ConfirmationService)

@@ -18,8 +18,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
-        rewrite: (path) => path.replace(/^\/api/, ''), // Удаляет /api перед отправкой на бэк
+        target: 'http://localhost:8080'
       },
     },
   },

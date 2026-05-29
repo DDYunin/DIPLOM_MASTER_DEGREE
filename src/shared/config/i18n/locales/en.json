@@ -93,7 +93,10 @@
     "title": "System settings",
     "generalConfig": "General configuration",
     "generalDesc": "Manage your administrative profile and system parameters.",
-    "saved": "System settings have been updated."
+    "saved": "System settings have been updated.",
+    "passwordUpdated": "Password has been updated.",
+    "loadError": "Failed to load profile. Please try again later.",
+    "noUserId": "Unable to determine the current user. Please sign in again."
   },
   "adminOrg": {
     "title": "Hierarchy",
@@ -188,6 +191,7 @@
     "editDetails": "Edit details",
     "changeAvatar": "Change avatar",
     "fullName": "Full name",
+    "username": "Username",
     "email": "Email address",
     "phone": "Phone number",
     "department": "Main department",
@@ -204,6 +208,9 @@
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
     "passwordHint": "Password must be at least 8 characters and include a number.",
+    "updatePassword": "Update password",
+    "passwordRequired": "Fill in all password fields.",
+    "passwordMismatch": "New password and confirmation do not match.",
     "passwordReset": "Password reset",
     "generateNew": "Generate new",
     "sendLink": "Send link",

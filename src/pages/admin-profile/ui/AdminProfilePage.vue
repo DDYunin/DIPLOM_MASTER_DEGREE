@@ -1,46 +1,74 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
+import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 
-import { useUserStore, type User } from '@/entities/user'
+import { type User } from '@/entities/user'
+import { useAdminOwnProfile } from '@/features/admin-own-profile'
 import { useNotifications } from '@/shared/model/useNotifications'
 
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
 import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 
 const { t } = useI18n()
-const userStore = useUserStore()
 const notifications = useNotifications()
 
-// Черновик формы. Изначально null, пока данные не загрузятся.
+const { userId, profileQuery, updateEmailMutation, changePasswordMutation } = useAdminOwnProfile()
+
 const profileDraft = ref<User | null>(null)
+const securityCardRef = ref<InstanceType<typeof SecuritySettingsCard> | null>(null)
 
-onMounted(async () => {
-  // 1. Убеждаемся, что пользователи загружены
-  // (В реальном приложении здесь был бы запрос профиля текущего пользователя: await userStore.fetchMe())
-  if (userStore.users.length === 0) {
-    await userStore.loadUsers()
+watch(
+  () => profileQuery.data.value,
+  (profile) => {
+    if (profile) {
+      profileDraft.value = { ...profile }
+    }
+  },
+  { immediate: true }
+)
+
+const isLoading = computed(() => profileQuery.isPending.value)
+const isSaving = computed(() => updateEmailMutation.isPending.value)
+const isPasswordUpdating = computed(() => changePasswordMutation.isPending.value)
+
+const hasEmailChanges = computed(() => {
+  if (!profileDraft.value || !profileQuery.data.value) {
+    return false
   }
 
-  // 2. Ищем админа (ID 'admin-1' мы задали в mock-данных)
-  const adminData = userStore.getUserById('admin-1')
-
-  // 3. Создаем ЛОКАЛЬНУЮ КОПИЮ для редактирования
-  if (adminData) {
-    profileDraft.value = { ...adminData }
-  }
+  return profileDraft.value.email.trim() !== profileQuery.data.value.email
 })
 
+const resetDraft = () => {
+  if (profileQuery.data.value) {
+    profileDraft.value = { ...profileQuery.data.value }
+  }
+}
+
 const handleSaveChanges = async () => {
-  if (!profileDraft.value) return
+  if (!profileDraft.value || !hasEmailChanges.value) {
+    return
+  }
 
-  // Вызываем экшен стора. Если будет ошибка сети — API клиент сам выбросит Toast с ошибкой.
-  await userStore.updateUser(profileDraft.value.id, profileDraft.value)
+  try {
+    await updateEmailMutation.mutateAsync(profileDraft.value.email.trim())
+    notifications.showToast('success', t('common.save'), t('adminProfile.saved'))
+  } catch {
+    // Ошибка уже обработана глобальным API-клиентом
+  }
+}
 
-  // Если код дошел сюда, значит запрос успешен! Показываем Toast.
-  notifications.showToast('success', t('common.save'), t('adminProfile.saved'))
+const handleUpdatePassword = async (payload: { oldPassword: string; newPassword: string }) => {
+  try {
+    await changePasswordMutation.mutateAsync(payload)
+    securityCardRef.value?.clearPasswordFields()
+    notifications.showToast('success', t('common.success'), t('adminProfile.passwordUpdated'))
+  } catch {
+    // Ошибка уже обработана глобальным API-клиентом
+  }
 }
 </script>
 
@@ -56,23 +84,44 @@ const handleSaveChanges = async () => {
         <p class="sub-desc">{{ t('adminProfile.generalDesc') }}</p>
       </div>
 
-      <div v-if="userStore.isLoading || !profileDraft" class="content-column">
+      <Message v-if="!userId" severity="error" :closable="false">
+        {{ t('adminProfile.noUserId') }}
+      </Message>
+
+      <Message v-else-if="profileQuery.isError.value" severity="error" :closable="false">
+        {{ t('adminProfile.loadError') }}
+      </Message>
+
+      <div v-else-if="isLoading || !profileDraft" class="content-column">
         <Skeleton width="100%" height="300px" borderRadius="12px" />
         <Skeleton width="100%" height="200px" borderRadius="12px" />
       </div>
 
       <div v-else class="content-column">
-        <!-- ИСПОЛЬЗУЕМ УНИВЕРСАЛЬНУЮ АНКЕТУ -->
-        <ProfileInfoCard v-model="profileDraft" />
+        <ProfileInfoCard v-model="profileDraft" variant="own-profile" />
 
-        <SecuritySettingsCard v-model="profileDraft" mode="self" />
+        <SecuritySettingsCard
+          ref="securityCardRef"
+          v-model="profileDraft"
+          mode="self"
+          :password-loading="isPasswordUpdating"
+          @update-password="handleUpdatePassword"
+        />
 
         <div class="form-actions">
-          <Button :label="t('common.cancel')" outlined class="btn-cancel" />
+          <Button
+            :label="t('common.cancel')"
+            outlined
+            class="btn-cancel"
+            :disabled="isSaving || !hasEmailChanges"
+            @click="resetDraft"
+          />
           <Button
             :label="t('common.saveChanges')"
             class="btn-save"
             icon="pi pi-check"
+            :loading="isSaving"
+            :disabled="!hasEmailChanges"
             @click="handleSaveChanges"
           />
         </div>
