@@ -284,7 +284,10 @@
     "bankTitle": "Bank title",
     "description": "Description",
     "showAllQuestions": "Show all questions",
-    "manageQuestions": "Manage questions: {name}"
+    "manageQuestions": "Manage questions: {name}",
+    "bankCreated": "Question bank created successfully.",
+    "loadError": "Failed to load question banks. Please try again later.",
+    "noQuestionsYet": "This bank has no questions yet."
   },
   "teacherQuiz": {
     "courses": "Courses",

@@ -2,24 +2,31 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-// TODO: удалить модуль из зависимостей
-import vueDevTools from 'vite-plugin-vue-devtools'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    // vueDevTools(),
-  ],
+  plugins: [vue()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
-    },
+    }
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8080'
+      '/api/users': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/users/, '/api/v1')
       },
-    },
-  },
+      '/api/course': {
+        target: 'http://localhost:10001',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/course/, '')
+      },
+      '/api/files': {
+        target: 'http://localhost:8087',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/files/, '')
+      }
+    }
+  }
 })

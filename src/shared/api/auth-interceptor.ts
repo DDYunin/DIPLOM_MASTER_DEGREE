@@ -1,5 +1,7 @@
-import { tokenService } from './token.service'
+import { usersApiPath } from '@/shared/config/api-routes'
+
 import { baseFetch } from './base'
+import { tokenService } from './token.service'
 
 interface FailedRequest {
   resolve: (token: string | null) => void
@@ -57,7 +59,7 @@ export const refreshTokenAndRetry = async <T>(
     // Делаем запрос на бэкенд за новой парой токенов
     // ВАЖНО: используем "глупый" baseFetch, чтобы не попасть в бесконечный цикл 401 ошибок
     const response = await baseFetch<{ accessToken: string; refreshToken: string }>(
-      '/auth/refresh',
+      usersApiPath('/auth/refresh'),
       {
         method: 'POST',
         body: JSON.stringify({ refreshToken })

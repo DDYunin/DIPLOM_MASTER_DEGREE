@@ -1,0 +1,3223 @@
+{
+  "schemes": ["http"],
+  "swagger": "2.0",
+  "info": {
+    "description": "REST API for courses, sections, assignments, question banks and tests.\nCourses: list/stats use query `user_id` until JWT is enabled. Course status: 0 — Draft, 1 — Active.\nCover image changes publish Kafka events on topic `file-topic` (FileLoadedEvent / FileDeletedEvent).\nTests are also available under `/api` (same handlers as `/cs/v1`).",
+    "title": "Course Service API",
+    "contact": {},
+    "version": "1.0"
+  },
+  "host": "localhost:10001",
+  "basePath": "/cs/v1",
+  "paths": {
+    "/assignments": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["assignments"],
+        "summary": "List assignments",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/course-service_internal_domain.Assignment"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assignments"],
+        "summary": "Create assignment",
+        "parameters": [
+          {
+            "description": "Assignment",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.CreateAssignment"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Assignment"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/assignments/{item_id}": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["assignments"],
+        "summary": "Get assignment",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Section item ID",
+            "name": "item_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Assignment"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assignments"],
+        "summary": "Update assignment",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Section item ID",
+            "name": "item_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Assignment",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.UpdateAssignment"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Assignment"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["assignments"],
+        "summary": "Delete assignment",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Section item ID",
+            "name": "item_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/attempts": {
+      "get": {
+        "description": "Lists attempts with optional filters. status values: IN_PROGRESS, COMPLETED, NEEDS_GRADING.",
+        "produces": ["application/json"],
+        "tags": ["attempts"],
+        "summary": "List attempts",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Filter by test ID",
+            "name": "test_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "example": 42,
+            "description": "Filter by user ID",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "enum": ["IN_PROGRESS", "COMPLETED", "NEEDS_GRADING"],
+            "type": "string",
+            "example": "IN_PROGRESS",
+            "description": "Filter by status",
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/course-service_internal_domain.TestAttempt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Starts a new attempt. Optional limit/offset paginate questions in the response. Body: {\"testId\":10,\"userId\":42}.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["attempts"],
+        "summary": "Start test attempt",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Questions page size",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "example": 0,
+            "description": "Questions page offset",
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "description": "Attempt start payload",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.StartAttempt"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.AttemptState"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/attempts/{attempt_id}": {
+      "get": {
+        "description": "Returns attempt metadata, remaining time, and paginated questions with answer options (without isCorrect). Each question may include saved response.",
+        "produces": ["application/json"],
+        "tags": ["attempts"],
+        "summary": "Get attempt state",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 200,
+            "description": "Attempt ID",
+            "name": "attempt_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Questions page size",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "example": 0,
+            "description": "Questions page offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.AttemptState"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/attempts/{attempt_id}/answers": {
+      "put": {
+        "description": "Saves or updates an answer for one question. For SINGLE use selectedAnswerId; for MULTIPLE use selectedAnswerIds array; for TEXT use textResponse. See schemas SaveAttemptAnswerSingleExample, SaveAttemptAnswerMultipleExample, SaveAttemptAnswerTextExample.",
+        "consumes": ["application/json"],
+        "tags": ["attempts"],
+        "summary": "Save attempt answer",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 200,
+            "description": "Attempt ID",
+            "name": "attempt_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Answer payload",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.SaveAttemptAnswer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/attempts/{attempt_id}/submit": {
+      "post": {
+        "description": "Finishes the attempt and runs auto-grading for choice questions. Text questions may require manual grading (status NEEDS_GRADING).",
+        "produces": ["application/json"],
+        "tags": ["attempts"],
+        "summary": "Submit attempt for grading",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 200,
+            "description": "Attempt ID",
+            "name": "attempt_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.TestAttempt"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/attempts/{attempt_id}/submit-answers": {
+      "post": {
+        "description": "Saves all provided answers and immediately submits the attempt for grading. Combines PUT /answers + POST /submit into a single call.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["attempts"],
+        "summary": "Submit all answers and complete attempt",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 200,
+            "description": "Attempt ID",
+            "name": "attempt_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "All answers",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.SubmitAttemptAnswers"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.TestAttempt"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bank_questions": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["bank-questions"],
+        "summary": "List bank questions",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Bank ID",
+            "name": "bank_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "Page size",
+            "name": "limit",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "Page offset",
+            "name": "offset",
+            "in": "query",
+            "required": true
+          },
+          {
+            "enum": ["SINGLE", "MULTIPLE", "TEXT"],
+            "type": "string",
+            "description": "Filter by question type",
+            "name": "question_type",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Filter by question text (substring, case-insensitive)",
+            "name": "filter",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.BankQuestionsListResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["bank-questions"],
+        "summary": "Create bank question",
+        "parameters": [
+          {
+            "description": "Question",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.CreateBankQuestion"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.BankQuestion"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bank_questions/bulk": {
+      "post": {
+        "consumes": ["application/json"],
+        "tags": ["bank-questions"],
+        "summary": "Bulk create bank questions",
+        "parameters": [
+          {
+            "description": "Questions",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.BulkCreateBankQuestion"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bank_questions/{id}": {
+      "put": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["bank-questions"],
+        "summary": "Update bank question",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Question ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Question",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.UpdateBankQuestion"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.BankQuestion"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["bank-questions"],
+        "summary": "Delete bank question",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Question ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/bank_questions/{id}/bulk": {
+      "put": {
+        "consumes": ["application/json"],
+        "tags": ["bank-questions"],
+        "summary": "Replace all questions in a bank",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Bank ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Questions",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.BulkUpdateBankQuestion"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/banks": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["banks"],
+        "summary": "List question banks",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Owner user ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/course-service_internal_domain.Bank"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["banks"],
+        "summary": "Create question bank",
+        "parameters": [
+          {
+            "description": "Bank",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.CreateBank"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Bank"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/banks/{id}": {
+      "put": {
+        "description": "Updates title and description. userId in body must match the bank owner; userId is not changed.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["banks"],
+        "summary": "Update question bank",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Bank ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Bank",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.UpdateBank"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Bank"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["banks"],
+        "summary": "Delete question bank",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Bank ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/course-section-items": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["course-section-items"],
+        "summary": "List section items",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/course-service_internal_domain.CourseSectionItem"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["course-section-items"],
+        "summary": "Create section item",
+        "parameters": [
+          {
+            "description": "Item",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.CreateCourseSectionItem"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.CourseSectionItem"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/course-section-items/{id}": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["course-section-items"],
+        "summary": "Get section item",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Item ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.CourseSectionItem"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["course-section-items"],
+        "summary": "Update section item",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Item ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Item",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.UpdateCourseSectionItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.CourseSectionItem"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["course-section-items"],
+        "summary": "Delete section item",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Item ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/course-sections": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["course-sections"],
+        "summary": "List course sections",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/course-service_internal_domain.CourseSection"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["course-sections"],
+        "summary": "Create course section",
+        "parameters": [
+          {
+            "description": "Section",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.CreateCourseSection"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.CourseSection"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/course-sections/{id}": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["course-sections"],
+        "summary": "Get course section",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Section ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.CourseSection"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["course-sections"],
+        "summary": "Update course section",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Section ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Section",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.UpdateCourseSection"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.CourseSection"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["course-sections"],
+        "summary": "Delete course section",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Section ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/courses": {
+      "get": {
+        "description": "Returns courses owned by user_id. Filter: if the value is numeric, matches course id; otherwise matches title (case-insensitive substring). Student count is in stats.totalStudents.",
+        "produces": ["application/json"],
+        "tags": ["courses"],
+        "summary": "List instructor courses",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Instructor user ID (until JWT auth)",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "User role (reserved for future auth)",
+            "name": "role",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Filter by course id or title",
+            "name": "filter",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/course-service_internal_domain.Course"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Creates a course with status Draft (0). If coverImageId is set, publishes FileLoadedEvent to Kafka (file-topic).",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["courses"],
+        "summary": "Create course",
+        "parameters": [
+          {
+            "description": "Course",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.CreateCourse"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Course"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/courses/stats": {
+      "get": {
+        "description": "Returns count of active courses and total students enrolled on active courses for the instructor.",
+        "produces": ["application/json"],
+        "tags": ["courses"],
+        "summary": "Course statistics",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Instructor user ID (until JWT auth)",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "User role (reserved for future auth)",
+            "name": "role",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.CoursesStatsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/courses/{course_id}/listeners": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["courses"],
+        "summary": "List course listeners",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Course ID",
+            "name": "course_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "consumes": ["application/json"],
+        "tags": ["courses"],
+        "summary": "Add course listeners",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Course ID",
+            "name": "course_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Listeners",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.SetCourseListener"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "consumes": ["application/json"],
+        "tags": ["courses"],
+        "summary": "Remove course listeners",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Course ID",
+            "name": "course_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Listeners",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.DeleteCourseListeners"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/courses/{course_id}/with-all-items": {
+      "get": {
+        "description": "Returns course metadata (including coverImageId) and nested sections with items (item_type, item_id for file/test/assignment reference).",
+        "produces": ["application/json"],
+        "tags": ["courses"],
+        "summary": "Get course with all items",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Course ID",
+            "name": "course_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "Page size for joined rows",
+            "name": "limit",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "Page offset for joined rows",
+            "name": "offset",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.CourseWithItems"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/courses/{id}": {
+      "get": {
+        "produces": ["application/json"],
+        "tags": ["courses"],
+        "summary": "Get course by ID",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Course ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Course"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Updates course fields. When coverImageId changes, emits FileLoadedEvent and/or FileDeletedEvent to Kafka.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["courses"],
+        "summary": "Update course",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Course ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Course",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.UpdateCourse"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Course"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["courses"],
+        "summary": "Delete course",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Course ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/tests": {
+      "get": {
+        "description": "Returns tests for a course. Query course_id is optional; omit to get all tests.",
+        "produces": ["application/json"],
+        "tags": ["tests"],
+        "summary": "List tests",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 1,
+            "description": "Filter by course ID",
+            "name": "course_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/course-service_internal_domain.Test"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Creates a test linked to a course section item. generationSettings is a JSON object: {\"shuffleQuestions\":true,\"difficultyLevels\":[1,2,3]}. questionsCount is a top-level field on the test. bankIds lists question banks used for random question generation. Dates are RFC3339 (UTC recommended).",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["tests"],
+        "summary": "Create test",
+        "parameters": [
+          {
+            "description": "Test payload",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.CreateTest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Test"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a test. Provide test_id in path or query.",
+        "tags": ["tests"],
+        "summary": "Delete test",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Test ID (query)",
+            "name": "test_id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/tests/{test_id}": {
+      "get": {
+        "description": "Returns test metadata and all attempts of the given user for this test.",
+        "produces": ["application/json"],
+        "tags": ["tests"],
+        "summary": "Get test info with user attempts",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Test ID",
+            "name": "test_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "example": 42,
+            "description": "User ID",
+            "name": "user_id",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.TestWithAttempts"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Updates test fields. test_id can be passed in path or in body as id. Same body format as create.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["tests"],
+        "summary": "Update test",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Test ID (path)",
+            "name": "test_id",
+            "in": "path"
+          },
+          {
+            "description": "Test payload",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.UpdateTest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.Test"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes a test. Provide test_id in path or query.",
+        "tags": ["tests"],
+        "summary": "Delete test",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Test ID (query)",
+            "name": "test_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Test ID (path)",
+            "name": "test_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/tests/{test_id}/attempts": {
+      "get": {
+        "description": "Lists attempts for a specific test. status values: IN_PROGRESS, COMPLETED, NEEDS_GRADING.",
+        "produces": ["application/json"],
+        "tags": ["tests"],
+        "summary": "List attempts for a test",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Test ID",
+            "name": "test_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "example": 42,
+            "description": "Filter by user ID",
+            "name": "user_id",
+            "in": "query"
+          },
+          {
+            "enum": ["IN_PROGRESS", "COMPLETED", "NEEDS_GRADING"],
+            "type": "string",
+            "example": "COMPLETED",
+            "description": "Filter by status",
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/course-service_internal_domain.TestAttempt"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/tests/{test_id}/attempts/{attempt_id}": {
+      "get": {
+        "description": "Same response as GET /attempts/{attempt_id}, but validates that the attempt belongs to the given test.",
+        "produces": ["application/json"],
+        "tags": ["tests"],
+        "summary": "Get attempt state within a test",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Test ID",
+            "name": "test_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "example": 200,
+            "description": "Attempt ID",
+            "name": "attempt_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Questions page size",
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "example": 0,
+            "description": "Questions page offset",
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.AttemptState"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/tests/{test_id}/attempts/{attempt_id}/grades": {
+      "post": {
+        "description": "Assigns scores to text (or other manually graded) questions. Body: {\"scores\":[{\"attemptQuestionId\":501,\"scoreAwarded\":8,\"instructorComment\":\"Partially correct\"}]}.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["tests"],
+        "summary": "Grade attempt manually",
+        "parameters": [
+          {
+            "type": "integer",
+            "example": 10,
+            "description": "Test ID",
+            "name": "test_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "example": 200,
+            "description": "Attempt ID",
+            "name": "attempt_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Manual scores",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_transport_http_v1_request.GradeAttempt"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/course-service_internal_domain.TestAttempt"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/internal_transport_http_v1.ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "course-service_internal_domain.Assignment": {
+      "type": "object",
+      "properties": {
+        "deadlineDays": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "itemId": {
+          "type": "integer"
+        },
+        "maxScore": {
+          "type": "integer"
+        }
+      }
+    },
+    "course-service_internal_domain.AttemptAnswer": {
+      "type": "object",
+      "properties": {
+        "attemptQuestionId": {
+          "type": "integer",
+          "example": 501
+        },
+        "id": {
+          "type": "integer",
+          "example": 601
+        },
+        "selectedAnswerId": {
+          "type": "integer",
+          "example": 1001
+        },
+        "textResponse": {
+          "type": "string",
+          "example": "The answer is 42"
+        }
+      }
+    },
+    "course-service_internal_domain.AttemptPagination": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "example": 10
+        },
+        "offset": {
+          "type": "integer",
+          "example": 0
+        },
+        "total": {
+          "type": "integer",
+          "example": 20
+        }
+      }
+    },
+    "course-service_internal_domain.AttemptQuestionState": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.PublicQuestionAnswer"
+          }
+        },
+        "attemptId": {
+          "type": "integer",
+          "example": 200
+        },
+        "id": {
+          "type": "integer",
+          "example": 501
+        },
+        "instructorComment": {
+          "type": "string",
+          "example": "Correct"
+        },
+        "orderIndex": {
+          "type": "integer",
+          "example": 0
+        },
+        "points": {
+          "type": "integer",
+          "example": 5
+        },
+        "question": {
+          "$ref": "#/definitions/course-service_internal_domain.Question"
+        },
+        "questionId": {
+          "type": "integer",
+          "example": 100
+        },
+        "response": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.AttemptAnswer"
+          }
+        },
+        "scoreAwarded": {
+          "type": "integer",
+          "example": 5
+        },
+        "text": {
+          "type": "string",
+          "example": "What is 2+2?"
+        },
+        "type": {
+          "enum": ["SINGLE", "MULTIPLE", "TEXT"],
+          "allOf": [
+            {
+              "$ref": "#/definitions/course-service_internal_domain.TestingQuestionType"
+            }
+          ],
+          "example": "SINGLE"
+        }
+      }
+    },
+    "course-service_internal_domain.AttemptState": {
+      "type": "object",
+      "properties": {
+        "attempt": {
+          "$ref": "#/definitions/course-service_internal_domain.TestAttempt"
+        },
+        "pagination": {
+          "$ref": "#/definitions/course-service_internal_domain.AttemptPagination"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.AttemptQuestionState"
+          }
+        },
+        "remainingSeconds": {
+          "type": "integer",
+          "example": 2700
+        }
+      }
+    },
+    "course-service_internal_domain.Bank": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "questionsCount": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        }
+      }
+    },
+    "course-service_internal_domain.BankAnswer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "isCorrect": {
+          "type": "boolean"
+        },
+        "questionId": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_domain.BankQuestion": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.BankAnswer"
+          }
+        },
+        "bankId": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "points": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/course-service_internal_domain.TestingQuestionType"
+        }
+      }
+    },
+    "course-service_internal_domain.BankQuestionsListMeta": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "course-service_internal_domain.BankQuestionsListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.BankQuestion"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/course-service_internal_domain.BankQuestionsListMeta"
+        }
+      }
+    },
+    "course-service_internal_domain.Course": {
+      "type": "object",
+      "properties": {
+        "coverImageId": {
+          "type": "string",
+          "example": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "ownerUserId": {
+          "type": "integer",
+          "example": 42
+        },
+        "stats": {
+          "$ref": "#/definitions/course-service_internal_domain.CourseStats"
+        },
+        "status": {
+          "description": "0 — Draft, 1 — Active",
+          "type": "integer",
+          "enum": [0, 1],
+          "example": 0
+        },
+        "title": {
+          "type": "string",
+          "example": "Advanced Calculus"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_domain.CourseSection": {
+      "type": "object",
+      "properties": {
+        "courseId": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "parentId": {
+          "type": "integer"
+        },
+        "sortOrder": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_domain.CourseSectionItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 10
+        },
+        "isPublished": {
+          "type": "boolean",
+          "example": true
+        },
+        "itemId": {
+          "type": "integer",
+          "example": 100
+        },
+        "itemType": {
+          "type": "string",
+          "enum": ["lecture", "assignment", "test"],
+          "example": "test"
+        },
+        "sectionId": {
+          "type": "integer",
+          "example": 5
+        },
+        "sortOrder": {
+          "type": "integer",
+          "example": 1
+        },
+        "title": {
+          "type": "string",
+          "example": "Midterm"
+        }
+      }
+    },
+    "course-service_internal_domain.CourseSectionWithItems": {
+      "type": "object",
+      "properties": {
+        "courseId": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.CourseSectionItem"
+          }
+        },
+        "parentId": {
+          "type": "integer"
+        },
+        "sortOrder": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_domain.CourseStats": {
+      "type": "object",
+      "properties": {
+        "totalStudents": {
+          "type": "integer",
+          "example": 45
+        }
+      }
+    },
+    "course-service_internal_domain.CourseWithItems": {
+      "type": "object",
+      "properties": {
+        "coverImageId": {
+          "type": "string",
+          "example": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "example": 1
+        },
+        "ownerUserId": {
+          "type": "integer",
+          "example": 42
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.CourseSectionWithItems"
+          }
+        },
+        "stats": {
+          "$ref": "#/definitions/course-service_internal_domain.CourseStats"
+        },
+        "status": {
+          "description": "0 — Draft, 1 — Active",
+          "type": "integer",
+          "enum": [0, 1],
+          "example": 0
+        },
+        "title": {
+          "type": "string",
+          "example": "Advanced Calculus"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_domain.CoursesStatsResponse": {
+      "type": "object",
+      "properties": {
+        "activeCoursesCount": {
+          "type": "integer",
+          "example": 3
+        },
+        "totalStudents": {
+          "type": "integer",
+          "example": 120
+        }
+      }
+    },
+    "course-service_internal_domain.PublicQuestionAnswer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1001
+        },
+        "questionId": {
+          "type": "integer",
+          "example": 100
+        },
+        "text": {
+          "type": "string",
+          "example": "4"
+        }
+      }
+    },
+    "course-service_internal_domain.Question": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.QuestionAnswer"
+          }
+        },
+        "bankId": {
+          "type": "integer",
+          "example": 1
+        },
+        "difficultyLevel": {
+          "type": "integer",
+          "example": 2
+        },
+        "id": {
+          "type": "integer",
+          "example": 100
+        },
+        "points": {
+          "type": "integer",
+          "example": 5
+        },
+        "text": {
+          "type": "string",
+          "example": "What is 2+2?"
+        },
+        "type": {
+          "enum": ["SINGLE", "MULTIPLE", "TEXT"],
+          "allOf": [
+            {
+              "$ref": "#/definitions/course-service_internal_domain.TestingQuestionType"
+            }
+          ],
+          "example": "SINGLE"
+        }
+      }
+    },
+    "course-service_internal_domain.QuestionAnswer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "example": 1001
+        },
+        "isCorrect": {
+          "type": "boolean",
+          "example": true
+        },
+        "questionId": {
+          "type": "integer",
+          "example": 100
+        },
+        "text": {
+          "type": "string",
+          "example": "4"
+        }
+      }
+    },
+    "course-service_internal_domain.Test": {
+      "type": "object",
+      "properties": {
+        "availableFrom": {
+          "type": "string",
+          "example": "2026-06-01T09:00:00Z"
+        },
+        "availableTo": {
+          "type": "string",
+          "example": "2026-06-30T23:59:59Z"
+        },
+        "bankIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "example": [1, 2]
+        },
+        "courseId": {
+          "type": "integer",
+          "example": 1
+        },
+        "courseSectionItemId": {
+          "type": "integer",
+          "example": 15
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2026-05-01T12:00:00Z"
+        },
+        "description": {
+          "type": "string",
+          "example": "Final assessment for module 1"
+        },
+        "durationSeconds": {
+          "type": "integer",
+          "example": 3600
+        },
+        "generationSettings": {
+          "type": "object"
+        },
+        "id": {
+          "type": "integer",
+          "example": 10
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "example": 3
+        },
+        "maxScore": {
+          "type": "integer",
+          "example": 100
+        },
+        "questionsCount": {
+          "type": "integer",
+          "example": 20
+        },
+        "title": {
+          "type": "string",
+          "example": "Midterm Exam"
+        }
+      }
+    },
+    "course-service_internal_domain.TestAttempt": {
+      "type": "object",
+      "properties": {
+        "attemptNumber": {
+          "type": "integer",
+          "example": 1
+        },
+        "completedAt": {
+          "type": "string",
+          "example": "2026-06-15T10:45:00Z"
+        },
+        "expiresAt": {
+          "type": "string",
+          "example": "2026-06-15T11:00:00Z"
+        },
+        "gradeStatus": {
+          "enum": ["NONE", "READY", "PRE_GRADED"],
+          "allOf": [
+            {
+              "$ref": "#/definitions/course-service_internal_domain.TestGradeStatus"
+            }
+          ],
+          "example": "NONE"
+        },
+        "id": {
+          "type": "integer",
+          "example": 200
+        },
+        "startedAt": {
+          "type": "string",
+          "example": "2026-06-15T10:00:00Z"
+        },
+        "status": {
+          "enum": ["IN_PROGRESS", "COMPLETED", "NEEDS_GRADING"],
+          "allOf": [
+            {
+              "$ref": "#/definitions/course-service_internal_domain.TestAttemptStatus"
+            }
+          ],
+          "example": "IN_PROGRESS"
+        },
+        "testId": {
+          "type": "integer",
+          "example": 10
+        },
+        "totalScore": {
+          "type": "integer",
+          "example": 85
+        },
+        "userId": {
+          "type": "integer",
+          "example": 42
+        }
+      }
+    },
+    "course-service_internal_domain.TestAttemptStatus": {
+      "type": "string",
+      "enum": ["IN_PROGRESS", "COMPLETED", "NEEDS_GRADING"],
+      "x-enum-varnames": [
+        "TestAttemptStatusInProgress",
+        "TestAttemptStatusCompleted",
+        "TestAttemptStatusNeedsGrading"
+      ]
+    },
+    "course-service_internal_domain.TestGenerationSettings": {
+      "type": "object",
+      "properties": {
+        "difficultyLevels": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "example": [1, 2, 3]
+        },
+        "shuffleQuestions": {
+          "type": "boolean",
+          "example": true
+        }
+      }
+    },
+    "course-service_internal_domain.TestGradeStatus": {
+      "type": "string",
+      "enum": ["NONE", "READY", "PRE_GRADED"],
+      "x-enum-varnames": ["TestGradeStatusNone", "TestGradeStatusReady", "TestGradeStatusPreGraded"]
+    },
+    "course-service_internal_domain.TestWithAttempts": {
+      "type": "object",
+      "properties": {
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_domain.TestAttempt"
+          }
+        },
+        "test": {
+          "$ref": "#/definitions/course-service_internal_domain.Test"
+        }
+      }
+    },
+    "course-service_internal_domain.TestingQuestionType": {
+      "type": "string",
+      "enum": ["SINGLE", "MULTIPLE", "TEXT"],
+      "x-enum-varnames": [
+        "TestingQuestionTypeSingle",
+        "TestingQuestionTypeMultiple",
+        "TestingQuestionTypeText"
+      ]
+    },
+    "course-service_internal_transport_http_v1_request.BankAnswerRequest": {
+      "type": "object",
+      "properties": {
+        "isCorrect": {
+          "type": "boolean",
+          "example": true
+        },
+        "text": {
+          "type": "string",
+          "example": "4"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.BulkCreateBankQuestion": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_transport_http_v1_request.CreateBankQuestion"
+          }
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.BulkUpdateBankQuestion": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_transport_http_v1_request.UpdateBankQuestion"
+          }
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.CreateAssignment": {
+      "type": "object",
+      "properties": {
+        "deadlineDays": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "itemId": {
+          "type": "integer"
+        },
+        "maxScore": {
+          "type": "integer"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.CreateBank": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.CreateBankQuestion": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_transport_http_v1_request.BankAnswerRequest"
+          }
+        },
+        "bankId": {
+          "type": "integer",
+          "example": 1
+        },
+        "points": {
+          "type": "integer",
+          "example": 5
+        },
+        "text": {
+          "type": "string",
+          "example": "What is 2+2?"
+        },
+        "type": {
+          "enum": ["SINGLE", "MULTIPLE", "TEXT"],
+          "allOf": [
+            {
+              "$ref": "#/definitions/course-service_internal_domain.TestingQuestionType"
+            }
+          ],
+          "example": "SINGLE"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.CreateCourse": {
+      "type": "object",
+      "properties": {
+        "coverImageId": {
+          "type": "string",
+          "example": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ownerUserId": {
+          "type": "integer",
+          "example": 42
+        },
+        "title": {
+          "type": "string",
+          "example": "Advanced Calculus"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.CreateCourseSection": {
+      "type": "object",
+      "properties": {
+        "courseId": {
+          "type": "integer"
+        },
+        "parentId": {
+          "type": "integer"
+        },
+        "sortOrder": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.CreateCourseSectionItem": {
+      "type": "object",
+      "properties": {
+        "isPublished": {
+          "type": "boolean"
+        },
+        "itemType": {
+          "type": "string"
+        },
+        "sectionId": {
+          "type": "integer"
+        },
+        "sortOrder": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.CreateTest": {
+      "type": "object",
+      "properties": {
+        "availableFrom": {
+          "type": "string",
+          "example": "2026-06-01T09:00:00Z"
+        },
+        "availableTo": {
+          "type": "string",
+          "example": "2026-06-30T23:59:59Z"
+        },
+        "bankIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "example": [1, 2]
+        },
+        "courseId": {
+          "type": "integer",
+          "example": 1
+        },
+        "courseSectionItemId": {
+          "type": "integer",
+          "example": 15
+        },
+        "description": {
+          "type": "string",
+          "example": "Final assessment for module 1"
+        },
+        "durationSeconds": {
+          "type": "integer",
+          "example": 3600
+        },
+        "generationSettings": {
+          "$ref": "#/definitions/course-service_internal_domain.TestGenerationSettings"
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "example": 3
+        },
+        "maxScore": {
+          "type": "integer",
+          "example": 100
+        },
+        "questionsCount": {
+          "type": "integer",
+          "example": 20
+        },
+        "title": {
+          "type": "string",
+          "example": "Midterm Exam"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.DeleteCourseListeners": {
+      "type": "object",
+      "properties": {
+        "groupIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "userIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.GradeAttempt": {
+      "type": "object",
+      "properties": {
+        "scores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_transport_http_v1_request.GradeAttemptQuestion"
+          }
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.GradeAttemptQuestion": {
+      "type": "object",
+      "properties": {
+        "attemptQuestionId": {
+          "type": "integer",
+          "example": 501
+        },
+        "instructorComment": {
+          "type": "string",
+          "example": "Partially correct reasoning"
+        },
+        "scoreAwarded": {
+          "type": "integer",
+          "example": 8
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.SaveAttemptAnswer": {
+      "type": "object",
+      "properties": {
+        "attemptQuestionId": {
+          "type": "integer",
+          "example": 501
+        },
+        "selectedAnswerId": {
+          "type": "integer",
+          "example": 1001
+        },
+        "selectedAnswerIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "example": [1001, 1003]
+        },
+        "textResponse": {
+          "type": "string",
+          "example": "The answer is 42"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.SetCourseListener": {
+      "type": "object",
+      "properties": {
+        "groupIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "userIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.StartAttempt": {
+      "type": "object",
+      "properties": {
+        "testId": {
+          "type": "integer",
+          "example": 10
+        },
+        "userId": {
+          "type": "integer",
+          "example": 42
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.SubmitAttemptAnswers": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_transport_http_v1_request.SaveAttemptAnswer"
+          }
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.UpdateAssignment": {
+      "type": "object",
+      "properties": {
+        "deadlineDays": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "itemId": {
+          "type": "integer"
+        },
+        "maxScore": {
+          "type": "integer"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.UpdateBank": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "integer"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.UpdateBankQuestion": {
+      "type": "object",
+      "properties": {
+        "answers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/course-service_internal_transport_http_v1_request.BankAnswerRequest"
+          }
+        },
+        "bankId": {
+          "type": "integer",
+          "example": 1
+        },
+        "points": {
+          "type": "integer",
+          "example": 5
+        },
+        "text": {
+          "type": "string",
+          "example": "What is 2+2?"
+        },
+        "type": {
+          "enum": ["SINGLE", "MULTIPLE", "TEXT"],
+          "allOf": [
+            {
+              "$ref": "#/definitions/course-service_internal_domain.TestingQuestionType"
+            }
+          ],
+          "example": "SINGLE"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.UpdateCourse": {
+      "type": "object",
+      "properties": {
+        "coverImageId": {
+          "type": "string",
+          "example": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "description": {
+          "type": "string"
+        },
+        "ownerUserId": {
+          "type": "integer",
+          "example": 42
+        },
+        "status": {
+          "description": "0 — Draft, 1 — Active",
+          "type": "integer",
+          "enum": [0, 1],
+          "example": 1
+        },
+        "title": {
+          "type": "string",
+          "example": "Advanced Calculus"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.UpdateCourseSection": {
+      "type": "object",
+      "properties": {
+        "courseId": {
+          "type": "integer"
+        },
+        "parentId": {
+          "type": "integer"
+        },
+        "sortOrder": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.UpdateCourseSectionItem": {
+      "type": "object",
+      "properties": {
+        "isPublished": {
+          "type": "boolean"
+        },
+        "itemType": {
+          "type": "string"
+        },
+        "sectionId": {
+          "type": "integer"
+        },
+        "sortOrder": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "course-service_internal_transport_http_v1_request.UpdateTest": {
+      "type": "object",
+      "properties": {
+        "availableFrom": {
+          "type": "string",
+          "example": "2026-06-01T09:00:00Z"
+        },
+        "availableTo": {
+          "type": "string",
+          "example": "2026-06-30T23:59:59Z"
+        },
+        "bankIds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "example": [1, 2]
+        },
+        "courseId": {
+          "type": "integer",
+          "example": 1
+        },
+        "courseSectionItemId": {
+          "type": "integer",
+          "example": 15
+        },
+        "description": {
+          "type": "string",
+          "example": "Updated description"
+        },
+        "durationSeconds": {
+          "type": "integer",
+          "example": 3600
+        },
+        "generationSettings": {
+          "$ref": "#/definitions/course-service_internal_domain.TestGenerationSettings"
+        },
+        "id": {
+          "type": "integer",
+          "example": 10
+        },
+        "maxAttempts": {
+          "type": "integer",
+          "example": 3
+        },
+        "maxScore": {
+          "type": "integer",
+          "example": 100
+        },
+        "questionsCount": {
+          "type": "integer",
+          "example": 20
+        },
+        "title": {
+          "type": "string",
+          "example": "Midterm Exam (updated)"
+        }
+      }
+    },
+    "internal_transport_http_v1.ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "bad request"
+        }
+      }
+    }
+  }
+}

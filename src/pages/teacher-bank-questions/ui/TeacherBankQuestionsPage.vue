@@ -6,22 +6,60 @@ import Button from 'primevue/button'
 
 import { BankQuestionsTable } from '@/widgets/bank-questions-table'
 import { QuestionEditorModal } from '@/features/question-editor'
-import { useQuestionBankEntityStore, questionBankApi } from '@/entities/question-bank'
+import {
+  useQuestionBankEntityStore,
+  questionBankApi,
+  mapBanksToQuestionBanks,
+  mapBankQuestionToQuestion
+} from '@/entities/question-bank'
+import { getCurrentUserIdAsNumber } from '@/shared/lib/jwt'
+import { useNotifications } from '@/shared/model'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const entityStore = useQuestionBankEntityStore()
+const notifications = useNotifications()
 
 const bankId = computed(() => route.params.bankId as string)
 
 const currentBank = computed(() => entityStore.getBankById(bankId.value))
 
-onMounted(async () => {
-  // Если зашли по прямой ссылке, грузим банки
+const loadBankData = async () => {
+  const userId = getCurrentUserIdAsNumber()
+  if (!userId) {
+    return
+  }
+
   if (!currentBank.value) {
-    const data = await questionBankApi.fetchBanks()
-    entityStore.upsertBanks(data) // Сохраняем в кэш
+    const banks = await questionBankApi.fetchBanks(userId)
+    entityStore.upsertBanks(mapBanksToQuestionBanks(banks))
+  }
+
+  const response = await questionBankApi.fetchBankQuestions({
+    bankId: bankId.value,
+    limit: 100,
+    offset: 0
+  })
+
+  const questions = response.data.map((question, index) =>
+    mapBankQuestionToQuestion(question, index + 1)
+  )
+
+  entityStore.upsertBanks([
+    {
+      id: bankId.value,
+      questions,
+      questionsCount: response.meta.total
+    }
+  ])
+}
+
+onMounted(async () => {
+  try {
+    await loadBankData()
+  } catch {
+    // Toast об ошибке показывает API-клиент
   }
 })
 
@@ -38,15 +76,12 @@ const openEditModal = (question: any) => {
   isEditorVisible.value = true
 }
 
-const handleSaveQuestion = async (questionData: any) => {
-  // 1. Отправляем изменения на бэкенд
-  const updatedBank = await questionBankApi.saveQuestion(bankId.value, questionData)
-
-  if (updatedBank) {
-    // 2. Кладем обновленный банк в глобальный кэш!
-    // Computed-свойство currentBank мгновенно обновит таблицу!
-    entityStore.upsertBanks([updatedBank])
-  }
+const handleSaveQuestion = async () => {
+  notifications.showToast(
+    'info',
+    t('teacherQuestionBanks.addQuestion'),
+    'API save for questions is planned in the next step.'
+  )
 }
 
 const goBack = () => {

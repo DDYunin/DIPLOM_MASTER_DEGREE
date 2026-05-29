@@ -1,14 +1,62 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { type QuestionType, type Difficulty } from '@/entities/question-bank'
 import { useQuestionBanksManagerStore } from '../model/store'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
+import Skeleton from 'primevue/skeleton'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const widgetStore = useQuestionBanksManagerStore()
 const router = useRouter()
+
+const bankTitleDraft = ref('')
+const bankDescriptionDraft = ref('')
+
+const syncDraftFromSelectedBank = () => {
+  if (!widgetStore.selectedBank) {
+    bankTitleDraft.value = ''
+    bankDescriptionDraft.value = ''
+    return
+  }
+
+  bankTitleDraft.value = widgetStore.selectedBank.title
+  bankDescriptionDraft.value = widgetStore.selectedBank.description
+}
+
+const hasBankChanges = computed(() => {
+  if (!widgetStore.selectedBank) {
+    return false
+  }
+
+  return (
+    bankTitleDraft.value.trim() !== widgetStore.selectedBank.title ||
+    bankDescriptionDraft.value.trim() !== widgetStore.selectedBank.description
+  )
+})
+
+const handleSelectBank = async (bankId: string) => {
+  await widgetStore.selectBank(bankId)
+  syncDraftFromSelectedBank()
+}
+
+const handleSaveBank = async () => {
+  if (!hasBankChanges.value) {
+    return
+  }
+
+  await widgetStore.updateSelectedBank(
+    {
+      title: bankTitleDraft.value.trim(),
+      description: bankDescriptionDraft.value.trim()
+    },
+    locale.value
+  )
+  syncDraftFromSelectedBank()
+}
 
 const emit = defineEmits<{
   (e: 'create-bank'): void
@@ -62,13 +110,21 @@ const goToAllQuestions = () => {
         <span class="total-badge">{{ widgetStore.totalBanks }} Total</span>
       </div>
 
-      <div class="banks-list">
+      <Message v-if="widgetStore.loadError" severity="error" :closable="false" class="sidebar-error">
+        {{ t('teacherQuestionBanks.loadError') }}
+      </Message>
+
+      <div v-if="widgetStore.isLoading" class="banks-list banks-list--loading">
+        <Skeleton v-for="index in 3" :key="index" height="96px" class="bank-skeleton" />
+      </div>
+
+      <div v-else class="banks-list">
         <div
           v-for="bank in widgetStore.banksList"
           :key="bank.id"
           class="bank-item"
           :class="{ 'bank-item--active': widgetStore.selectedBankId === bank.id }"
-          @click="widgetStore.selectBank(bank.id)"
+          @click="handleSelectBank(bank.id)"
         >
           <h4 class="bank-title">{{ bank.title }}</h4>
           <p class="bank-desc">{{ bank.description }}</p>
@@ -116,19 +172,19 @@ const goToAllQuestions = () => {
                 severity="secondary"
                 aria-label="Delete Bank"
               />
-              <Button :label="t('common.saveChanges')" icon="pi pi-save" text />
+              <Button :label="t('common.saveChanges')" icon="pi pi-save" text :loading="widgetStore.isSaving" :disabled="!hasBankChanges" @click="handleSaveBank" />
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">{{ t('teacherQuestionBanks.bankTitle') }}</label>
             <!-- Спец. класс filled-input для имитации серого фона как на макете -->
-            <InputText v-model="widgetStore.selectedBank.title" class="w-full filled-input" />
+            <InputText v-model="bankTitleDraft" class="w-full filled-input" />
           </div>
 
           <div class="form-group">
             <label class="form-label">{{ t('teacherQuestionBanks.description') }}</label>
-            <InputText v-model="widgetStore.selectedBank.description" class="w-full filled-input" />
+            <InputText v-model="bankDescriptionDraft" class="w-full filled-input" />
           </div>
         </section>
 
@@ -145,7 +201,15 @@ const goToAllQuestions = () => {
             </div>
           </div>
 
-          <div class="questions-list">
+          <div v-if="widgetStore.isQuestionsLoading" class="questions-list">
+            <Skeleton v-for="index in 3" :key="index" height="120px" />
+          </div>
+
+          <div v-else-if="widgetStore.selectedBank.questions.length === 0" class="questions-empty">
+            {{ t('teacherQuestionBanks.noQuestionsYet') }}
+          </div>
+
+          <div v-else class="questions-list">
             <div
               v-for="(question, index) in widgetStore.selectedBank.questions"
               :key="question.id"
@@ -251,6 +315,19 @@ const goToAllQuestions = () => {
   flex-direction: column;
   max-height: 700px;
   overflow-y: auto;
+}
+
+.banks-list--loading {
+  padding: 1rem;
+  gap: 0.75rem;
+}
+
+.bank-skeleton {
+  border-radius: var(--radius-md);
+}
+
+.sidebar-error {
+  margin: 1rem;
 }
 
 .bank-item {
@@ -453,6 +530,13 @@ const goToAllQuestions = () => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.questions-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--text-color-muted);
+  font-size: 0.875rem;
 }
 
 .question-card {

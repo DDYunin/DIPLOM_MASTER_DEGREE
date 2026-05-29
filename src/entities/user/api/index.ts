@@ -1,4 +1,5 @@
 import { api } from '@/shared/api'
+import { usersApiPath } from '@/shared/config/api-routes'
 
 import type {
   AdminUserDetailsResponse,
@@ -13,35 +14,35 @@ import type {
 } from './types'
 
 export const fetchUsersList = (queryParams: AdminUsersListQueryParams = {}) =>
-  api<AdminUsersPageDto>('/admin/users', {
+  api<AdminUsersPageDto>(usersApiPath('/admin/users'), {
     queryParams: queryParams as Record<string, string | number | boolean | null | undefined>
   })
 
 export const fetchAdminUserDetails = (id: string) =>
-  api<AdminUserDetailsResponse>(`/admin/users/${id}`)
+  api<AdminUserDetailsResponse>(usersApiPath(`/admin/users/${id}`))
 
-export const fetchCurrentUserProfile = () => api<UserResponseDto>('/users/me')
+export const fetchCurrentUserProfile = () => api<UserResponseDto>(usersApiPath('/users/me'))
 
 export const createAdminUser = (userData: CreateAdminUserRequest) =>
-  api<AdminUserResponse>('/admin/users', {
+  api<AdminUserResponse>(usersApiPath('/admin/users'), {
     method: 'POST',
     body: JSON.stringify(userData)
   })
 
 export const updateOwnProfileEmail = (payload: UpdateOwnProfileRequest) =>
-  api<UserResponseDto>('/users/me/email', {
+  api<UserResponseDto>(usersApiPath('/users/me/email'), {
     method: 'PATCH',
     body: JSON.stringify(payload)
   })
 
 export const changeOwnPassword = (payload: ChangePasswordRequest) =>
-  api<void>('/users/me/password', {
+  api<void>(usersApiPath('/users/me/password'), {
     method: 'PATCH',
     body: JSON.stringify(payload)
   })
 
 export const changeOwnAvatar = (payload: ChangeAvatarRequestDto) =>
-  api<void>('/users/me/avatar', {
+  api<void>(usersApiPath('/users/me/avatar'), {
     method: 'PATCH',
     body: JSON.stringify(payload)
   })

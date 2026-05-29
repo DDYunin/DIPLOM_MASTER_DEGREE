@@ -1,5 +1,3 @@
-const BASE_URL = import.meta.env.VITE_API_URL
-
 export const baseFetch = async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
   const headers = new Headers(options.headers)
 
@@ -7,7 +5,7 @@ export const baseFetch = async <T>(endpoint: string, options: RequestInit = {}):
     headers.set('Content-Type', 'application/json')
   }
 
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+  const response = await fetch(endpoint, {
     ...options,
     headers
   })
@@ -25,18 +23,18 @@ export const baseFetch = async <T>(endpoint: string, options: RequestInit = {}):
       | null
       | undefined
 
-    const errorMessage = payload?.debugErrorMessage || payload?.errorCode || `HTTP Error: ${response.status}`
-    // Выкидываем кастомную ошибку с полем status, чтобы перехватчики могли её прочитать
+    const errorMessage =
+      payload?.debugErrorMessage || payload?.errorCode || `HTTP Error: ${response.status}`
     const error = new Error(errorMessage)
-    ;(error as any).status = response.status
-    ;(error as any).payload = errorPayload
+    ;(error as Error & { status?: number; payload?: unknown; errorCode?: string }).status =
+      response.status
+    ;(error as Error & { payload?: unknown }).payload = errorPayload
     if (payload?.errorCode) {
-      ;(error as any).errorCode = payload.errorCode
+      ;(error as Error & { errorCode?: string }).errorCode = payload.errorCode
     }
     throw error
   }
 
-  // Пустой ответ (204 No Content)
   if (response.status === 204) {
     return {} as T
   }

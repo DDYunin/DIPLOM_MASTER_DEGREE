@@ -26,3 +26,26 @@ export const getCurrentUserId = (): string | null => {
   const payload = getAccessTokenPayload()
   return payload?.sub ?? payload?.userId ?? payload?.id ?? null
 }
+
+export const getCurrentUserIdAsNumber = (): number | null => {
+  const payload = getAccessTokenPayload()
+  if (!payload) {
+    return null
+  }
+
+  const candidates = [payload.userId, payload.id, payload.sub]
+
+  for (const candidate of candidates) {
+    if (candidate === undefined || candidate === null || candidate === '') {
+      continue
+    }
+
+    return parseInt(candidate)
+    // const numeric = Number(candidate)
+    // if (Number.isFinite(numeric)) {
+    //   return numeric
+    // }
+  }
+
+  return null
+}

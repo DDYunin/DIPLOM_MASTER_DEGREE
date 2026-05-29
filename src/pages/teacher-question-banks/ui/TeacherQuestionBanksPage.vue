@@ -12,7 +12,7 @@ import { ImportQuestionBankModal } from '@/features/import-question-bank'
 import { CreateQuestionBankModal } from '@/features/create-question-bank'
 import { useNotifications } from '@/shared/model'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const widgetStore = useQuestionBanksManagerStore()
 const notifications = useNotifications()
 
@@ -20,32 +20,34 @@ const isImportModalVisible = ref(false)
 const isCreateModalVisible = ref(false)
 
 const handleImportSuccess = () => {
-  // Здесь можно показать Toast "Успешно импортировано"
   console.log('Bank successfully imported!')
 }
 
-// 2. ОБРАБОТЧИК СОЗДАНИЯ
-const handleCreateBank = (data: { title: string; description: string }) => {
-  // Вызываем твой готовый метод из стора
-  widgetStore.createNewBank(data)
-
-  // При желании здесь можно вызвать Toast "Bank created successfully"
-  notifications.showToast('success', t('teacherQuestionBanks.listUpdated'), t('common.save'))
+const handleCreateBank = async (data: { title: string; description: string }) => {
+  try {
+    await widgetStore.createNewBank(data, locale.value)
+    notifications.showToast('success', t('common.success'), t('teacherQuestionBanks.bankCreated'))
+  } catch {
+    // Toast об ошибке показывает API-клиент
+  }
 }
 
 onMounted(async () => {
-  // Загружаем банки с "бэкенда", если они еще не загружены
+  debugger
   if (widgetStore.bankIds.length === 0) {
-    await widgetStore.loadBanks()
+    try {
+      await widgetStore.loadBanks(locale.value)
+    } catch {
+      // Toast об ошибке показывает API-клиент
+    }
   }
-  // Сбрасываем выделение банка, чтобы справа показывался стартовый экран (Empty State)
+
   widgetStore.clearSelection()
 })
 </script>
 
 <template>
   <div class="question-banks-page">
-    <!-- HEADER -->
     <header class="page-header">
       <div class="header-info">
         <h1 class="page-title">{{ t('teacherQuestionBanks.title') }}</h1>
@@ -68,12 +70,10 @@ onMounted(async () => {
       </div>
     </header>
 
-    <!-- CONTENT WIDGET -->
     <div class="page-content">
       <QuestionBanksManager @create-bank="isCreateModalVisible = true" />
     </div>
 
-    <!-- Внедряем компонент фичи в корень страницы -->
     <ImportQuestionBankModal
       v-model:visible="isImportModalVisible"
       @success="handleImportSuccess"

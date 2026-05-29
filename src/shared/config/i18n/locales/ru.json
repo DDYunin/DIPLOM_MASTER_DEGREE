@@ -284,7 +284,10 @@
     "bankTitle": "Название банка",
     "description": "Описание",
     "showAllQuestions": "Все вопросы",
-    "manageQuestions": "Вопросы: {name}"
+    "manageQuestions": "Вопросы: {name}",
+    "bankCreated": "Банк вопросов успешно создан.",
+    "loadError": "Не удалось загрузить банки вопросов. Попробуйте позже.",
+    "noQuestionsYet": "В этом банке пока нет вопросов."
   },
   "teacherQuiz": {
     "courses": "Курсы",
