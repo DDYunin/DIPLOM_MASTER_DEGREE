@@ -286,6 +286,9 @@
     "showAllQuestions": "Show all questions",
     "manageQuestions": "Manage questions: {name}",
     "bankCreated": "Question bank created successfully.",
+    "bankDeleted": "Question bank deleted successfully.",
+    "deleteBank": "Delete bank",
+    "deleteBankConfirm": "Are you sure you want to delete this question bank? All questions in it will be removed.",
     "loadError": "Failed to load question banks. Please try again later.",
     "noQuestionsYet": "This bank has no questions yet."
   },
@@ -371,24 +374,26 @@
   "bankQuestions": {
     "search": "Search question text...",
     "type": "Type",
-    "difficulty": "Difficulty",
+    "allTypes": "All types",
+    "totalCount": "Total questions: {count}",
+    "selectedCount": "{count} selected",
+    "deleteConfirm": "Delete this question?",
+    "deleteManyConfirm": "Delete {count} selected questions?",
+    "questionCreated": "Question created successfully.",
+    "questionUpdated": "Question updated successfully.",
+    "questionDeleted": "Question deleted successfully.",
+    "questionsDeleted": "Selected questions deleted successfully.",
     "columns": {
       "text": "Question text",
       "type": "Type",
-      "difficulty": "Difficulty",
+      "points": "Points",
       "actions": "Actions"
     },
     "editQuestion": "Edit question",
     "types": {
-      "multipleChoice": "Multiple choice",
-      "trueFalse": "True / false",
-      "shortAnswer": "Short answer",
-      "essay": "Essay"
-    },
-    "difficulty": {
-      "easy": "Easy",
-      "medium": "Medium",
-      "hard": "Hard"
+      "single": "Single choice",
+      "multiple": "Multiple choice",
+      "text": "Text answer"
     }
   },
   "teacherProfile": {
@@ -511,6 +516,11 @@
       "prompt": "Question prompt",
       "answerOptions": "Answer options",
       "addOption": "Add option",
+      "addTextAnswer": "Add acceptable answer",
+      "singleHint": "Select one correct answer.",
+      "multipleHint": "Mark all correct answers.",
+      "textAnswers": "Acceptable answers",
+      "textHint": "Add one or more acceptable text answers.",
       "promptPlaceholder": "Type your question here...",
       "correctAnswer": "Correct answer",
       "exactMatchHint": "Students must match this answer exactly",

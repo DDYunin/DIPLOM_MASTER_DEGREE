@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
+import Skeleton from 'primevue/skeleton'
 
 import { BankQuestionsTable } from '@/widgets/bank-questions-table'
 import { QuestionEditorModal } from '@/features/question-editor'
@@ -10,7 +11,11 @@ import {
   useQuestionBankEntityStore,
   questionBankApi,
   mapBanksToQuestionBanks,
-  mapBankQuestionToQuestion
+  mapBankQuestionToQuestion,
+  buildCreateQuestionPayload,
+  buildUpdateQuestionPayload,
+  type Question,
+  type QuestionFormValues
 } from '@/entities/question-bank'
 import { getCurrentUserIdAsNumber } from '@/shared/lib/jwt'
 import { useNotifications } from '@/shared/model'
@@ -22,37 +27,47 @@ const entityStore = useQuestionBankEntityStore()
 const notifications = useNotifications()
 
 const bankId = computed(() => route.params.bankId as string)
-
 const currentBank = computed(() => entityStore.getBankById(bankId.value))
 
+const isLoading = ref(false)
+const isSaving = ref(false)
+const isEditorVisible = ref(false)
+const selectedQuestion = ref<Question | null>(null)
+
 const loadBankData = async () => {
-  const userId = getCurrentUserIdAsNumber()
-  if (!userId) {
-    return
-  }
+  isLoading.value = true
 
-  if (!currentBank.value) {
-    const banks = await questionBankApi.fetchBanks(userId)
-    entityStore.upsertBanks(mapBanksToQuestionBanks(banks))
-  }
-
-  const response = await questionBankApi.fetchBankQuestions({
-    bankId: bankId.value,
-    limit: 100,
-    offset: 0
-  })
-
-  const questions = response.data.map((question, index) =>
-    mapBankQuestionToQuestion(question, index + 1)
-  )
-
-  entityStore.upsertBanks([
-    {
-      id: bankId.value,
-      questions,
-      questionsCount: response.meta.total
+  try {
+    const userId = getCurrentUserIdAsNumber()
+    if (!userId) {
+      return
     }
-  ])
+
+    if (!currentBank.value) {
+      const banks = await questionBankApi.fetchBanks(userId)
+      entityStore.upsertBanks(mapBanksToQuestionBanks(banks))
+    }
+
+    const response = await questionBankApi.fetchBankQuestions({
+      bankId: bankId.value,
+      limit: 100,
+      offset: 0
+    })
+
+    const questions = response.data.map((question, index) =>
+      mapBankQuestionToQuestion(question, index + 1)
+    )
+
+    entityStore.upsertBanks([
+      {
+        id: bankId.value,
+        questions,
+        questionsCount: response.meta.total
+      }
+    ])
+  } finally {
+    isLoading.value = false
+  }
 }
 
 onMounted(async () => {
@@ -63,25 +78,61 @@ onMounted(async () => {
   }
 })
 
-const isEditorVisible = ref(false)
-const selectedQuestion = ref<any>(null)
-
 const openCreateModal = () => {
-  selectedQuestion.value = null // Новый вопрос
+  selectedQuestion.value = null
   isEditorVisible.value = true
 }
 
-const openEditModal = (question: any) => {
-  selectedQuestion.value = question // Редактирование
+const openEditModal = (question: Question) => {
+  selectedQuestion.value = question
   isEditorVisible.value = true
 }
 
-const handleSaveQuestion = async () => {
-  notifications.showToast(
-    'info',
-    t('teacherQuestionBanks.addQuestion'),
-    'API save for questions is planned in the next step.'
-  )
+const handleSaveQuestion = async (values: QuestionFormValues) => {
+  isSaving.value = true
+
+  try {
+    if (values.id) {
+      await questionBankApi.updateBankQuestion(
+        values.id,
+        buildUpdateQuestionPayload(bankId.value, values)
+      )
+      notifications.showToast('success', t('common.save'), t('bankQuestions.questionUpdated'))
+    } else {
+      await questionBankApi.createBankQuestion(
+        buildCreateQuestionPayload(bankId.value, values)
+      )
+      notifications.showToast('success', t('common.save'), t('bankQuestions.questionCreated'))
+    }
+
+    await loadBankData()
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const handleDeleteQuestion = async (questionId: string) => {
+  isSaving.value = true
+
+  try {
+    await questionBankApi.deleteBankQuestion(questionId)
+    notifications.showToast('success', t('common.delete'), t('bankQuestions.questionDeleted'))
+    await loadBankData()
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const handleDeleteMany = async (questionIds: string[]) => {
+  isSaving.value = true
+
+  try {
+    await Promise.all(questionIds.map((id) => questionBankApi.deleteBankQuestion(id)))
+    notifications.showToast('success', t('common.delete'), t('bankQuestions.questionsDeleted'))
+    await loadBankData()
+  } finally {
+    isSaving.value = false
+  }
 }
 
 const goBack = () => {
@@ -94,32 +145,46 @@ const goBack = () => {
     <nav class="breadcrumbs">
       <a href="#" class="crumb" @click.prevent="goBack">{{ t('teacherQuestionBanks.banksBreadcrumb') }}</a>
       <span class="separator">/</span>
-      <span class="crumb active" v-if="currentBank">{{ currentBank.title }}</span>
+      <span v-if="currentBank" class="crumb active">{{ currentBank.title }}</span>
     </nav>
 
-    <header class="page-header" v-if="currentBank">
+    <header v-if="currentBank" class="page-header">
       <div class="header-info">
-        <h1 class="page-title">Manage Questions: {{ currentBank.title }}</h1>
+        <h1 class="page-title">
+          {{ t('teacherQuestionBanks.manageQuestions', { name: currentBank.title }) }}
+        </h1>
         <p class="page-subtitle">
-          {{ currentBank.description }} You have {{ currentBank.questionsCount }} active questions.
+          {{ currentBank.description }}
+          {{ t('bankQuestions.totalCount', { count: currentBank.questionsCount }) }}
         </p>
       </div>
       <div class="header-actions">
-        <Button :label="t('teacherQuestionBanks.addQuestion')" icon="pi pi-plus" @click="openCreateModal" />
+        <Button
+          :label="t('teacherQuestionBanks.addQuestion')"
+          icon="pi pi-plus"
+          :loading="isSaving"
+          @click="openCreateModal"
+        />
       </div>
     </header>
 
-    <!-- Выводим таблицу, если банк загрузился -->
-    <div class="page-content" v-if="currentBank">
-      <!-- Ловим событие 'edit' из таблицы -->
-      <BankQuestionsTable :questions="currentBank.questions" @edit="openEditModal" />
+    <div v-if="isLoading" class="page-content">
+      <Skeleton width="100%" height="400px" borderRadius="12px" />
     </div>
 
-    <!-- Модалка редактора -->
+    <div v-else-if="currentBank" class="page-content">
+      <BankQuestionsTable
+        :questions="currentBank.questions"
+        @edit="openEditModal"
+        @delete="handleDeleteQuestion"
+        @delete-many="handleDeleteMany"
+      />
+    </div>
+
     <QuestionEditorModal
       v-model:visible="isEditorVisible"
-      :bankName="currentBank?.title"
-      :initialData="selectedQuestion"
+      :bank-name="currentBank?.title"
+      :initial-data="selectedQuestion"
       @save="handleSaveQuestion"
     />
   </div>
@@ -135,7 +200,6 @@ const goBack = () => {
   width: 100%;
 }
 
-/* --- BREADCRUMBS --- */
 .breadcrumbs {
   display: flex;
   align-items: center;
@@ -164,7 +228,6 @@ const goBack = () => {
   color: var(--icon-muted);
 }
 
-/* --- HEADER --- */
 .page-header {
   display: flex;
   justify-content: space-between;

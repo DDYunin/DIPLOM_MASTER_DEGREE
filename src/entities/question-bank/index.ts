@@ -1,22 +1,34 @@
 import { useQuestionBankEntityStore } from './model/store'
-import type { QuestionBank, Question, QuestionType, Difficulty } from './model/types'
+import type {
+  QuestionBank,
+  Question,
+  QuestionAnswer,
+  QuestionFormValues,
+  QuestionType
+} from './model/types'
 import * as questionBankApi from './api'
 import {
   mapBankQuestionToQuestion,
   mapBankToQuestionBank,
-  mapBanksToQuestionBanks
+  mapBanksToQuestionBanks,
+  mapQuestionToFormValues
 } from './lib/mappers'
+import { buildCreateQuestionPayload, buildUpdateQuestionPayload } from './lib/question-payload'
 
 export {
-  useQuestionBankEntityStore,
   type QuestionBank,
   type Question,
+  type QuestionAnswer,
+  type QuestionFormValues,
   type QuestionType,
-  type Difficulty,
+  useQuestionBankEntityStore,
   questionBankApi,
   mapBankQuestionToQuestion,
   mapBankToQuestionBank,
-  mapBanksToQuestionBanks
+  mapBanksToQuestionBanks,
+  mapQuestionToFormValues,
+  buildCreateQuestionPayload,
+  buildUpdateQuestionPayload
 }
 
 export type {

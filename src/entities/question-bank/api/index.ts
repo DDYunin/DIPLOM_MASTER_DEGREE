@@ -3,9 +3,12 @@ import { courseApiPath } from '@/shared/config/api-routes'
 
 import type {
   BankDto,
+  BankQuestionDto,
   BankQuestionsListResponseDto,
+  CreateBankQuestionRequest,
   CreateBankRequest,
   FetchBankQuestionsParams,
+  UpdateBankQuestionRequest,
   UpdateBankRequest
 } from './types'
 
@@ -46,4 +49,21 @@ export const fetchBankQuestions = ({
       question_type: questionType,
       filter
     }
+  })
+
+export const createBankQuestion = (payload: CreateBankQuestionRequest) =>
+  api<BankQuestionDto>(courseApiPath('/bank_questions'), {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  })
+
+export const updateBankQuestion = (questionId: string, payload: UpdateBankQuestionRequest) =>
+  api<BankQuestionDto>(courseApiPath(`/bank_questions/${questionId}`), {
+    method: 'PUT',
+    body: JSON.stringify(payload)
+  })
+
+export const deleteBankQuestion = (questionId: string) =>
+  api<void>(courseApiPath(`/bank_questions/${questionId}`), {
+    method: 'DELETE'
   })

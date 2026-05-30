@@ -82,7 +82,6 @@ export const useQuestionBanksManagerStore = defineStore('widget-question-banks-m
 
     try {
       const userId = resolveUserId()
-      debugger
       const data = await questionBankApi.fetchBanks(userId)
       const mappedBanks = mapBanksToQuestionBanks(data, locale)
 
@@ -155,6 +154,24 @@ export const useQuestionBanksManagerStore = defineStore('widget-question-banks-m
     }
   }
 
+  const deleteSelectedBank = async () => {
+    if (!selectedBankId.value) {
+      return
+    }
+
+    const bankId = selectedBankId.value
+    isSaving.value = true
+
+    try {
+      await questionBankApi.deleteBank(bankId)
+      entityStore.removeBankFromCache(bankId)
+      bankIds.value = bankIds.value.filter((id) => id !== bankId)
+      clearSelection()
+    } finally {
+      isSaving.value = false
+    }
+  }
+
   return {
     bankIds,
     selectedBankId,
@@ -169,6 +186,7 @@ export const useQuestionBanksManagerStore = defineStore('widget-question-banks-m
     selectBank,
     clearSelection,
     createNewBank,
-    updateSelectedBank
+    updateSelectedBank,
+    deleteSelectedBank
   }
 })

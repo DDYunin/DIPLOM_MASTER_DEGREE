@@ -2,16 +2,21 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { type QuestionType, type Difficulty } from '@/entities/question-bank'
+import { type QuestionType } from '@/entities/question-bank'
 import { useQuestionBanksManagerStore } from '../model/store'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
+import { useConfirm } from 'primevue/useconfirm'
+
+import { useNotifications } from '@/shared/model'
 
 const { t, locale } = useI18n()
 const widgetStore = useQuestionBanksManagerStore()
 const router = useRouter()
+const confirm = useConfirm()
+const notifications = useNotifications()
 
 const bankTitleDraft = ref('')
 const bankDescriptionDraft = ref('')
@@ -58,32 +63,49 @@ const handleSaveBank = async () => {
   syncDraftFromSelectedBank()
 }
 
+const handleDeleteBank = () => {
+  if (!widgetStore.selectedBankId) {
+    return
+  }
+
+  confirm.require({
+    message: t('teacherQuestionBanks.deleteBankConfirm'),
+    header: t('teacherQuestionBanks.deleteBank'),
+    icon: 'pi pi-exclamation-triangle',
+    rejectLabel: t('common.cancel'),
+    acceptLabel: t('common.delete'),
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      await widgetStore.deleteSelectedBank()
+      notifications.showToast('success', t('common.delete'), t('teacherQuestionBanks.bankDeleted'))
+    }
+  })
+}
+
 const emit = defineEmits<{
   (e: 'create-bank'): void
 }>()
 
-// Хелперы для стилизации бейджей
 const getTypeStyles = (type: QuestionType) => {
   switch (type) {
-    case 'multiple-choice':
-      return { bg: 'var(--color-accent-purple-muted)', color: 'var(--color-accent-purple-text)', label: 'MULTIPLE CHOICE' }
-    case 'true-false':
-      return { bg: 'var(--color-primary-muted)', color: 'var(--color-primary-text-on-subtle)', label: 'TRUE / FALSE' }
-    case 'short-answer':
-      return { bg: 'var(--color-warning-muted)', color: 'var(--color-warning-text)', label: 'SHORT ANSWER' }
-    case 'essay':
-      return { bg: 'var(--color-warning-muted)', color: 'var(--color-warning-text)', label: 'ESSAY' }
-  }
-}
-
-const getDifficultyStyles = (diff: Difficulty) => {
-  switch (diff) {
-    case 'easy':
-      return { bg: 'var(--color-success-muted)', color: 'var(--color-success-text)', label: 'EASY' }
-    case 'medium':
-      return { bg: 'var(--color-caution-muted)', color: 'var(--color-caution-text)', label: 'MEDIUM' }
-    case 'hard':
-      return { bg: 'var(--color-danger-muted)', color: 'var(--color-danger-text)', label: 'HARD' }
+    case 'SINGLE':
+      return {
+        bg: 'var(--color-primary-muted)',
+        color: 'var(--color-primary-text-on-subtle)',
+        label: t('bankQuestions.types.single')
+      }
+    case 'MULTIPLE':
+      return {
+        bg: 'var(--color-accent-purple-muted)',
+        color: 'var(--color-accent-purple-text)',
+        label: t('bankQuestions.types.multiple')
+      }
+    case 'TEXT':
+      return {
+        bg: 'var(--color-warning-muted)',
+        color: 'var(--color-warning-text)',
+        label: t('bankQuestions.types.text')
+      }
   }
 }
 
@@ -169,8 +191,10 @@ const goToAllQuestions = () => {
                 icon="pi pi-trash"
                 text
                 rounded
-                severity="secondary"
-                aria-label="Delete Bank"
+                severity="danger"
+                :aria-label="t('teacherQuestionBanks.deleteBank')"
+                :loading="widgetStore.isSaving"
+                @click="handleDeleteBank"
               />
               <Button :label="t('common.saveChanges')" icon="pi pi-save" text :loading="widgetStore.isSaving" :disabled="!hasBankChanges" @click="handleSaveBank" />
             </div>
@@ -234,15 +258,7 @@ const goToAllQuestions = () => {
                   >
                     {{ getTypeStyles(question.type).label }}
                   </span>
-                  <span
-                    class="custom-badge"
-                    :style="{
-                      backgroundColor: getDifficultyStyles(question.difficulty).bg,
-                      color: getDifficultyStyles(question.difficulty).color
-                    }"
-                  >
-                    {{ getDifficultyStyles(question.difficulty).label }}
-                  </span>
+                  <span class="points-badge">{{ question.points }} pts</span>
                 </div>
 
                 <h4 class="question-text">{{ question.text }}</h4>
@@ -592,6 +608,15 @@ const goToAllQuestions = () => {
   padding: 0.25rem 0.5rem;
   border-radius: var(--radius-md);
   letter-spacing: 0.5px;
+}
+
+.points-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-subtle);
+  color: var(--text-color-muted);
 }
 
 .question-text {

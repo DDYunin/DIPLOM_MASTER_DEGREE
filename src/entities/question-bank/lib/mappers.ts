@@ -1,13 +1,5 @@
-import type { BankDto, BankQuestionDto, BackendQuestionType } from '../api/types'
-import type { Difficulty, Question, QuestionBank, QuestionType } from '../model/types'
-
-const QUESTION_TYPE_MAP: Record<BackendQuestionType, QuestionType> = {
-  SINGLE: 'multiple-choice',
-  MULTIPLE: 'multiple-choice',
-  TEXT: 'short-answer'
-}
-
-const DEFAULT_DIFFICULTY: Difficulty = 'medium'
+import type { BankDto, BankQuestionDto } from '../api/types'
+import type { Question, QuestionBank, QuestionFormValues } from '../model/types'
 
 export const formatBankUpdatedAt = (isoDate: string, locale = 'en'): string => {
   const date = new Date(isoDate)
@@ -44,11 +36,28 @@ export const mapBankQuestionToQuestion = (
   order: number
 ): Question => ({
   id: String(question.id),
-  type: QUESTION_TYPE_MAP[question.type],
-  difficulty: DEFAULT_DIFFICULTY,
+  type: question.type,
   text: question.text,
+  points: question.points,
+  answers: question.answers.map((answer) => ({
+    id: answer.id,
+    text: answer.text,
+    isCorrect: answer.isCorrect
+  })),
   answerText: buildAnswerText(question),
   order
+})
+
+export const mapQuestionToFormValues = (question: Question): QuestionFormValues => ({
+  id: question.id,
+  type: question.type,
+  text: question.text,
+  points: question.points,
+  answers: question.answers.map((answer) => ({
+    id: answer.id,
+    text: answer.text,
+    isCorrect: answer.isCorrect
+  }))
 })
 
 export const mapBankToQuestionBank = (

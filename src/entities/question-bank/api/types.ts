@@ -1,4 +1,6 @@
-export type BackendQuestionType = 'SINGLE' | 'MULTIPLE' | 'TEXT'
+import type { QuestionType } from '../model/types'
+
+export type BackendQuestionType = QuestionType
 
 export interface BankDto {
   id: number
@@ -38,6 +40,11 @@ export interface BankQuestionsListResponseDto {
   meta: BankQuestionsListMetaDto
 }
 
+export interface BankAnswerRequest {
+  text: string
+  isCorrect: boolean
+}
+
 export interface CreateBankRequest {
   title: string
   description?: string
@@ -50,10 +57,26 @@ export interface UpdateBankRequest {
   userId: number
 }
 
+export interface CreateBankQuestionRequest {
+  bankId: number
+  text: string
+  type: QuestionType
+  points: number
+  answers: BankAnswerRequest[]
+}
+
+export interface UpdateBankQuestionRequest {
+  bankId: number
+  text: string
+  type: QuestionType
+  points: number
+  answers: BankAnswerRequest[]
+}
+
 export interface FetchBankQuestionsParams {
   bankId: string
   limit: number
   offset: number
-  questionType?: BackendQuestionType
+  questionType?: QuestionType
   filter?: string
 }
