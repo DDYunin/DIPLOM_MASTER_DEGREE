@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
 
 import Password from 'primevue/password'
 import ToggleSwitch from 'primevue/toggleswitch'
@@ -10,6 +12,7 @@ import Message from 'primevue/message'
 import { WidgetCard } from '@/shared/ui'
 import { useNotifications } from '@/shared/model'
 import type { User } from '@/entities/user'
+import { createChangePasswordSchema, getChangePasswordInitialValues } from '@/features/own-profile'
 
 const props = withDefaults(
   defineProps<{
@@ -37,12 +40,16 @@ const profile = computed({
   set: (val) => emit('update:modelValue', val)
 })
 
-// Локальное состояние для формы смены пароля (используется только в режиме 'self')
-const passwords = ref({
-  current: '',
-  new: '',
-  confirm: ''
+const validationSchema = computed(() => toTypedSchema(createChangePasswordSchema(t)))
+
+const { defineField, errors, handleSubmit, resetForm } = useForm({
+  validationSchema,
+  initialValues: getChangePasswordInitialValues()
 })
+
+const [currentPassword, currentPasswordAttrs] = defineField('currentPassword')
+const [newPassword, newPasswordAttrs] = defineField('newPassword')
+const [confirmNewPassword, confirmNewPasswordAttrs] = defineField('confirmNewPassword')
 
 // Экшены для режима 'manage'
 const handleSendResetLink = () => {
@@ -62,25 +69,15 @@ const handleGeneratePassword = () => {
   )
 }
 
-const handleUpdatePassword = () => {
-  if (!passwords.value.current || !passwords.value.new || !passwords.value.confirm) {
-    notifications.showToast('warn', t('common.error'), t('securityCard.passwordRequired'))
-    return
-  }
-
-  if (passwords.value.new !== passwords.value.confirm) {
-    notifications.showToast('warn', t('common.error'), t('securityCard.passwordMismatch'))
-    return
-  }
-
+const handleUpdatePassword = handleSubmit((formValues) => {
   emit('update-password', {
-    oldPassword: passwords.value.current,
-    newPassword: passwords.value.new
+    oldPassword: formValues.currentPassword,
+    newPassword: formValues.newPassword
   })
-}
+})
 
 const clearPasswordFields = () => {
-  passwords.value = { current: '', new: '', confirm: '' }
+  resetForm({ values: getChangePasswordInitialValues() })
 }
 
 defineExpose({ clearPasswordFields })
@@ -100,34 +97,43 @@ defineExpose({ clearPasswordFields })
         <div class="form-field full-width">
           <label>{{ t('securityCard.currentPassword') }}</label>
           <Password
-            v-model="passwords.current"
+            v-model="currentPassword"
+            v-bind="currentPasswordAttrs"
             :feedback="false"
             toggleMask
+            :invalid="!!errors.currentPassword"
             class="w-full"
             inputClass="w-full"
           />
+          <small v-if="errors.currentPassword" class="field-error">{{ errors.currentPassword }}</small>
         </div>
 
         <div class="form-field">
           <label>{{ t('securityCard.newPassword') }}</label>
           <Password
-            v-model="passwords.new"
+            v-model="newPassword"
+            v-bind="newPasswordAttrs"
             :feedback="true"
             toggleMask
+            :invalid="!!errors.newPassword"
             class="w-full"
             inputClass="w-full"
           />
+          <small v-if="errors.newPassword" class="field-error">{{ errors.newPassword }}</small>
         </div>
 
         <div class="form-field">
           <label>{{ t('securityCard.confirmPassword') }}</label>
           <Password
-            v-model="passwords.confirm"
+            v-model="confirmNewPassword"
+            v-bind="confirmNewPasswordAttrs"
             :feedback="false"
             toggleMask
+            :invalid="!!errors.confirmNewPassword"
             class="w-full"
             inputClass="w-full"
           />
+          <small v-if="errors.confirmNewPassword" class="field-error">{{ errors.confirmNewPassword }}</small>
         </div>
       </div>
 
@@ -220,6 +226,10 @@ defineExpose({ clearPasswordFields })
   color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+.field-error {
+  color: var(--color-danger, #ef4444);
+  font-size: 0.75rem;
 }
 .w-full {
   width: 100%;

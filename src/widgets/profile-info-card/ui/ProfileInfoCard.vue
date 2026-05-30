@@ -20,9 +20,13 @@ const props = withDefaults(
   defineProps<{
     modelValue: User
     variant?: 'default' | 'own-profile'
+    emailError?: string
+    emailInputAttrs?: Record<string, unknown>
   }>(),
   {
-    variant: 'default'
+    variant: 'default',
+    emailError: undefined,
+    emailInputAttrs: undefined
   }
 )
 const emit = defineEmits(['update:modelValue'])
@@ -110,8 +114,16 @@ const deptOptions = [
           <label>{{ t('profileCard.email') }}</label>
           <IconField iconPosition="left">
             <InputIcon class="pi pi-envelope" />
-            <InputText v-model="profile.email" class="w-full" />
+            <InputText
+              v-model="profile.email"
+              v-bind="variant === 'own-profile' ? emailInputAttrs : undefined"
+              :invalid="variant === 'own-profile' && !!emailError"
+              class="w-full"
+            />
           </IconField>
+          <small v-if="variant === 'own-profile' && emailError" class="field-error">
+            {{ emailError }}
+          </small>
         </div>
 
         <!-- 2. СПЕЦИФИЧНЫЕ ПОЛЯ: АДМИН ИЛИ МОДЕРАТОР -->
@@ -249,6 +261,11 @@ const deptOptions = [
   color: var(--text-color-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.field-error {
+  color: var(--color-danger, #ef4444);
+  font-size: 0.75rem;
 }
 
 .full-width {

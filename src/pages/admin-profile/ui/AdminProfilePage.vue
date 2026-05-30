@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
 import Button from 'primevue/button'
 import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 
 import { type User } from '@/entities/user'
-import { useAdminOwnProfile } from '@/features/admin-own-profile'
+import { createOwnProfileEmailSchema, useOwnProfile } from '@/features/own-profile'
 import { useNotifications } from '@/shared/model/useNotifications'
 
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
@@ -15,51 +17,68 @@ import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 const { t } = useI18n()
 const notifications = useNotifications()
 
-const { userId, profileQuery, updateEmailMutation, changePasswordMutation } = useAdminOwnProfile()
+const { userId, profileQuery, updateEmailMutation, changePasswordMutation } = useOwnProfile()
 
 const profileDraft = ref<User | null>(null)
 const securityCardRef = ref<InstanceType<typeof SecuritySettingsCard> | null>(null)
+
+const validationSchema = computed(() => toTypedSchema(createOwnProfileEmailSchema(t)))
+
+const { defineField, errors, handleSubmit, resetForm } = useForm({
+  validationSchema,
+  initialValues: { email: '' }
+})
+
+const [email, emailAttrs] = defineField('email')
 
 watch(
   () => profileQuery.data.value,
   (profile) => {
     if (profile) {
       profileDraft.value = { ...profile }
+      resetForm({ values: { email: profile.email } })
     }
   },
   { immediate: true }
 )
+
+watch(email, (nextEmail) => {
+  if (profileDraft.value) {
+    profileDraft.value.email = nextEmail
+  }
+})
 
 const isLoading = computed(() => profileQuery.isPending.value)
 const isSaving = computed(() => updateEmailMutation.isPending.value)
 const isPasswordUpdating = computed(() => changePasswordMutation.isPending.value)
 
 const hasEmailChanges = computed(() => {
-  if (!profileDraft.value || !profileQuery.data.value) {
+  if (!profileQuery.data.value) {
     return false
   }
 
-  return profileDraft.value.email.trim() !== profileQuery.data.value.email
+  return email.value.trim() !== profileQuery.data.value.email
 })
 
 const resetDraft = () => {
   if (profileQuery.data.value) {
     profileDraft.value = { ...profileQuery.data.value }
+    resetForm({ values: { email: profileQuery.data.value.email } })
   }
 }
 
-const handleSaveChanges = async () => {
-  if (!profileDraft.value || !hasEmailChanges.value) {
+const handleSaveChanges = handleSubmit(async (formValues) => {
+  if (!hasEmailChanges.value) {
     return
   }
 
   try {
-    await updateEmailMutation.mutateAsync(profileDraft.value.email.trim())
+    await updateEmailMutation.mutateAsync(formValues.email.trim())
     notifications.showToast('success', t('common.save'), t('adminProfile.saved'))
   } catch {
     // Ошибка уже обработана глобальным API-клиентом
   }
-}
+})
 
 const handleUpdatePassword = async (payload: { oldPassword: string; newPassword: string }) => {
   try {
@@ -97,8 +116,13 @@ const handleUpdatePassword = async (payload: { oldPassword: string; newPassword:
         <Skeleton width="100%" height="200px" borderRadius="12px" />
       </div>
 
-      <div v-else class="content-column">
-        <ProfileInfoCard v-model="profileDraft" variant="own-profile" />
+      <form v-else class="content-column" @submit.prevent="handleSaveChanges">
+        <ProfileInfoCard
+          v-model="profileDraft"
+          variant="own-profile"
+          :email-error="errors.email"
+          :email-input-attrs="emailAttrs"
+        />
 
         <SecuritySettingsCard
           ref="securityCardRef"
@@ -110,6 +134,7 @@ const handleUpdatePassword = async (payload: { oldPassword: string; newPassword:
 
         <div class="form-actions">
           <Button
+            type="button"
             :label="t('common.cancel')"
             outlined
             class="btn-cancel"
@@ -117,15 +142,15 @@ const handleUpdatePassword = async (payload: { oldPassword: string; newPassword:
             @click="resetDraft"
           />
           <Button
+            type="submit"
             :label="t('common.saveChanges')"
             class="btn-save"
             icon="pi pi-check"
             :loading="isSaving"
             :disabled="!hasEmailChanges"
-            @click="handleSaveChanges"
           />
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
@@ -7,7 +7,7 @@ import Button from 'primevue/button'
 import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 
-import { useOwnProfile } from '@/features/own-profile'
+import { useOwnProfile, useOwnProfileSettingsForm } from '@/features/own-profile'
 import { useNotifications } from '@/shared/model'
 
 const { t } = useI18n()
@@ -15,18 +15,28 @@ const notifications = useNotifications()
 
 const { userId, profileQuery, updateEmailMutation, changePasswordMutation } = useOwnProfile()
 
-const emailForm = ref({
-  newEmail: '',
-  confirmNewEmail: ''
-})
-
-const passwordForm = ref({
-  currentPassword: '',
-  newPassword: '',
-  confirmNewPassword: ''
-})
-
 const profile = computed(() => profileQuery.data.value ?? null)
+const currentEmail = computed(() => profile.value?.email)
+
+const {
+  errors,
+  handleSubmit,
+  hasChanges,
+  hasEmailChanges,
+  hasPasswordChanges,
+  resetSettingsForm,
+  newEmail,
+  newEmailAttrs,
+  confirmNewEmail,
+  confirmNewEmailAttrs,
+  currentPassword,
+  currentPasswordAttrs,
+  newPassword,
+  newPasswordAttrs,
+  confirmNewPassword,
+  confirmNewPasswordAttrs
+} = useOwnProfileSettingsForm(currentEmail)
+
 const isLoading = computed(() => profileQuery.isPending.value)
 const isSaving = computed(
   () => updateEmailMutation.isPending.value || changePasswordMutation.isPending.value
@@ -44,116 +54,26 @@ const avatarInitials = computed(() => {
   return `${profile.value.firstName.charAt(0)}${profile.value.lastName.charAt(0)}`.toUpperCase()
 })
 
-const hasEmailChanges = computed(() => emailForm.value.newEmail.trim().length > 0)
-
-const hasPasswordChanges = computed(
-  () =>
-    passwordForm.value.currentPassword.length > 0 ||
-    passwordForm.value.newPassword.length > 0 ||
-    passwordForm.value.confirmNewPassword.length > 0
-)
-
-const hasChanges = computed(() => hasEmailChanges.value || hasPasswordChanges.value)
-
-const resetForms = () => {
-  emailForm.value = { newEmail: '', confirmNewEmail: '' }
-  passwordForm.value = {
-    currentPassword: '',
-    newPassword: '',
-    confirmNewPassword: ''
-  }
-}
-
-watch(
-  () => profileQuery.data.value?.email,
-  () => {
-    emailForm.value.newEmail = ''
-    emailForm.value.confirmNewEmail = ''
-  }
-)
-
-const validateEmailForm = (): boolean => {
-  const newEmail = emailForm.value.newEmail.trim()
-  const confirmEmail = emailForm.value.confirmNewEmail.trim()
-
-  if (!newEmail && !confirmEmail) {
-    return true
-  }
-
-  if (!newEmail || !confirmEmail) {
-    notifications.showToast('warn', t('common.error'), t('teacherProfile.emailRequired'))
-    return false
-  }
-
-  if (newEmail !== confirmEmail) {
-    notifications.showToast('warn', t('common.error'), t('teacherProfile.emailMismatch'))
-    return false
-  }
-
-  if (profile.value && newEmail === profile.value.email) {
-    notifications.showToast('warn', t('common.error'), t('teacherProfile.emailSameAsCurrent'))
-    return false
-  }
-
-  return true
-}
-
-const validatePasswordForm = (): boolean => {
-  const { currentPassword, newPassword, confirmNewPassword } = passwordForm.value
-
-  if (!currentPassword && !newPassword && !confirmNewPassword) {
-    return true
-  }
-
-  if (!currentPassword || !newPassword || !confirmNewPassword) {
-    notifications.showToast('warn', t('common.error'), t('teacherProfile.passwordRequired'))
-    return false
-  }
-
-  if (newPassword !== confirmNewPassword) {
-    notifications.showToast('warn', t('common.error'), t('teacherProfile.passwordMismatch'))
-    return false
-  }
-
-  return true
-}
-
-const handleSave = async () => {
-  if (!hasChanges.value) {
-    return
-  }
-
-  if (!validateEmailForm() || !validatePasswordForm()) {
-    return
-  }
-
+const handleSave = handleSubmit(async (formValues) => {
   try {
     if (hasEmailChanges.value) {
-      await updateEmailMutation.mutateAsync(emailForm.value.newEmail.trim())
+      await updateEmailMutation.mutateAsync(formValues.newEmail.trim())
       notifications.showToast('success', t('common.save'), t('teacherProfile.saved'))
-      emailForm.value = { newEmail: '', confirmNewEmail: '' }
     }
 
     if (hasPasswordChanges.value) {
       await changePasswordMutation.mutateAsync({
-        oldPassword: passwordForm.value.currentPassword,
-        newPassword: passwordForm.value.newPassword
+        oldPassword: formValues.currentPassword,
+        newPassword: formValues.newPassword
       })
       notifications.showToast('success', t('common.success'), t('teacherProfile.passwordUpdated'))
-      passwordForm.value = {
-        currentPassword: '',
-        newPassword: '',
-        confirmNewPassword: ''
-      }
     }
+
+    resetSettingsForm()
   } catch {
     // Ошибка уже обработана глобальным API-клиентом
   }
-}
-
-const handleCancel = () => {
-  resetForms()
-}
+})
 </script>
 
 <template>
@@ -172,7 +92,7 @@ const handleCancel = () => {
       <Skeleton width="100%" height="220px" borderRadius="12px" />
     </template>
 
-    <template v-else>
+    <form v-else class="profile-settings-form" @submit.prevent="handleSave">
       <div class="settings-card">
         <div class="card-header">
           <div class="header-title">
@@ -185,7 +105,7 @@ const handleCancel = () => {
           <div class="avatar-section">
             <div class="avatar-circle">
               {{ avatarInitials }}
-              <button class="avatar-edit-btn" :aria-label="t('teacherProfile.editAvatar')">
+              <button type="button" class="avatar-edit-btn" :aria-label="t('teacherProfile.editAvatar')">
                 <i class="pi pi-camera"></i>
               </button>
             </div>
@@ -236,18 +156,24 @@ const handleCancel = () => {
             <div class="field-group">
               <label>{{ t('teacherProfile.newEmailLabel') }}</label>
               <InputText
-                v-model="emailForm.newEmail"
+                v-model="newEmail"
+                v-bind="newEmailAttrs"
                 :placeholder="t('teacherProfile.newEmail')"
+                :invalid="!!errors.newEmail"
                 class="w-full"
               />
+              <small v-if="errors.newEmail" class="field-error">{{ errors.newEmail }}</small>
             </div>
             <div class="field-group">
               <label>{{ t('teacherProfile.confirmNewEmailLabel') }}</label>
               <InputText
-                v-model="emailForm.confirmNewEmail"
+                v-model="confirmNewEmail"
+                v-bind="confirmNewEmailAttrs"
                 :placeholder="t('teacherProfile.confirmEmail')"
+                :invalid="!!errors.confirmNewEmail"
                 class="w-full"
               />
+              <small v-if="errors.confirmNewEmail" class="field-error">{{ errors.confirmNewEmail }}</small>
             </div>
           </div>
         </div>
@@ -264,34 +190,43 @@ const handleCancel = () => {
           <div class="field-group w-full mb-4">
             <label>{{ t('teacherProfile.currentPassword') }}</label>
             <Password
-              v-model="passwordForm.currentPassword"
+              v-model="currentPassword"
+              v-bind="currentPasswordAttrs"
               toggleMask
               :feedback="false"
+              :invalid="!!errors.currentPassword"
               inputClass="w-full"
               class="w-full"
             />
+            <small v-if="errors.currentPassword" class="field-error">{{ errors.currentPassword }}</small>
           </div>
 
           <div class="fields-grid-2 mb-4">
             <div class="field-group">
               <label>{{ t('teacherProfile.newPassword') }}</label>
               <Password
-                v-model="passwordForm.newPassword"
+                v-model="newPassword"
+                v-bind="newPasswordAttrs"
                 toggleMask
                 :feedback="true"
+                :invalid="!!errors.newPassword"
                 inputClass="w-full"
                 class="w-full"
               />
+              <small v-if="errors.newPassword" class="field-error">{{ errors.newPassword }}</small>
             </div>
             <div class="field-group">
               <label>{{ t('teacherProfile.confirmPassword') }}</label>
               <Password
-                v-model="passwordForm.confirmNewPassword"
+                v-model="confirmNewPassword"
+                v-bind="confirmNewPasswordAttrs"
                 toggleMask
                 :feedback="false"
+                :invalid="!!errors.confirmNewPassword"
                 inputClass="w-full"
                 class="w-full"
               />
+              <small v-if="errors.confirmNewPassword" class="field-error">{{ errors.confirmNewPassword }}</small>
             </div>
           </div>
 
@@ -303,27 +238,34 @@ const handleCancel = () => {
 
       <div class="actions-footer">
         <Button
+          type="button"
           :label="t('common.cancel')"
           severity="secondary"
           outlined
           :disabled="isSaving || !hasChanges"
-          @click="handleCancel"
+          @click="resetSettingsForm"
         />
         <Button
+          type="submit"
           :label="t('common.saveChanges')"
           icon="pi pi-check"
           severity="success"
           :loading="isSaving"
           :disabled="!hasChanges"
-          @click="handleSave"
         />
       </div>
-    </template>
+    </form>
   </div>
 </template>
 
 <style scoped>
 .profile-settings-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-settings-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -435,6 +377,11 @@ const handleCancel = () => {
   color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.field-error {
+  color: var(--color-danger, #ef4444);
+  font-size: 0.75rem;
 }
 
 .w-full {

@@ -75,6 +75,7 @@ export const mapUserResponseToUser = (dto: UserResponseDto): User => {
     role: resolvePrimaryRole(dto.roles),
     status,
     identifier: dto.username,
+    studentId: dto.username,
     avatarInitials: buildAvatarInitials(dto.firstName, dto.lastName)
   }
 }
@@ -99,6 +100,9 @@ export const mapAdminUserDetailsToUser = (
   identifier: dto.username,
   institute: dto.faculty,
   department: dto.department,
+  major: dto.fieldOfStudy,
+  group: dto.studentGroup,
+  studentId: dto.username,
   avatarInitials: buildAvatarInitials(dto.firstName, dto.lastName)
 })
 

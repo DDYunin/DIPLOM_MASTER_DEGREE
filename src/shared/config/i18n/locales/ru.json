@@ -211,6 +211,7 @@
     "updatePassword": "Обновить пароль",
     "passwordRequired": "Заполните все поля пароля.",
     "passwordMismatch": "Новый пароль и подтверждение не совпадают.",
+    "passwordMinLength": "Пароль должен содержать не менее 8 символов.",
     "passwordReset": "Сброс пароля",
     "generateNew": "Сгенерировать",
     "sendLink": "Отправить ссылку",
