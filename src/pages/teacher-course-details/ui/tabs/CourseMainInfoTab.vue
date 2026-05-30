@@ -1,25 +1,37 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useCourseStore } from '@/entities/course'
-import { CourseInfoEditor } from '@/widgets/course-info-editor'
+import { useI18n } from 'vue-i18n'
 
+import { useCourseStore, type CourseFormValues } from '@/entities/course'
+import { CourseInfoEditor } from '@/widgets/course-info-editor'
+import { useNotifications } from '@/shared/model'
+
+const { t } = useI18n()
 const route = useRoute()
 const courseStore = useCourseStore()
+const notifications = useNotifications()
 
 const courseId = computed(() => route.params.id as string)
 const currentCourse = computed(() => courseStore.getCourseById(courseId.value))
 
-const handleUpdate = async (updatedData: any) => {
-  if (currentCourse.value) {
-    // Вызываем PATCH-запрос через стор
-    await courseStore.updateCourse(currentCourse.value.id, updatedData)
+onMounted(async () => {
+  if (!currentCourse.value) {
+    await courseStore.loadCourseById(courseId.value)
   }
-}
+})
 
-const handleCancel = () => {
-  // Для таба редактирования "Cancel" может просто сбрасывать форму или ничего не делать
-  console.log('Edit cancelled')
+const handleUpdate = async (updatedData: CourseFormValues) => {
+  if (!currentCourse.value) {
+    return
+  }
+
+  try {
+    await courseStore.updateCourse(currentCourse.value.id, updatedData)
+    notifications.showToast('success', t('common.success'), t('teacherCourses.courseUpdated'))
+  } catch {
+    // Toast об ошибке показывает API-клиент
+  }
 }
 </script>
 
@@ -29,8 +41,9 @@ const handleCancel = () => {
       <CourseInfoEditor
         :initial-data="currentCourse"
         :is-edit-mode="true"
+        :is-saving="courseStore.isSaving"
         @save="handleUpdate"
-        @cancel="handleCancel"
+        @cancel="() => undefined"
       />
     </div>
     <div v-else class="loading-state">
@@ -40,10 +53,6 @@ const handleCancel = () => {
 </template>
 
 <style scoped>
-.course-main-info-tab {
-  /* Форма и так имеет нужные отступы из виджета */
-}
-
 .loading-state {
   display: flex;
   justify-content: center;

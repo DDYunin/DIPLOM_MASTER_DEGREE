@@ -4,6 +4,7 @@ import { usersApiPath } from '@/shared/config/api-routes'
 import type {
   TeacherGroupAccessListQueryParams,
   TeacherGroupAccessPageDto,
+  TeacherGroupAccessScopeDetailsDto,
   TeacherGroupAccessScopeDto,
   TeacherGroupAccessScopeRequest,
   TeacherScopeType,
@@ -16,6 +17,21 @@ export const grantTeacherGroupAccess = (teacherId: string, payload: TeacherGroup
     method: 'POST',
     body: JSON.stringify(payload)
   })
+
+export const fetchTeacherGroupAccess = (teacherId: string) =>
+  api<TeacherGroupAccessScopeDetailsDto[]>(
+    usersApiPath(`/admin/teachers/${teacherId}/group-access`)
+  )
+
+export const revokeTeacherGroupAccess = (
+  teacherId: string,
+  scopeType: TeacherScopeType,
+  scopeId: number
+) =>
+  api<void>(
+    usersApiPath(`/admin/teachers/${teacherId}/group-access/${scopeType}/${scopeId}`),
+    { method: 'DELETE' }
+  )
 
 export const fetchTeacherGroupAccessByType = (
   teacherId: string,

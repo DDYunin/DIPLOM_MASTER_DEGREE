@@ -235,9 +235,12 @@
   "teacherRoles": {
     "title": "Roles & permissions",
     "subtitle": "Access levels and administrative groups assigned to this user",
+    "subtitleReadonly": "Student groups you have access to",
     "assignedGroups": "Assigned groups",
+    "assignedScopes": "Access scopes",
     "noAssignedGroups": "No access scopes assigned yet",
-    "loadScopesError": "Failed to load assigned access scopes"
+    "loadScopesError": "Failed to load assigned access scopes",
+    "scopeRevoked": "Access scope revoked successfully"
   },
   "teacherAssigned": {
     "title": "Assigned courses",
@@ -283,7 +286,9 @@
     "students": "Students",
     "nextDue": "Next due",
     "edit": "Edit",
-    "manage": "Manage"
+    "manage": "Manage",
+    "courseCreated": "Course created successfully.",
+    "courseUpdated": "Course updated successfully."
   },
   "teacherQuestionBanks": {
     "title": "Question banks",
@@ -357,6 +362,12 @@
     "deleteMaterial": "Delete material",
     "topicCreated": "Topic has been created.",
     "topicUpdated": "Topic has been updated.",
+    "topicDeleted": "Topic has been deleted.",
+    "materialCreated": "Material has been added.",
+    "materialUpdated": "Material has been updated.",
+    "materialDeleted": "Material has been deleted.",
+    "contentReloaded": "Course content reloaded.",
+    "status": "Course status",
     "video": "Video",
     "fileReading": "File / reading",
     "assignment": "Assignment"

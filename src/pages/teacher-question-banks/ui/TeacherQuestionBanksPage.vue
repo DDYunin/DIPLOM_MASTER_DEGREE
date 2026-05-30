@@ -33,7 +33,6 @@ const handleCreateBank = async (data: { title: string; description: string }) =>
 }
 
 onMounted(async () => {
-  debugger
   if (widgetStore.bankIds.length === 0) {
     try {
       await widgetStore.loadBanks(locale.value)

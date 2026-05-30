@@ -4,13 +4,17 @@ export interface ContentElement {
   id: string
   type: ElementType
   title: string
-  meta: string // например, "10:00 mins", "5 pages", "Due: Oct 12"
+  meta: string
+  itemId?: number
+  isPublished?: boolean
+  sortOrder?: number
 }
 
 export interface Topic {
   id: string
   title: string
-  meta: string // например, "3 items • 45 mins"
+  meta: string
   elements: ContentElement[]
-  isExpanded?: boolean // Состояние UI (развернут/свернут)
+  isExpanded?: boolean
+  sortOrder?: number
 }

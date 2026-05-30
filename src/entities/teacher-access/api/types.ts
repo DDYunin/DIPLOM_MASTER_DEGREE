@@ -25,6 +25,12 @@ export interface TeacherGroupAccessPageDto {
   hasNext: boolean
 }
 
+export interface TeacherGroupAccessScopeDetailsDto {
+  scopeType: TeacherScopeType
+  scopeId: number
+  scopeName: string
+}
+
 export interface TeacherAccessScopeDisplay extends TeacherGroupAccessScopeDto {
   label: string
 }

@@ -26,10 +26,9 @@ onMounted(() => {
 })
 
 // --- ВЫЧИСЛЯЕМЫЕ ДАННЫЕ ДЛЯ СТАТИСТИКИ ---
-const activeCoursesCount = computed(() => courseStore.activeCourses.length)
+const activeCoursesCount = computed(() => courseStore.stats.activeCoursesCount || courseStore.activeCourses.length)
 const totalStudentsCount = computed(() => courseStore.totalStudents)
-// Пока что хардкодим значение "Pending Grading" по макету (можно будет добавить в стор позже)
-const pendingGradingCount = 24
+const pendingGradingCount = 0
 
 // --- ЛОГИКА ПОИСКА ---
 const filteredCourses = computed(() => {

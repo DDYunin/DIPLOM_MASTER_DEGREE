@@ -1,31 +1,28 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
-import { useCourseStore } from '@/entities/course'
+import { useCourseStore, type CourseFormValues } from '@/entities/course'
 import { CourseInfoEditor } from '@/widgets/course-info-editor'
+import { useNotifications } from '@/shared/model'
 
 const { t } = useI18n()
 const router = useRouter()
 const courseStore = useCourseStore()
+const notifications = useNotifications()
 
 const handleCancel = () => {
   router.push({ name: 'teacher-courses' })
 }
 
-const handleCreate = async (courseData: any) => {
-  // Вызываем экшен стора (моковый POST запрос)
-  await courseStore.addCourse({
-    ...courseData,
-    status: 'Draft',
-    term: 'Fall 2024',
-    studentsCount: 0,
-    nextDueLabel: 'Status',
-    nextDueDate: 'Unpublished'
-  })
-
-  // После создания перекидываем обратно в список курсов (или сразу внутрь созданного)
-  router.push({ name: 'teacher-courses' })
+const handleCreate = async (courseData: CourseFormValues) => {
+  try {
+    const created = await courseStore.addCourse(courseData)
+    notifications.showToast('success', t('common.success'), t('teacherCourses.courseCreated'))
+    router.push({ name: 'course-main-info', params: { id: created.id } })
+  } catch {
+    // Toast об ошибке показывает API-клиент
+  }
 }
 </script>
 
@@ -36,8 +33,12 @@ const handleCreate = async (courseData: any) => {
       <p class="page-subtitle">{{ t('teacherCourses.subtitle') }}</p>
     </div>
 
-    <!-- Внедряем наш переиспользуемый виджет -->
-    <CourseInfoEditor :is-edit-mode="false" @save="handleCreate" @cancel="handleCancel" />
+    <CourseInfoEditor
+      :is-edit-mode="false"
+      :is-saving="courseStore.isSaving"
+      @save="handleCreate"
+      @cancel="handleCancel"
+    />
   </div>
 </template>
 

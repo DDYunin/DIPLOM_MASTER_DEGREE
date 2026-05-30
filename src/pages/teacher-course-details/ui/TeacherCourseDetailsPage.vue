@@ -1,32 +1,30 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, onMounted, onUnmounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+
 import { useCourseStore } from '@/entities/course'
+import { useCourseContentStore } from '@/entities/course-content'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 
 const { t } = useI18n()
 const route = useRoute()
-const router = useRouter()
 const courseStore = useCourseStore()
+const contentStore = useCourseContentStore()
 
-// Получаем ID курса из URL (например, 'course-1')
 const courseId = computed(() => route.params.id as string)
-
-// Находим курс в сторе
 const course = computed(() => courseStore.getCourseById(courseId.value))
 
 onMounted(async () => {
-  // Если зашли по прямой ссылке и курсов в сторе еще нет — загружаем
-  if (courseStore.courses.length === 0) {
-    await courseStore.loadCourses()
+  if (!course.value) {
+    await courseStore.loadCourseById(courseId.value)
   }
 })
 
-const goBack = () => {
-  router.push({ name: 'teacher-courses' })
-}
+onUnmounted(() => {
+  contentStore.reset()
+})
 
 const getStatusSeverity = (status: string) => {
   if (status === 'Active') {
@@ -41,7 +39,6 @@ const getStatusSeverity = (status: string) => {
 
 <template>
   <div class="course-details-page">
-    <!-- Шапка страницы -->
     <header class="page-header">
       <div class="header-top">
         <Button
@@ -49,7 +46,7 @@ const getStatusSeverity = (status: string) => {
           text
           rounded
           severity="secondary"
-          @click="goBack"
+          @click="$router.push({ name: 'teacher-courses' })"
           :aria-label="t('teacherCourses.backToCourses')"
         />
         <div v-if="course" class="title-wrapper">
@@ -62,7 +59,6 @@ const getStatusSeverity = (status: string) => {
       </div>
     </header>
 
-    <!-- Навигация по вкладкам (Tabs) -->
     <nav class="tabs-navigation">
       <router-link
         :to="{ name: 'course-main-info' }"
@@ -90,7 +86,6 @@ const getStatusSeverity = (status: string) => {
       </router-link>
     </nav>
 
-    <!-- Контейнер для активной вкладки -->
     <main class="tab-container">
       <router-view />
     </main>
@@ -106,7 +101,6 @@ const getStatusSeverity = (status: string) => {
   margin: 0 auto;
 }
 
-/* --- HEADER --- */
 .page-header {
   margin-bottom: 2rem;
 }
@@ -130,7 +124,6 @@ const getStatusSeverity = (status: string) => {
   margin: 0;
 }
 
-/* --- TABS NAVIGATION --- */
 .tabs-navigation {
   display: flex;
   gap: 2rem;
@@ -149,7 +142,7 @@ const getStatusSeverity = (status: string) => {
   font-size: 1rem;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
-  margin-bottom: -1px; /* Накладываем бордер на бордер контейнера */
+  margin-bottom: -1px;
 }
 
 .tab-link i {
@@ -165,7 +158,6 @@ const getStatusSeverity = (status: string) => {
   border-bottom-color: var(--color-primary);
 }
 
-/* --- TAB CONTAINER --- */
 .tab-container {
   background-color: var(--surface-card);
   border: 1px solid var(--surface-border);

@@ -235,9 +235,12 @@
   "teacherRoles": {
     "title": "Роли и права",
     "subtitle": "Уровни доступа и группы, назначенные пользователю",
+    "subtitleReadonly": "Студенческие группы, к которым у вас есть доступ",
     "assignedGroups": "Назначенные группы",
+    "assignedScopes": "Области доступа",
     "noAssignedGroups": "Области доступа пока не назначены",
-    "loadScopesError": "Не удалось загрузить назначенные области доступа"
+    "loadScopesError": "Не удалось загрузить назначенные области доступа",
+    "scopeRevoked": "Область доступа успешно удалена"
   },
   "teacherAssigned": {
     "title": "Назначенные курсы",
@@ -283,7 +286,9 @@
     "students": "Студенты",
     "nextDue": "Ближайший дедлайн",
     "edit": "Редактировать",
-    "manage": "Управление"
+    "manage": "Управление",
+    "courseCreated": "Курс успешно создан.",
+    "courseUpdated": "Курс успешно обновлён."
   },
   "teacherQuestionBanks": {
     "title": "Банки вопросов",
@@ -357,6 +362,12 @@
     "deleteMaterial": "Удалить материал",
     "topicCreated": "Тема создана.",
     "topicUpdated": "Тема обновлена.",
+    "topicDeleted": "Тема удалена.",
+    "materialCreated": "Материал добавлен.",
+    "materialUpdated": "Материал обновлён.",
+    "materialDeleted": "Материал удалён.",
+    "contentReloaded": "Содержание курса обновлено.",
+    "status": "Статус курса",
     "video": "Видео",
     "fileReading": "Файл / материал",
     "assignment": "Задание"

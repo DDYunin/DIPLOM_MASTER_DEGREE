@@ -1,77 +1,89 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
-import Select from 'primevue/select' // В PrimeVue v4 Dropdown переименован в Select
-import Checkbox from 'primevue/checkbox'
+import Select from 'primevue/select'
 import Button from 'primevue/button'
 
 import { CourseCard } from '@/entities/course'
-import type { Course } from '@/entities/course'
+import type { Course, CourseFormValues } from '@/entities/course'
 
 const { t } = useI18n()
 
 const props = defineProps<{
   initialData?: Partial<Course>
   isEditMode?: boolean
+  isSaving?: boolean
 }>()
 
 const emit = defineEmits<{
-  (e: 'save', data: Partial<Course>): void
-  (e: 'cancel'): void
+  save: [data: CourseFormValues]
+  cancel: []
 }>()
 
-// Заглушка для списка кафедр/департаментов
-const departments = [
-  { label: 'Computer Science', value: 'CS' },
-  { label: 'Mathematics', value: 'MATH' },
-  { label: 'Information Technology', value: 'IT' }
+const statusOptions = [
+  { label: 'Draft', value: 'Draft' as const },
+  { label: 'Active', value: 'Active' as const }
 ]
 
-// Реактивное состояние формы
 const formData = ref({
   title: props.initialData?.title || '',
-  code: props.initialData?.code || '',
-  department: props.initialData?.code ? 'CS' : null, // Упрощенный маппинг
   description: props.initialData?.description || '',
-  isPrivate: false
+  status: (props.initialData?.status === 'Active' ? 'Active' : 'Draft') as Course['status']
 })
 
-// Вычисляемое свойство для Live Preview карточки курса
+watch(
+  () => props.initialData,
+  (value) => {
+    if (!value) {
+      return
+    }
+
+    formData.value = {
+      title: value.title || '',
+      description: value.description || '',
+      status: value.status === 'Active' ? 'Active' : 'Draft'
+    }
+  },
+  { deep: true }
+)
+
 const previewCourse = computed<Course>(() => ({
   id: props.initialData?.id || 'preview-id',
   title: formData.value.title || 'New Course Title',
-  code: formData.value.code || 'CODE-101',
+  code: props.initialData?.code || 'CRS-NEW',
   description:
     formData.value.description ||
     'Course description will appear here. It gives students a quick overview...',
-  status: props.initialData?.status || 'Draft',
-  term: props.initialData?.term || 'Fall 2024',
+  status: formData.value.status,
+  term: props.initialData?.term || new Date().getFullYear().toString(),
   studentsCount: props.initialData?.studentsCount || 0,
   nextDueLabel: 'Status',
-  nextDueDate: props.initialData?.status === 'Active' ? 'Configured' : 'Unpublished'
+  nextDueDate: formData.value.status
 }))
 
 const handleSave = () => {
+  if (!formData.value.title.trim()) {
+    return
+  }
+
   emit('save', {
     title: formData.value.title,
-    code: formData.value.code,
-    description: formData.value.description
-    // ... остальные поля
+    description: formData.value.description,
+    status: props.isEditMode ? formData.value.status : undefined
   })
 }
 </script>
 
 <template>
   <div class="course-info-editor">
-    <!-- ЛЕВАЯ КОЛОНКА: Форма -->
     <div class="editor-main">
       <div class="form-card">
         <div class="field-group">
-          <label for="title" class="field-label"
-            >{{ t('courseEditor.courseTitle') }} <span class="required">*</span></label
-          >
+          <label for="title" class="field-label">
+            {{ t('courseEditor.courseTitle') }} <span class="required">*</span>
+          </label>
           <InputText
             id="title"
             v-model="formData.title"
@@ -80,30 +92,16 @@ const handleSave = () => {
           />
         </div>
 
-        <div class="field-row">
-          <div class="field-group flex-1">
-            <label for="code" class="field-label"
-              >{{ t('courseEditor.courseCode') }} <span class="required">*</span></label
-            >
-            <InputText
-              id="code"
-              v-model="formData.code"
-              :placeholder="t('courseEditor.codePlaceholder')"
-              class="w-full"
-            />
-          </div>
-          <div class="field-group flex-1">
-            <label for="department" class="field-label">{{ t('courseEditor.department') }}</label>
-            <Select
-              id="department"
-              v-model="formData.department"
-              :options="departments"
-              optionLabel="label"
-              optionValue="value"
-              :placeholder="t('courseEditor.deptPlaceholder')"
-              class="w-full"
-            />
-          </div>
+        <div v-if="isEditMode" class="field-group">
+          <label for="status" class="field-label">{{ t('courseEditor.status') }}</label>
+          <Select
+            id="status"
+            v-model="formData.status"
+            :options="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            class="w-full"
+          />
         </div>
 
         <div class="field-group">
@@ -116,16 +114,7 @@ const handleSave = () => {
             class="w-full textarea-field"
           />
           <div class="field-hint">
-            <span>{{ t('courseEditor.markdownSupported') }}</span>
             <span>{{ formData.description.length }}/500 characters</span>
-          </div>
-        </div>
-
-        <div class="field-group checkbox-group">
-          <Checkbox v-model="formData.isPrivate" inputId="isPrivate" binary />
-          <div class="checkbox-label-wrapper">
-            <label for="isPrivate" class="checkbox-title">{{ t('courseEditor.makePrivate') }}</label>
-            <span class="checkbox-desc">Only enrolled students can view course materials.</span>
           </div>
         </div>
 
@@ -133,26 +122,17 @@ const handleSave = () => {
           <Button :label="t('common.cancel')" severity="secondary" outlined @click="emit('cancel')" />
           <Button
             :label="isEditMode ? t('common.saveChanges') : t('courseEditor.createCourse')"
+            :loading="isSaving"
             @click="handleSave"
           />
         </div>
       </div>
     </div>
 
-    <!-- ПРАВАЯ КОЛОНКА: Сайдбар -->
     <aside class="editor-sidebar">
       <div class="sidebar-section">
         <h4 class="sidebar-title">{{ t('courseEditor.cardPreview') }}</h4>
-        <!-- Используем готовую карточку из entities -->
         <CourseCard :course="previewCourse" class="preview-card" />
-
-        <Button
-          icon="pi pi-image"
-          :label="t('courseEditor.uploadCover')"
-          outlined
-          severity="secondary"
-          class="upload-btn w-full mt-3"
-        />
       </div>
 
       <div class="tips-card">
@@ -163,7 +143,7 @@ const handleSave = () => {
         <ul class="tips-list">
           <li>Keep titles concise and descriptive.</li>
           <li>Use the description to outline learning objectives.</li>
-          <li>You can import content from previous semesters after creation.</li>
+          <li>Add course content after creation on the Content tab.</li>
         </ul>
       </div>
     </aside>
@@ -173,18 +153,17 @@ const handleSave = () => {
 <style scoped>
 .course-info-editor {
   display: grid;
-  grid-template-columns: 1fr 350px; /* 2 колонки: форма и сайдбар */
+  grid-template-columns: 1fr 350px;
   gap: 2rem;
   align-items: start;
 }
 
 @media (max-width: 1024px) {
   .course-info-editor {
-    grid-template-columns: 1fr; /* На планшетах одна колонка */
+    grid-template-columns: 1fr;
   }
 }
 
-/* --- MAIN FORM --- */
 .form-card {
   background-color: var(--surface-card);
   border: 1px solid var(--surface-border);
@@ -199,15 +178,6 @@ const handleSave = () => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.field-row {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.flex-1 {
-  flex: 1;
 }
 
 .w-full {
@@ -230,37 +200,10 @@ const handleSave = () => {
 
 .field-hint {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   font-size: 0.75rem;
   color: var(--text-color-muted);
   margin-top: 0.25rem;
-}
-
-.checkbox-group {
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-top: 1px solid var(--surface-subtle);
-  border-bottom: 1px solid var(--surface-subtle);
-}
-
-.checkbox-label-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.checkbox-title {
-  font-weight: 600;
-  color: var(--text-color);
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.checkbox-desc {
-  font-size: 0.875rem;
-  color: var(--text-color-muted);
 }
 
 .form-actions {
@@ -270,7 +213,6 @@ const handleSave = () => {
   margin-top: 1rem;
 }
 
-/* --- SIDEBAR --- */
 .editor-sidebar {
   display: flex;
   flex-direction: column;
@@ -287,25 +229,11 @@ const handleSave = () => {
 }
 
 .preview-card {
-  pointer-events: none; /* Запрещаем клики на карточке превью */
+  pointer-events: none;
 }
 
-.upload-btn {
-  border-style: dashed;
-  border-width: 2px;
-}
-
-.upload-btn:hover {
-  background-color: var(--surface-ground);
-}
-
-.mt-3 {
-  margin-top: 1rem;
-}
-
-/* --- TIPS CARD --- */
 .tips-card {
-  background-color: var(--color-primary-subtle); /* Светло-синий фон */
+  background-color: var(--color-primary-subtle);
   border: 1px solid var(--color-primary-muted);
   border-radius: var(--radius-md);
   padding: 1.5rem;

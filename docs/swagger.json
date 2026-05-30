@@ -57,7 +57,407 @@
     }
   ],
   "paths": {
-    "/hierarchy/student-groups": {
+    "/us/api/v1/import/users/teachers": {
+      "post": {
+        "tags": ["Imports"],
+        "summary": "Import teachers from Excel",
+        "operationId": "importTeachers",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid file or validation errors",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Import processed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResultResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/us/api/v1/import/users/students": {
+      "post": {
+        "tags": ["Imports"],
+        "summary": "Import students from Excel",
+        "operationId": "importStudents",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid file or validation errors",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Import processed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResultResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/us/api/v1/import/hierarchy/structure": {
+      "post": {
+        "tags": ["Imports"],
+        "summary": "Import full hierarchy structure from Excel",
+        "operationId": "importStructure",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid file or validation errors",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Import processed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResultResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/us/api/v1/import/hierarchy/departments": {
+      "post": {
+        "tags": ["Imports"],
+        "summary": "Import departments from Excel",
+        "operationId": "importDepartments",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid file or validation errors",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Import processed",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResultResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/us/api/v1/hierarchy/student-groups": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "List student groups",
@@ -271,7 +671,7 @@
         ]
       }
     },
-    "/hierarchy/fields-of-study": {
+    "/us/api/v1/hierarchy/fields-of-study": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "List all fields of study",
@@ -485,7 +885,7 @@
         ]
       }
     },
-    "/hierarchy/faculties": {
+    "/us/api/v1/hierarchy/faculties": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "List faculties",
@@ -699,7 +1099,7 @@
         ]
       }
     },
-    "/hierarchy/departments": {
+    "/us/api/v1/hierarchy/departments": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "List departments",
@@ -913,7 +1313,7 @@
         ]
       }
     },
-    "/auth/reset-password": {
+    "/us/api/v1/auth/reset-password": {
       "post": {
         "tags": ["Auth"],
         "summary": "Reset password by token",
@@ -996,7 +1396,7 @@
         }
       }
     },
-    "/auth/login": {
+    "/us/api/v1/auth/login": {
       "post": {
         "tags": ["Auth"],
         "summary": "Authenticate user",
@@ -1086,7 +1486,7 @@
         }
       }
     },
-    "/auth/forgot-password": {
+    "/us/api/v1/auth/forgot-password": {
       "post": {
         "tags": ["Auth"],
         "summary": "Request password reset",
@@ -1169,407 +1569,7 @@
         }
       }
     },
-    "/api/v1/import/users/teachers": {
-      "post": {
-        "tags": ["Imports"],
-        "summary": "Import teachers from Excel",
-        "operationId": "importTeachers",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                },
-                "required": ["file"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Invalid file or validation errors",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Import processed",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportResultResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/v1/import/users/students": {
-      "post": {
-        "tags": ["Imports"],
-        "summary": "Import students from Excel",
-        "operationId": "importStudents",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                },
-                "required": ["file"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Invalid file or validation errors",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Import processed",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportResultResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/v1/import/hierarchy/structure": {
-      "post": {
-        "tags": ["Imports"],
-        "summary": "Import full hierarchy structure from Excel",
-        "operationId": "importStructure",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                },
-                "required": ["file"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Invalid file or validation errors",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Import processed",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportResultResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/v1/import/hierarchy/departments": {
-      "post": {
-        "tags": ["Imports"],
-        "summary": "Import departments from Excel",
-        "operationId": "importDepartments",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                },
-                "required": ["file"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Invalid file or validation errors",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Import processed",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ImportResultResponse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/admin/users": {
+    "/us/api/v1/admin/users": {
       "get": {
         "tags": ["Admin Users"],
         "summary": "Search users",
@@ -1792,7 +1792,202 @@
         ]
       }
     },
-    "/admin/teachers/{teacherId}/group-access": {
+    "/us/api/v1/admin/users/details": {
+      "post": {
+        "tags": ["Admin Users"],
+        "summary": "Get user details by ids",
+        "description": "Returns admin details for existing users in request order. Missing ids are omitted.",
+        "operationId": "getUserDetailsByIds",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUserIdsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "User details list",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminUserDetailsResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/us/api/v1/admin/teachers/{teacherId}/group-access": {
+      "get": {
+        "tags": ["Teacher Access"],
+        "summary": "List all teacher access scopes with hierarchy node names",
+        "operationId": "findTeacherGroupAccess",
+        "parameters": [
+          {
+            "name": "teacherId",
+            "in": "path",
+            "description": "Teacher user id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Teacher scopes list",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeacherGroupAccessScopeDetailsResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "post": {
         "tags": ["Teacher Access"],
         "summary": "Grant teacher group access scope",
@@ -1897,7 +2092,7 @@
         ]
       }
     },
-    "/users/me/password": {
+    "/us/api/v1/users/me/password": {
       "patch": {
         "tags": ["Users"],
         "summary": "Change current user password",
@@ -1984,7 +2179,7 @@
         ]
       }
     },
-    "/users/me/email": {
+    "/us/api/v1/users/me/email": {
       "patch": {
         "tags": ["Users"],
         "summary": "Update current user profile",
@@ -2079,7 +2274,7 @@
         ]
       }
     },
-    "/users/me/avatar": {
+    "/us/api/v1/users/me/avatar": {
       "patch": {
         "tags": ["Users"],
         "summary": "Change current user avatar",
@@ -2167,7 +2362,7 @@
         ]
       }
     },
-    "/hierarchy/student-groups/{id}": {
+    "/us/api/v1/hierarchy/student-groups/{id}": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "Get student group by id",
@@ -2451,7 +2646,7 @@
         ]
       }
     },
-    "/hierarchy/fields-of-study/{id}": {
+    "/us/api/v1/hierarchy/fields-of-study/{id}": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "Get field of study by id",
@@ -2735,7 +2930,7 @@
         ]
       }
     },
-    "/hierarchy/faculties/{id}": {
+    "/us/api/v1/hierarchy/faculties/{id}": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "Get faculty by id",
@@ -3019,7 +3214,7 @@
         ]
       }
     },
-    "/hierarchy/departments/{id}": {
+    "/us/api/v1/hierarchy/departments/{id}": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "Get department by id",
@@ -3303,7 +3498,7 @@
         ]
       }
     },
-    "/admin/users/{id}": {
+    "/us/api/v1/admin/users/{id}": {
       "get": {
         "tags": ["Admin Users"],
         "summary": "Get user details by id",
@@ -3587,22 +3782,98 @@
         ]
       }
     },
-    "/teachers/me/student-groups": {
+    "/us/api/v1/users/me": {
       "get": {
-        "tags": ["Teacher Groups"],
-        "summary": "Search accessible student groups",
-        "description": "Returns only groups available for authenticated teacher. Optional query performs text search.",
-        "operationId": "findAll_4",
-        "parameters": [
-          {
-            "name": "query",
-            "in": "query",
-            "description": "Optional search term by group name/code",
-            "required": false,
-            "schema": {
-              "type": "string"
+        "tags": ["Users"],
+        "summary": "Get current user profile",
+        "description": "Returns profile of the authenticated user from JWT subject.",
+        "operationId": "getCurrentUser",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
             }
           },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Current user profile",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentUserProfileResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/us/api/v1/teachers/me/student-groups": {
+      "get": {
+        "tags": ["Teacher Groups"],
+        "summary": "List accessible student groups",
+        "description": "Returns paginated groups available for authenticated teacher.",
+        "operationId": "findAll_4",
+        "parameters": [
           {
             "name": "page",
             "in": "query",
@@ -3718,7 +3989,7 @@
         ]
       }
     },
-    "/hierarchy/student-groups/by-field-of-study/{fieldOfStudyId}": {
+    "/us/api/v1/hierarchy/student-groups/by-field-of-study/{fieldOfStudyId}": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "List student groups by field of study id",
@@ -3848,7 +4119,7 @@
         ]
       }
     },
-    "/hierarchy/fields-of-study/by-faculty/{facultyId}": {
+    "/us/api/v1/hierarchy/fields-of-study/by-faculty/{facultyId}": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "List fields of study by faculty",
@@ -3978,7 +4249,7 @@
         ]
       }
     },
-    "/hierarchy/departments/by-faculty/{facultyId}": {
+    "/us/api/v1/hierarchy/departments/by-faculty/{facultyId}": {
       "get": {
         "tags": ["Hierarchy"],
         "summary": "List departments by faculty id",
@@ -4108,7 +4379,7 @@
         ]
       }
     },
-    "/auth/refresh": {
+    "/us/api/v1/auth/refresh": {
       "get": {
         "tags": ["Auth"],
         "summary": "Refresh access token",
@@ -4198,7 +4469,7 @@
         }
       }
     },
-    "/admin/teachers/{teacherId}/group-access/by-type/{scopeType}": {
+    "/us/api/v1/admin/teachers/{teacherId}/group-access/by-type/{scopeType}": {
       "get": {
         "tags": ["Teacher Access"],
         "summary": "List teacher scopes by scope type",
@@ -4420,6 +4691,117 @@
           }
         }
       }
+    },
+    "/us/api/v1/admin/teachers/{teacherId}/group-access/{scopeType}/{scopeId}": {
+      "delete": {
+        "tags": ["Teacher Access"],
+        "summary": "Revoke teacher group access scope",
+        "operationId": "deleteTeacherGroupAccess",
+        "parameters": [
+          {
+            "name": "teacherId",
+            "in": "path",
+            "description": "Teacher user id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "scopeType",
+            "in": "path",
+            "description": "Scope type",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["STUDENT_GROUP", "FIELD_OF_STUDY", "FACULTY"]
+            },
+            "example": "FACULTY"
+          },
+          {
+            "name": "scopeId",
+            "in": "path",
+            "description": "Target hierarchy node id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Teacher or scope not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Scope deleted"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -4447,6 +4829,18 @@
             "example": {
               "id": "4b4f60a5-7b67-44f3-9e5a-9df45f77f653"
             }
+          }
+        }
+      },
+      "ImportResultResponse": {
+        "type": "object",
+        "description": "Import summary response",
+        "properties": {
+          "imported": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of successfully imported rows",
+            "example": 245
           }
         }
       },
@@ -4695,18 +5089,6 @@
         },
         "required": ["email"]
       },
-      "ImportResultResponse": {
-        "type": "object",
-        "description": "Import summary response",
-        "properties": {
-          "imported": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Number of successfully imported rows",
-            "example": 245
-          }
-        }
-      },
       "CreateUserRequest": {
         "type": "object",
         "description": "Request payload to create a new user by admin",
@@ -4809,6 +5191,88 @@
               "type": "string"
             },
             "uniqueItems": true
+          }
+        }
+      },
+      "AdminUserIdsRequest": {
+        "type": "object",
+        "description": "List of user ids to load admin details for",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "description": "User ids",
+            "example": ["550e8400-e29b-41d4-a716-446655440000"],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 1
+          }
+        },
+        "required": ["ids"]
+      },
+      "AdminUserDetailsResponse": {
+        "type": "object",
+        "description": "Detailed user profile for admin view",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User id",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name",
+            "example": "Ivan"
+          },
+          "middleName": {
+            "type": "string",
+            "description": "Middle name",
+            "example": "Sergeevich"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name",
+            "example": "Petrov"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "example": "ivan.petrov@university.edu"
+          },
+          "roles": {
+            "type": "array",
+            "description": "Assigned roles",
+            "example": ["ROLE_STUDENT"],
+            "items": {
+              "type": "string"
+            }
+          },
+          "username": {
+            "type": "string",
+            "description": "Username/login",
+            "example": "s102344"
+          },
+          "faculty": {
+            "type": "string",
+            "description": "Faculty name for student scope",
+            "example": "Faculty of Computer Science"
+          },
+          "fieldOfStudy": {
+            "type": "string",
+            "description": "Field of study name for student scope",
+            "example": "Software Engineering"
+          },
+          "studentGroup": {
+            "type": "string",
+            "description": "Student group name",
+            "example": "SE-23-01"
+          },
+          "department": {
+            "type": "string",
+            "description": "Department name for teacher scope",
+            "example": "Department of Applied Mathematics"
           }
         }
       },
@@ -5023,6 +5487,72 @@
               "enum": ["ROLE_ADMIN", "ROLE_TEACHER", "ROLE_STUDENT"]
             },
             "uniqueItems": true
+          }
+        }
+      },
+      "CurrentUserProfileResponse": {
+        "type": "object",
+        "description": "Authenticated user profile with role-specific fields",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "User unique identifier",
+            "example": "4b4f60a5-7b67-44f3-9e5a-9df45f77f653"
+          },
+          "roles": {
+            "type": "array",
+            "description": "Assigned role names",
+            "example": ["ROLE_STUDENT"],
+            "items": {
+              "type": "string"
+            }
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name",
+            "example": "Ivan"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name",
+            "example": "Petrov"
+          },
+          "middleName": {
+            "type": "string",
+            "description": "Middle name",
+            "example": "Sergeevich"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email (admin)",
+            "example": "admin@university.edu"
+          },
+          "avatarFileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Avatar file id in file-service",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "faculty": {
+            "type": "string",
+            "description": "Faculty (institute) name",
+            "example": "Faculty of Computer Science"
+          },
+          "fieldOfStudy": {
+            "type": "string",
+            "description": "Field of study name (student)",
+            "example": "Software Engineering"
+          },
+          "department": {
+            "type": "string",
+            "description": "Department name",
+            "example": "Department of Applied Mathematics"
+          },
+          "studentGroup": {
+            "type": "string",
+            "description": "Student group name",
+            "example": "SE-23-01"
           }
         }
       },
@@ -5318,62 +5848,26 @@
           }
         }
       },
-      "AdminUserDetailsResponse": {
+      "TeacherGroupAccessScopeDetailsResponse": {
         "type": "object",
-        "description": "Detailed user profile for admin view",
+        "description": "Granted teacher access scope with resolved hierarchy node name",
         "properties": {
-          "firstName": {
-            "type": "string",
-            "description": "First name",
-            "example": "Ivan"
+          "scopeId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Target hierarchy node id",
+            "example": 1
           },
-          "middleName": {
+          "scopeType": {
             "type": "string",
-            "description": "Middle name",
-            "example": "Sergeevich"
+            "description": "Scope type level in hierarchy",
+            "enum": ["STUDENT_GROUP", "FIELD_OF_STUDY", "FACULTY"],
+            "example": "FACULTY"
           },
-          "lastName": {
+          "scopeName": {
             "type": "string",
-            "description": "Last name",
-            "example": "Petrov"
-          },
-          "email": {
-            "type": "string",
-            "description": "Email",
-            "example": "ivan.petrov@university.edu"
-          },
-          "roles": {
-            "type": "array",
-            "description": "Assigned roles",
-            "example": ["ROLE_STUDENT"],
-            "items": {
-              "type": "string"
-            }
-          },
-          "username": {
-            "type": "string",
-            "description": "Username/login",
-            "example": "s102344"
-          },
-          "faculty": {
-            "type": "string",
-            "description": "Faculty name for student scope",
+            "description": "Resolved hierarchy node name",
             "example": "Faculty of Computer Science"
-          },
-          "fieldOfStudy": {
-            "type": "string",
-            "description": "Field of study name for student scope",
-            "example": "Software Engineering"
-          },
-          "studentGroup": {
-            "type": "string",
-            "description": "Student group name",
-            "example": "SE-23-01"
-          },
-          "department": {
-            "type": "string",
-            "description": "Department name for teacher scope",
-            "example": "Department of Applied Mathematics"
           }
         }
       },
