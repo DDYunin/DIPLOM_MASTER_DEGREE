@@ -10,6 +10,7 @@ import type {
   ChangePasswordRequest,
   CreateAdminUserRequest,
   UpdateOwnProfileRequest,
+  UpdateUserByAdminRequest,
   UserResponseDto
 } from './types'
 
@@ -27,6 +28,12 @@ export const createAdminUser = (userData: CreateAdminUserRequest) =>
   api<AdminUserResponse>(usersApiPath('/admin/users'), {
     method: 'POST',
     body: JSON.stringify(userData)
+  })
+
+export const updateAdminUser = (id: string, payload: UpdateUserByAdminRequest) =>
+  api<AdminUserResponse>(usersApiPath(`/admin/users/${id}`), {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
   })
 
 export const updateOwnProfileEmail = (payload: UpdateOwnProfileRequest) =>

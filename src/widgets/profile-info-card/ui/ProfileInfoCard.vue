@@ -7,14 +7,15 @@ import InputIcon from 'primevue/inputicon'
 import Tag from 'primevue/tag'
 import Avatar from 'primevue/avatar'
 import Select from 'primevue/select'
-import Textarea from 'primevue/textarea'
 
-// Импортируем нашу обертку и тип пользователя
 import { WidgetCard } from '@/shared/ui'
 import type { User } from '@/entities/user'
 
-// Используем v-model для удобного связывания с черновиком на странице
 const { t } = useI18n()
+
+export type ProfileInfoFieldErrors = Partial<
+  Record<'email' | 'firstName' | 'lastName' | 'middleName' | 'departmentId' | 'groupId', string>
+>
 
 const props = withDefaults(
   defineProps<{
@@ -22,22 +23,26 @@ const props = withDefaults(
     variant?: 'default' | 'own-profile'
     emailError?: string
     emailInputAttrs?: Record<string, unknown>
+    fieldErrors?: ProfileInfoFieldErrors
+    departmentOptions?: { id: number; name: string }[]
+    groupOptions?: { id: number; name: string }[]
   }>(),
   {
     variant: 'default',
     emailError: undefined,
-    emailInputAttrs: undefined
+    emailInputAttrs: undefined,
+    fieldErrors: undefined,
+    departmentOptions: () => [],
+    groupOptions: () => []
   }
 )
 const emit = defineEmits(['update:modelValue'])
 
-// Создаем двусторонне-связанный computed
 const profile = computed({
   get: () => props.modelValue,
   set: (val) => emit('update:modelValue', val)
 })
 
-// Генерируем инициалы, если они не заданы в базе
 const initials = computed(() => {
   if (profile.value.avatarInitials) return profile.value.avatarInitials
   if (!profile.value.fullName) return 'U'
@@ -49,51 +54,62 @@ const initials = computed(() => {
     .toUpperCase()
 })
 
-// Утилита для цвета бейджа роли
 const getRoleSeverity = (role: string) => {
   if (role === 'Super Admin') return 'danger'
   if (role === 'Teacher') return 'warn'
   if (role === 'Moderator') return 'info'
-  return 'success' // Student
+  return 'success'
 }
 
-// Моковые справочники (в реальности придут с сервера)
-const cohortOptions = ['CS-2024', 'ENG-2023', 'IT-2025', 'BIO-2024', 'ART-2023']
-const deptOptions = [
-  'Computer Science',
-  'Engineering',
-  'Information Technology',
-  'Physics',
-  'Mathematics'
-]
+const isStudentOrTeacher = computed(() => ['Student', 'Teacher'].includes(profile.value.role))
 </script>
 
 <template>
-  <!-- Используем нашу универсальную обертку -->
   <WidgetCard :title="t('profileCard.title')" icon="pi-user" iconColorClass="text-blue-500">
-    <template v-if="variant === 'default'" #header-actions>
-      <a href="#" class="edit-link">{{ t('profileCard.editDetails') }}</a>
-    </template>
-
     <div class="profile-content">
-      <!-- ========================================== -->
-      <!-- ЛЕВАЯ ЧАСТЬ: АВАТАРКА (Общая для всех)     -->
-      <!-- ========================================== -->
       <div class="avatar-section">
         <div class="avatar-wrapper">
           <Avatar :label="initials" size="xlarge" shape="circle" class="custom-avatar" />
-          <button class="camera-btn" :title="t('profileCard.changeAvatar')">
+          <button type="button" class="camera-btn" :title="t('profileCard.changeAvatar')">
             <i class="pi pi-camera"></i>
           </button>
         </div>
       </div>
 
-      <!-- ========================================== -->
-      <!-- ПРАВАЯ ЧАСТЬ: ФОРМА                        -->
-      <!-- ========================================== -->
       <div class="form-grid">
-        <!-- 1. ОБЩИЕ ПОЛЯ -->
-        <div class="form-field">
+        <template v-if="variant === 'default' && isStudentOrTeacher">
+          <div class="form-field">
+            <label>{{ t('teacherProfile.lastName') }}</label>
+            <InputText
+              v-model="profile.lastName"
+              :invalid="!!fieldErrors?.lastName"
+              class="w-full"
+            />
+            <small v-if="fieldErrors?.lastName" class="field-error">{{ fieldErrors.lastName }}</small>
+          </div>
+
+          <div class="form-field">
+            <label>{{ t('teacherProfile.firstName') }}</label>
+            <InputText
+              v-model="profile.firstName"
+              :invalid="!!fieldErrors?.firstName"
+              class="w-full"
+            />
+            <small v-if="fieldErrors?.firstName" class="field-error">{{ fieldErrors.firstName }}</small>
+          </div>
+
+          <div class="form-field">
+            <label>{{ t('teacherProfile.patronymic') }}</label>
+            <InputText
+              v-model="profile.patronymic"
+              :invalid="!!fieldErrors?.middleName"
+              class="w-full"
+            />
+            <small v-if="fieldErrors?.middleName" class="field-error">{{ fieldErrors.middleName }}</small>
+          </div>
+        </template>
+
+        <div v-else class="form-field">
           <label>{{ t('profileCard.fullName') }}</label>
           <InputText v-model="profile.fullName" :disabled="variant === 'own-profile'" />
         </div>
@@ -117,16 +133,18 @@ const deptOptions = [
             <InputText
               v-model="profile.email"
               v-bind="variant === 'own-profile' ? emailInputAttrs : undefined"
-              :invalid="variant === 'own-profile' && !!emailError"
+              :invalid="variant === 'own-profile' ? !!emailError : !!fieldErrors?.email"
               class="w-full"
             />
           </IconField>
-          <small v-if="variant === 'own-profile' && emailError" class="field-error">
-            {{ emailError }}
+          <small
+            v-if="variant === 'own-profile' ? emailError : fieldErrors?.email"
+            class="field-error"
+          >
+            {{ variant === 'own-profile' ? emailError : fieldErrors?.email }}
           </small>
         </div>
 
-        <!-- 2. СПЕЦИФИЧНЫЕ ПОЛЯ: АДМИН ИЛИ МОДЕРАТОР -->
         <div
           v-if="
             variant === 'default' &&
@@ -141,48 +159,51 @@ const deptOptions = [
           </IconField>
         </div>
 
-        <!-- 3. СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ И УЧИТЕЛЬ -->
-        <div
-          v-if="variant === 'default' && ['Student', 'Teacher'].includes(profile.role)"
-          class="form-field"
-        >
-          <!-- Динамический лейбл в зависимости от роли -->
-          <label>{{ profile.role === 'Student' ? 'STUDENT ID' : 'EMPLOYEE ID' }}</label>
-          <InputText v-model="profile.identifier" disabled class="w-full" />
-        </div>
-
-        <div
-          v-if="variant === 'default' && ['Student', 'Teacher'].includes(profile.role)"
-          class="form-field"
-        >
-          <label>{{ t('profileCard.department') }}</label>
-          <Select v-model="profile.department" :options="deptOptions" class="w-full" />
-        </div>
-
-        <!-- 4. СПЕЦИФИЧНЫЕ ПОЛЯ: ТОЛЬКО СТУДЕНТ -->
-        <div
-          v-if="variant === 'default' && profile.role === 'Student'"
-          class="form-field"
-        >
-          <label>{{ t('profileCard.cohort') }}</label>
-          <Select v-model="profile.cohort" :options="cohortOptions" class="w-full" />
-        </div>
-
-        <!-- 5. ДОПОЛНИТЕЛЬНЫЕ ЗАМЕТКИ (на всю ширину) -->
-        <div
-          v-if="
-            variant === 'default' &&
-            (profile.role === 'Student' || profile.notes !== undefined)
-          "
-          class="form-field full-width mt-2"
-        >
-          <label>{{ t('profileCard.notes') }}</label>
-          <Textarea
-            v-model="profile.notes"
-            rows="3"
-            autoResize
-            :placeholder="t('profileCard.notesPlaceholder')"
+        <div v-if="variant === 'default' && isStudentOrTeacher" class="form-field">
+          <label>{{ profile.role === 'Student' ? t('teacherProfile.studentId') : t('profileCard.employeeId') }}</label>
+          <InputText
+            :value="profile.identifier ?? profile.studentId ?? ''"
+            disabled
+            class="w-full"
           />
+        </div>
+
+        <div v-if="variant === 'default' && profile.role === 'Student'" class="form-field">
+          <label>{{ t('teacherProfile.institute') }}</label>
+          <InputText :value="profile.institute ?? ''" disabled class="w-full" />
+        </div>
+
+        <div v-if="variant === 'default' && profile.role === 'Student'" class="form-field">
+          <label>{{ t('teacherProfile.major') }}</label>
+          <InputText :value="profile.major ?? ''" disabled class="w-full" />
+        </div>
+
+        <div v-if="variant === 'default' && profile.role === 'Teacher'" class="form-field">
+          <label>{{ t('profileCard.department') }}</label>
+          <Select
+            v-model="profile.departmentId"
+            :options="departmentOptions"
+            option-label="name"
+            option-value="id"
+            :placeholder="t('addUser.selectDepartment')"
+            :invalid="!!fieldErrors?.departmentId"
+            class="w-full"
+          />
+          <small v-if="fieldErrors?.departmentId" class="field-error">{{ fieldErrors.departmentId }}</small>
+        </div>
+
+        <div v-if="variant === 'default' && profile.role === 'Student'" class="form-field">
+          <label>{{ t('teacherProfile.group') }}</label>
+          <Select
+            v-model="profile.groupId"
+            :options="groupOptions"
+            option-label="name"
+            option-value="id"
+            :placeholder="t('addUser.selectGroup')"
+            :invalid="!!fieldErrors?.groupId"
+            class="w-full"
+          />
+          <small v-if="fieldErrors?.groupId" class="field-error">{{ fieldErrors.groupId }}</small>
         </div>
       </div>
     </div>
@@ -190,20 +211,12 @@ const deptOptions = [
 </template>
 
 <style scoped>
-.edit-link {
-  color: var(--color-primary);
-  font-size: 0.875rem;
-  text-decoration: none;
-  font-weight: 500;
-}
-
 .profile-content {
   display: flex;
   gap: 2rem;
   align-items: flex-start;
 }
 
-/* Аватарка */
 .avatar-section {
   flex-shrink: 0;
   display: flex;
@@ -243,7 +256,6 @@ const deptOptions = [
   border-color: var(--color-primary);
 }
 
-/* Сетка формы */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -274,9 +286,6 @@ const deptOptions = [
 .w-full {
   width: 100%;
 }
-.mt-2 {
-  margin-top: 0.5rem;
-}
 
 .role-display {
   height: 2.5rem;
@@ -284,7 +293,6 @@ const deptOptions = [
   align-items: center;
 }
 
-/* Адаптив */
 @media (max-width: 640px) {
   .profile-content {
     flex-direction: column;

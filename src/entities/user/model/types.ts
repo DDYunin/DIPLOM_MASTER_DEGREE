@@ -46,8 +46,9 @@ export interface User {
 
   // === СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ / ПРЕПОДАВАТЕЛЬ ===
   identifier?: string; // Универсальное поле для Student ID или Employee ID
-  department?: string;
-  subDepartment?: string;
+  department?: string
+  departmentId?: number | null
+  subDepartment?: string
 
   // === СПЕЦИФИЧНЫЕ ПОЛЯ: СТУДЕНТ ===
   // TODO: оставить только studentId
@@ -55,6 +56,7 @@ export interface User {
   institute?: string
   major?: string
   group?: string
+  groupId?: number | null
   cohort?: string;
   notes?: string;
 

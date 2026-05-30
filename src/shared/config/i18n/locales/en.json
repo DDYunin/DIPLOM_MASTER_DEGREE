@@ -244,7 +244,10 @@
     "teacherNotFound": "Teacher not found.",
     "studentNotFound": "Student not found.",
     "teacherSaved": "Teacher profile updated successfully.",
-    "studentSaved": "Student profile updated successfully."
+    "studentSaved": "Student profile updated successfully.",
+    "loadError": "Failed to load user profile. Please try again later.",
+    "roleMismatch": "This profile does not match the selected user type.",
+    "backToUsers": "Back to users"
   },
   "teacherCourses": {
     "title": "Courses",

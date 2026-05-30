@@ -3,19 +3,22 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Chip from 'primevue/chip'
 import ToggleSwitch from 'primevue/toggleswitch'
-import type { TeacherProfile } from '@/entities/user'
+import type { User } from '@/entities/user'
 import { AddPermissionScope } from '@/features/add-permission-scope'
 
 import { WidgetCard } from '@/shared/ui/'
 
 const { t } = useI18n()
 
-const props = defineProps<{ profile: TeacherProfile }>()
+const props = defineProps<{ profile: User }>()
 
-// Локальное состояние для переключателей (тогглов)
-const permissions = ref({ ...props.profile.permissions })
+const permissions = ref({
+  publishGrades: false,
+  manageUsers: false,
+  ...props.profile.permissions
+})
 
-const groups = ref([...props.profile.groups])
+const groups = ref([...(props.profile.groups ?? [])])
 
 // Обработка события @add из нашего модального окна
 const handleAddGroups = (newGroups: string[]) => {

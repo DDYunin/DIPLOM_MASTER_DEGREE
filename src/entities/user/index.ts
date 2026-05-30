@@ -22,6 +22,7 @@ export {
   type AdminUsersPageDto,
   type AdminUsersListQueryParams,
   type CreateAdminUserRequest,
+  type UpdateUserByAdminRequest,
   useUserStore,
   mapAdminUserListItemToUser,
   mapAdminUserListItemsToUsers,

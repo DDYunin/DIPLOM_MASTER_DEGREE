@@ -3,13 +3,13 @@ import { useI18n } from 'vue-i18n'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Tag from 'primevue/tag'
-import type { TeacherProfile } from '@/entities/user'
+import type { User } from '@/entities/user'
 
 import { WidgetCard } from '@/shared/ui/'
 
 const { t } = useI18n()
 
-defineProps<{ profile: TeacherProfile }>()
+defineProps<{ profile: User }>()
 
 const getStatusSeverity = (status: string) => {
   if (status === 'Active') return 'success'
@@ -24,7 +24,7 @@ const getStatusSeverity = (status: string) => {
       <a href="#" class="history-link">{{ t('teacherAssigned.viewHistory') }}</a>
     </template>
     <template #default>
-      <DataTable :value="profile.courses" class="courses-table">
+      <DataTable :value="profile.courses ?? []" class="courses-table">
         <Column field="code" :header="t('teacherAssigned.courseCode')"></Column>
         <Column field="name" :header="t('teacherAssigned.courseName')"></Column>
         <Column field="semester" :header="t('teacherAssigned.semester')"></Column>

@@ -76,6 +76,17 @@ export interface UserResponseDto {
   roles: string[]
 }
 
+export interface UpdateUserByAdminRequest {
+  email?: string
+  username?: string
+  firstName?: string
+  lastName?: string
+  middleName?: string
+  groupId?: number
+  departmentId?: number
+  roles?: string[]
+}
+
 export interface UpdateOwnProfileRequest {
   email: string
 }
