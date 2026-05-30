@@ -97,6 +97,7 @@ export const mapAdminUserDetailsToUser = (
   role: resolvePrimaryRole(dto.roles),
   status: 'Active',
   identifier: dto.username,
+  institute: dto.faculty,
   department: dto.department,
   avatarInitials: buildAvatarInitials(dto.firstName, dto.lastName)
 })

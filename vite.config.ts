@@ -15,7 +15,7 @@ export default defineConfig({
       '/api/users': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/users/, '/api/v1')
+        rewrite: (path) => path.replace(/^\/api\/users/, '/api')
       },
       '/api/course': {
         target: 'http://localhost:10001',
