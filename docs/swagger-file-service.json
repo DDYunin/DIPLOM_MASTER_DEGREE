@@ -1,0 +1,532 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "File Service API",
+    "description": "Contract for presigned upload/download URLs, file metadata and Kafka-driven lifecycle events.\nFile bytes are transferred directly between clients and S3 (MinIO); this service only issues URLs and tracks metadata.\n",
+    "contact": {
+      "name": "File Service Team"
+    },
+    "license": {
+      "name": "Proprietary"
+    },
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8087",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Files",
+      "description": "Upload requests, download URLs and file metadata"
+    }
+  ],
+  "paths": {
+    "/api/v1/files/upload-request": {
+      "post": {
+        "tags": ["Files"],
+        "summary": "Request presigned upload URL",
+        "description": "Validates role, domain quotas and content constraints, persists a PENDING file record\nand returns a presigned PUT URL (15 minutes) for direct upload to S3/MinIO.\n",
+        "operationId": "createUploadRequest",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadUrlRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Validation or policy error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Upload URL issued",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadUrlResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/files/{fileId}": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Get file metadata",
+        "description": "Returns metadata for an ACTIVE or PENDING file record.",
+        "operationId": "getFileInfo",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "description": "File identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "File metadata",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileInfoResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/files/download-url/{fileId}": {
+      "get": {
+        "tags": ["Files"],
+        "summary": "Get presigned download URL",
+        "description": "Returns a presigned GET URL (2 hours) for private content when the caller is authorized.",
+        "operationId": "getDownloadUrl",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "description": "File identifier",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "File not found",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Download URL issued",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiErrorResponse": {
+        "type": "object",
+        "description": "Standard error response returned by GlobalExceptionHandler",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Human-readable error message",
+            "example": "File not found"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Machine-readable error code",
+            "example": "OBJECT_NOT_FOUND"
+          },
+          "violations": {
+            "type": "array",
+            "description": "Field-level validation errors",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "description": "Single field validation error",
+        "properties": {
+          "fieldName": {
+            "type": "string",
+            "description": "Request field name",
+            "example": "contentType"
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Validation message",
+            "example": "must not be blank"
+          }
+        }
+      },
+      "CourseAvatarContext": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FileContext"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "courseId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Target course id",
+                "example": "4b4f60a5-7b67-44f3-9e5a-9df45f77f653"
+              }
+            }
+          }
+        ],
+        "description": "Context for COURSE_AVATAR uploads",
+        "required": ["courseId"]
+      },
+      "CourseMaterialContext": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FileContext"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "courseId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Target course id",
+                "example": "4b4f60a5-7b67-44f3-9e5a-9df45f77f653"
+              }
+            }
+          }
+        ],
+        "description": "Context for COURSE_MATERIAL uploads",
+        "required": ["courseId"]
+      },
+      "FileContext": {},
+      "TaskAnswerContext": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FileContext"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "courseId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Course id",
+                "example": "4b4f60a5-7b67-44f3-9e5a-9df45f77f653"
+              },
+              "userId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Student user id",
+                "example": "8c1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"
+              }
+            }
+          }
+        ],
+        "description": "Context for ANSWER_FILE uploads",
+        "required": ["courseId", "userId"]
+      },
+      "UploadUrlRequest": {
+        "type": "object",
+        "description": "Request payload to obtain a presigned upload URL",
+        "properties": {
+          "originalFilename": {
+            "type": "string",
+            "description": "Original client filename",
+            "example": "avatar.png",
+            "minLength": 1
+          },
+          "domain": {
+            "type": "string",
+            "description": "Upload domain defining MIME and size limits",
+            "enum": ["USER_AVATAR", "COURSE_AVATAR", "COURSE_MATERIAL", "ANSWER_FILE"]
+          },
+          "contentType": {
+            "type": "string",
+            "description": "MIME type of the file",
+            "example": "image/png",
+            "minLength": 1
+          },
+          "contentLength": {
+            "type": "integer",
+            "format": "int64",
+            "description": "File size in bytes",
+            "example": 102400
+          },
+          "context": {
+            "description": "Domain-specific context (shape depends on domain)",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CourseAvatarContext"
+              },
+              {
+                "$ref": "#/components/schemas/CourseMaterialContext"
+              },
+              {
+                "$ref": "#/components/schemas/TaskAnswerContext"
+              },
+              {
+                "$ref": "#/components/schemas/UserAvatarContext"
+              }
+            ]
+          }
+        },
+        "required": ["contentType", "domain", "originalFilename"]
+      },
+      "UserAvatarContext": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FileContext"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string",
+                "format": "uuid",
+                "description": "Target user id",
+                "example": "4b4f60a5-7b67-44f3-9e5a-9df45f77f653"
+              }
+            }
+          }
+        ],
+        "description": "Context for USER_AVATAR uploads",
+        "required": ["userId"]
+      },
+      "UploadUrlResponse": {
+        "type": "object",
+        "description": "Presigned upload URL and created file identifier",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Created file record id",
+            "example": "4b4f60a5-7b67-44f3-9e5a-9df45f77f653"
+          },
+          "uploadUrl": {
+            "type": "string",
+            "description": "Presigned PUT URL valid for 15 minutes"
+          }
+        }
+      },
+      "FileInfoResponse": {
+        "type": "object",
+        "description": "File metadata exposed to API clients",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "File identifier",
+            "example": "4b4f60a5-7b67-44f3-9e5a-9df45f77f653"
+          },
+          "fileName": {
+            "type": "string",
+            "description": "Original filename",
+            "example": "lecture-01.mp4"
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type",
+            "example": "video/mp4"
+          },
+          "status": {
+            "type": "string",
+            "description": "Lifecycle status",
+            "enum": ["PENDING", "ACTIVE"],
+            "example": "ACTIVE"
+          }
+        }
+      },
+      "DownloadUrlResponse": {
+        "type": "object",
+        "description": "Presigned download URL for private content",
+        "properties": {
+          "downloadUrl": {
+            "type": "string",
+            "description": "Presigned GET URL valid for 2 hours"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "JWT access token issued by Users Service",
+        "name": "bearerAuth",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

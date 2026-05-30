@@ -1,11 +1,12 @@
 import { useNotifications } from '@/shared/model'
 
-import { refreshTokenAndRetry } from './auth-interceptor'
+import { ensureValidAccessToken, refreshTokenAndRetry } from './auth-interceptor'
 import { baseFetch } from './base'
 import { tokenService } from './token.service'
 
 export interface ApiRequestOptions extends RequestInit {
   queryParams?: Record<string, string | number | boolean | undefined | null>
+  skipAuthRefresh?: boolean
 }
 
 const appendQueryParams = (
@@ -32,11 +33,23 @@ const appendQueryParams = (
   return `${url}${url.includes('?') ? '&' : '?'}${queryString}`
 }
 
+const isAuthEndpoint = (url: string): boolean => {
+  return url.includes('/auth/login') || url.includes('/auth/refresh')
+}
+
 export const apiClient = async <T>(
   endpoint: string,
   options: ApiRequestOptions = {}
 ): Promise<T> => {
   const fullUrl = appendQueryParams(endpoint, options.queryParams)
+
+  if (!options.skipAuthRefresh && !isAuthEndpoint(fullUrl)) {
+    try {
+      await ensureValidAccessToken()
+    } catch {
+      throw new Error('Session expired')
+    }
+  }
 
   const token = tokenService.getAccessToken()
   const headers = new Headers(options.headers)
@@ -50,7 +63,7 @@ export const apiClient = async <T>(
   } catch (error: unknown) {
     const apiError = error as Error & { status?: number }
 
-    if (apiError.status === 401 && !fullUrl.includes('/auth/refresh')) {
+    if (apiError.status === 401 && !isAuthEndpoint(fullUrl)) {
       try {
         return await refreshTokenAndRetry<T>(fullUrl, { ...options, headers })
       } catch (refreshError) {

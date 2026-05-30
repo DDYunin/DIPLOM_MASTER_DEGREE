@@ -1,11 +1,26 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { tokenService } from '@/shared/api'
+import { jwtDecode } from 'jwt-decode'
+
+import { refreshAccessToken } from '@/shared/api/auth-interceptor'
+import { tokenService } from '@/shared/api/token.service'
+import { isAccessTokenExpired } from '@/shared/lib/jwt'
+import { ROLES, type AppRole } from '@/shared/config/roles'
+
 import * as sessionApi from '../api'
 import type { LoginCredentials } from './types'
-import { jwtDecode } from 'jwt-decode'
-import { ROLES, type AppRole } from '@/shared/config/roles'
+
+const resolveRoleFromToken = (accessToken: string): AppRole | null => {
+  const decoded = jwtDecode<{ roles?: string[] }>(accessToken)
+  const backendRole = decoded.roles?.[0]
+
+  if (backendRole === ROLES.ADMIN) return ROLES.ADMIN
+  if (backendRole === ROLES.TEACHER) return ROLES.TEACHER
+  if (backendRole === ROLES.STUDENT) return ROLES.STUDENT
+
+  return backendRole as AppRole | null
+}
 
 export const useSessionStore = defineStore('session', () => {
   const router = useRouter()
@@ -18,44 +33,62 @@ export const useSessionStore = defineStore('session', () => {
   const isTeacher = computed(() => userRole.value === ROLES.TEACHER)
   const isStudent = computed(() => userRole.value === ROLES.STUDENT)
 
-  // Инициализация при старте приложения (проверка наличия токена)
-  const initAuth = () => {
-    const token = tokenService.getAccessToken()
-    if (token) {
-      try {
-        const decoded = jwtDecode<{ roles: AppRole[] }>(token)
-        userRole.value = decoded.roles[0] ?? null
-        isAuth.value = true
-      } catch {
-        tokenService.clearTokens()
+  const applyAccessToken = (accessToken: string) => {
+    userRole.value = resolveRoleFromToken(accessToken)
+    isAuth.value = true
+  }
+
+  const initAuth = async () => {
+    isLoading.value = true
+
+    try {
+      const token = tokenService.getAccessToken()
+
+      if (token && !isAccessTokenExpired()) {
+        applyAccessToken(token)
+        return
       }
+
+      if (!token) {
+        isAuth.value = false
+        userRole.value = null
+        return
+      }
+
+      await refreshAccessToken()
+      const refreshedToken = tokenService.getAccessToken()
+
+      if (!refreshedToken) {
+        throw new Error('Access token was not restored after refresh')
+      }
+
+      applyAccessToken(refreshedToken)
+    } catch {
+      tokenService.clearTokens()
+      isAuth.value = false
+      userRole.value = null
+    } finally {
+      isLoading.value = false
     }
   }
 
   const login = async (credentials: LoginCredentials) => {
     isLoading.value = true
-    debugger
+
     try {
       const response = await sessionApi.loginWithEmail(credentials)
-
-      // Сохраняем токены в localStorage
-      tokenService.setTokens(response.accessToken)
-      const decoded = jwtDecode<{ roles: AppRole[] }>(response.accessToken)
-      if (decoded) {
-        userRole.value = decoded.roles[0] ?? null;
-      }
-      isAuth.value = true
+      tokenService.setTokens(response.accessToken, response.refreshToken)
+      applyAccessToken(response.accessToken)
     } finally {
       isLoading.value = false
     }
   }
 
   const logout = async () => {
-    // Очищаем локальные данные в любом случае
     tokenService.clearTokens()
     isAuth.value = false
-    userRole.value = null;
-    router.push('/login')
+    userRole.value = null
+    await router.push('/login')
   }
 
   return { isAuth, isLoading, initAuth, login, logout, isAdmin, isTeacher, isStudent, userRole }
