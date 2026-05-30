@@ -181,10 +181,23 @@
   "addPermission": {
     "addPermission": "Добавить доступ",
     "modalTitle": "Область доступа",
-    "subtitle": "Выберите подразделения для предоставления доступа.",
-    "searchPlaceholder": "Поиск в структуре...",
-    "addSelected": "Добавить выбранные",
-    "selectedCount": "Выбрано: {count}"
+    "subtitle": "Выберите тип области и целевую сущность для предоставления доступа.",
+    "scopeType": "Тип области",
+    "scopeTypePlaceholder": "Выберите тип области",
+    "faculty": "Факультет",
+    "facultyPlaceholder": "Выберите факультет",
+    "fieldOfStudy": "Направление подготовки",
+    "fieldOfStudyPlaceholder": "Выберите направление",
+    "studentGroup": "Студенческая группа",
+    "studentGroupPlaceholder": "Выберите группу",
+    "addSelected": "Предоставить доступ",
+    "grantSuccess": "Область доступа успешно добавлена",
+    "loadError": "Не удалось загрузить данные иерархии",
+    "scopeTypes": {
+      "faculty": "Факультет",
+      "fieldOfStudy": "Направление подготовки",
+      "studentGroup": "Студенческая группа"
+    }
   },
   "profileCard": {
     "title": "Информация профиля",
@@ -223,10 +236,8 @@
     "title": "Роли и права",
     "subtitle": "Уровни доступа и группы, назначенные пользователю",
     "assignedGroups": "Назначенные группы",
-    "publishGrades": "Публикация оценок",
-    "publishGradesDesc": "Может утверждать итоговые оценки",
-    "manageUsers": "Управление пользователями",
-    "manageUsersDesc": "Может добавлять студентов"
+    "noAssignedGroups": "Области доступа пока не назначены",
+    "loadScopesError": "Не удалось загрузить назначенные области доступа"
   },
   "teacherAssigned": {
     "title": "Назначенные курсы",

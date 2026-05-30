@@ -181,10 +181,23 @@
   "addPermission": {
     "addPermission": "Add permission",
     "modalTitle": "Add permission scope",
-    "subtitle": "Select organizations to grant access.",
-    "searchPlaceholder": "Search hierarchy...",
-    "addSelected": "Add selected",
-    "selectedCount": "{count} selected"
+    "subtitle": "Select the scope type and target entity to grant access.",
+    "scopeType": "Scope type",
+    "scopeTypePlaceholder": "Select scope type",
+    "faculty": "Faculty",
+    "facultyPlaceholder": "Select faculty",
+    "fieldOfStudy": "Field of study",
+    "fieldOfStudyPlaceholder": "Select field of study",
+    "studentGroup": "Student group",
+    "studentGroupPlaceholder": "Select student group",
+    "addSelected": "Grant access",
+    "grantSuccess": "Access scope granted successfully",
+    "loadError": "Failed to load hierarchy data",
+    "scopeTypes": {
+      "faculty": "Faculty",
+      "fieldOfStudy": "Field of study",
+      "studentGroup": "Student group"
+    }
   },
   "profileCard": {
     "title": "Profile information",
@@ -223,10 +236,8 @@
     "title": "Roles & permissions",
     "subtitle": "Access levels and administrative groups assigned to this user",
     "assignedGroups": "Assigned groups",
-    "publishGrades": "Publish grades",
-    "publishGradesDesc": "Can finalize term grades",
-    "manageUsers": "Manage system users",
-    "manageUsersDesc": "Can add new students"
+    "noAssignedGroups": "No access scopes assigned yet",
+    "loadScopesError": "Failed to load assigned access scopes"
   },
   "teacherAssigned": {
     "title": "Assigned courses",

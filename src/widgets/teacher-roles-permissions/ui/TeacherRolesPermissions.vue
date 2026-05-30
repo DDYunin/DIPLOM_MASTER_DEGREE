@@ -1,37 +1,32 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useQuery, useQueryClient } from '@tanstack/vue-query'
 import Chip from 'primevue/chip'
-import ToggleSwitch from 'primevue/toggleswitch'
-import type { User } from '@/entities/user'
-import { AddPermissionScope } from '@/features/add-permission-scope'
+import Skeleton from 'primevue/skeleton'
+import Message from 'primevue/message'
 
+import { fetchTeacherStudentGroups } from '@/entities/teacher-access'
+import { AddPermissionScope } from '@/features/add-permission-scope'
 import { WidgetCard } from '@/shared/ui/'
 
+const props = defineProps<{
+  teacherId: string
+}>()
+
 const { t } = useI18n()
+const queryClient = useQueryClient()
 
-const props = defineProps<{ profile: User }>()
-
-const permissions = ref({
-  publishGrades: false,
-  manageUsers: false,
-  ...props.profile.permissions
+const studentGroupsQuery = useQuery({
+  queryKey: computed(() => ['teacher-student-groups', props.teacherId]),
+  queryFn: () => fetchTeacherStudentGroups(),
+  enabled: computed(() => !!props.teacherId)
 })
 
-const groups = ref([...(props.profile.groups ?? [])])
+const studentGroups = computed(() => studentGroupsQuery.data.value?.items ?? [])
 
-// Обработка события @add из нашего модального окна
-const handleAddGroups = (newGroups: string[]) => {
-  // Чтобы не добавлять дубликаты, отфильтруем те группы, которые уже есть у преподавателя
-  const uniqueNewGroups = newGroups.filter((group) => !groups.value.includes(group))
-
-  // Добавляем новые группы в реактивный массив профиля
-  groups.value.push(...uniqueNewGroups)
-}
-
-// Функция для удаления группы (когда пользователь кликает на крестик в Chip)
-const removeGroup = (groupToRemove: string) => {
-  groups.value = groups.value.filter((g) => g !== groupToRemove)
+const handleGranted = () => {
+  queryClient.invalidateQueries({ queryKey: ['teacher-student-groups', props.teacherId] })
 }
 </script>
 
@@ -43,39 +38,33 @@ const removeGroup = (groupToRemove: string) => {
     :subtitle="t('teacherRoles.subtitle')"
   >
     <template #header-actions>
-      <AddPermissionScope @add="handleAddGroups" />
+      <AddPermissionScope :teacher-id="teacherId" @granted="handleGranted" />
     </template>
+
     <template #default>
       <div class="groups-section">
         <label class="section-label">{{ t('teacherRoles.assignedGroups') }}</label>
-        <div class="chips-container">
-          <!-- Отрисовываем группы. У Chip есть событие @remove для крестика -->
+
+        <div v-if="studentGroupsQuery.isLoading.value" class="chips-container">
+          <Skeleton width="120px" height="32px" borderRadius="999px" />
+          <Skeleton width="160px" height="32px" borderRadius="999px" />
+        </div>
+
+        <Message v-else-if="studentGroupsQuery.isError.value" severity="error" :closable="false">
+          {{ t('teacherRoles.loadScopesError') }}
+        </Message>
+
+        <p v-else-if="studentGroups.length === 0" class="empty-text">
+          {{ t('teacherRoles.noAssignedGroups') }}
+        </p>
+
+        <div v-else class="chips-container">
           <Chip
-            v-for="group in groups"
-            :key="group"
-            :label="group"
-            removable
-            @remove="removeGroup(group)"
+            v-for="group in studentGroups"
+            :key="group.id"
+            :label="group.name"
             class="custom-chip"
           />
-        </div>
-      </div>
-
-      <div class="permissions-grid">
-        <div class="permission-item">
-          <div class="perm-text">
-            <span class="perm-name">{{ t('teacherRoles.publishGrades') }}</span>
-            <span class="perm-desc">{{ t('teacherRoles.publishGradesDesc') }}</span>
-          </div>
-          <ToggleSwitch v-model="permissions.publishGrades" />
-        </div>
-
-        <div class="permission-item">
-          <div class="perm-text">
-            <span class="perm-name">{{ t('teacherRoles.manageUsers') }}</span>
-            <span class="perm-desc">{{ t('teacherRoles.manageUsersDesc') }}</span>
-          </div>
-          <ToggleSwitch v-model="permissions.manageUsers" />
         </div>
       </div>
     </template>
@@ -84,8 +73,9 @@ const removeGroup = (groupToRemove: string) => {
 
 <style scoped>
 .groups-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
+
 .section-label {
   font-size: 0.75rem;
   font-weight: 600;
@@ -95,55 +85,24 @@ const removeGroup = (groupToRemove: string) => {
   margin-bottom: 0.75rem;
   display: block;
 }
+
 .chips-container {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-/* Стилизация Chip (наш бейджик с крестиком) */
+.empty-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
 .custom-chip {
-  background: var(--color-primary-subtle); /* Светло-синий фон, как на макете */
+  background: var(--color-primary-subtle);
   color: var(--color-primary);
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.25rem 0.75rem;
-}
-/* Делаем крестик удаления чуть бледнее */
-:deep(.p-chip-remove-icon) {
-  color: var(--color-primary-icon-muted);
-  transition: color 0.2s;
-}
-:deep(.p-chip-remove-icon:hover) {
-  color: var(--color-primary-strong);
-}
-
-.permissions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-.permission-item {
-  border: 1px solid var(--surface-border);
-  border-radius: 8px;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--surface-ground);
-}
-.perm-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-.perm-name {
-  font-weight: 600;
-  color: var(--text-color);
-  font-size: 0.875rem;
-}
-.perm-desc {
-  font-size: 0.75rem;
-  color: var(--text-color-secondary);
 }
 </style>

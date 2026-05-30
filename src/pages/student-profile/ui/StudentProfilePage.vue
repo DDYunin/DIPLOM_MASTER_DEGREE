@@ -91,7 +91,7 @@ const handleNotFound = () => {
           :group-options="groupOptions"
         />
 
-        <SecuritySettingsCard v-model="profileDraft" mode="manage" />
+        <SecuritySettingsCard v-model="profileDraft" mode="manage" :show-mfa="false" />
 
         <div class="form-actions">
           <Button
