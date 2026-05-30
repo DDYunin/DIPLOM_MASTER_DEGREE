@@ -1,82 +1,106 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Skeleton from 'primevue/skeleton'
+import Message from 'primevue/message'
 
-import { useUserStore } from '@/entities/user'
+import { useOwnProfile, useOwnProfileSettingsForm } from '@/features/own-profile'
 import { SettingsCard } from '@/shared/ui'
+import { useNotifications } from '@/shared/model'
 
 const { t } = useI18n()
-const store = useUserStore()
+const notifications = useNotifications()
 
-const formData = ref({
-  firstName: '',
-  lastName: '',
-  patronymic: '',
-  email: '',
-  studentId: '',
-  institute: '',
-  major: '',
-  group: '',
-  department: ''
-})
+const { userId, profileQuery, updateEmailMutation, changePasswordMutation } = useOwnProfile()
 
-const emailConfig = ref({ current: '', new: '', confirm: '' })
-const securityConfig = ref({ current: '', new: '', confirm: '' })
+const profile = computed(() => profileQuery.data.value ?? null)
+const currentEmail = computed(() => profile.value?.email)
 
-onMounted(async () => {
-  await store.loadCurrentUser()
-  const user = store.currentUser
-  if (user) {
-    formData.value = {
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      patronymic: user.patronymic || '',
-      email: user.email || '',
-      studentId: user.studentId || '',
-      institute: user.institute || '',
-      major: user.major || '',
-      group: user.group || '',
-      department: user.department || ''
-    }
-    emailConfig.value.current = user.email
-  }
-})
+const {
+  errors,
+  handleSubmit,
+  hasChanges,
+  hasEmailChanges,
+  hasPasswordChanges,
+  resetSettingsForm,
+  newEmail,
+  newEmailAttrs,
+  confirmNewEmail,
+  confirmNewEmailAttrs,
+  currentPassword,
+  currentPasswordAttrs,
+  newPassword,
+  newPasswordAttrs,
+  confirmNewPassword,
+  confirmNewPasswordAttrs
+} = useOwnProfileSettingsForm(currentEmail)
+
+const isLoading = computed(() => profileQuery.isPending.value)
+const isSaving = computed(
+  () => updateEmailMutation.isPending.value || changePasswordMutation.isPending.value
+)
 
 const userInitials = computed(() => {
-  if (!formData.value.firstName && !formData.value.lastName) return 'ST'
-  return `${formData.value.firstName.charAt(0)}${formData.value.lastName.charAt(0)}`.toUpperCase()
+  if (!profile.value) {
+    return 'ST'
+  }
+
+  if (profile.value.avatarInitials) {
+    return profile.value.avatarInitials
+  }
+
+  return `${profile.value.firstName.charAt(0)}${profile.value.lastName.charAt(0)}`.toUpperCase()
 })
 
-const handleSaveProfile = async () => {
-  // Только редактируемые поля
-  await store.updateProfile({
-    firstName: formData.value.firstName,
-    lastName: formData.value.lastName,
-    patronymic: formData.value.patronymic
-  })
-}
+const handleSave = handleSubmit(async (formValues) => {
+  try {
+    if (hasEmailChanges.value) {
+      await updateEmailMutation.mutateAsync(formValues.newEmail.trim())
+      notifications.showToast('success', t('common.save'), t('teacherProfile.saved'))
+    }
+
+    if (hasPasswordChanges.value) {
+      await changePasswordMutation.mutateAsync({
+        oldPassword: formValues.currentPassword,
+        newPassword: formValues.newPassword
+      })
+      notifications.showToast('success', t('common.success'), t('teacherProfile.passwordUpdated'))
+    }
+
+    resetSettingsForm()
+  } catch {
+    // Ошибка уже обработана глобальным API-клиентом
+  }
+})
 </script>
 
 <template>
   <div class="profile-widget">
-    <div v-if="store.isLoading" class="loading-state">
+    <Message v-if="!userId" severity="error" :closable="false">
+      {{ t('teacherProfile.noUserId') }}
+    </Message>
+
+    <Message v-else-if="profileQuery.isError.value" severity="error" :closable="false">
+      {{ t('teacherProfile.loadError') }}
+    </Message>
+
+    <div v-else-if="isLoading || !profile" class="loading-state">
       <Skeleton height="300px" borderRadius="var(--radius-md)" />
+      <Skeleton height="200px" borderRadius="var(--radius-md)" />
       <Skeleton height="200px" borderRadius="var(--radius-md)" />
     </div>
 
-    <template v-else>
-      <!-- Block 1: Profile Information -->
+    <form v-else class="profile-form" @submit.prevent="handleSave">
       <SettingsCard :title="t('teacherProfile.profileInfo')" icon="pi pi-user">
         <div class="profile-info-body">
           <div class="avatar-section">
             <div class="avatar-wrapper">
               <Avatar :label="userInitials" size="xlarge" shape="circle" class="profile-avatar" />
-              <button class="avatar-edit-btn" :aria-label="t('aria.editAvatar')">
+              <button type="button" class="avatar-edit-btn" :aria-label="t('teacherProfile.editAvatar')">
                 <i class="pi pi-camera"></i>
               </button>
             </div>
@@ -85,106 +109,156 @@ const handleSaveProfile = async () => {
           <div class="fields-grid">
             <div class="field-group">
               <label>{{ t('teacherProfile.lastName') }}</label>
-              <InputText v-model="formData.lastName" class="w-full" />
+              <InputText :value="profile.lastName" disabled class="w-full" />
             </div>
             <div class="field-group">
               <label>{{ t('teacherProfile.firstName') }}</label>
-              <InputText v-model="formData.firstName" class="w-full" />
+              <InputText :value="profile.firstName" disabled class="w-full" />
             </div>
             <div class="field-group">
               <label>{{ t('teacherProfile.patronymic') }}</label>
-              <InputText v-model="formData.patronymic" class="w-full" />
+              <InputText :value="profile.patronymic ?? ''" disabled class="w-full" />
             </div>
             <div class="field-group">
               <label>{{ t('teacherProfile.institute') }}</label>
-              <InputText v-model="formData.institute" class="w-full" readonly />
+              <InputText :value="profile.institute ?? ''" disabled class="w-full" />
             </div>
             <div class="field-group">
               <label>{{ t('teacherProfile.major') }}</label>
-              <InputText v-model="formData.major" class="w-full" readonly />
+              <InputText :value="profile.major ?? ''" disabled class="w-full" />
             </div>
             <div class="field-group">
-              <label>{{ t('profileCard.department') }}</label>
-              <InputText v-model="formData.department" class="w-full" readonly />
+              <label>{{ t('teacherProfile.department') }}</label>
+              <InputText :value="profile.department ?? ''" disabled class="w-full" />
             </div>
             <div class="field-group">
               <label>{{ t('teacherProfile.group') }}</label>
-              <InputText v-model="formData.group" class="w-full" readonly />
+              <InputText :value="profile.group ?? ''" disabled class="w-full" />
             </div>
             <div class="field-group">
               <label>{{ t('teacherProfile.studentId') }}</label>
-              <InputText v-model="formData.studentId" class="w-full" readonly />
+              <InputText
+                :value="profile.studentId ?? profile.identifier ?? ''"
+                disabled
+                class="w-full"
+              />
             </div>
           </div>
         </div>
-
-        <template #footer>
-          <Button
-            :label="t('common.saveChanges')"
-            severity="primary"
-            size="small"
-            @click="handleSaveProfile"
-          />
-        </template>
       </SettingsCard>
 
-      <!-- Block 2: Email Configuration -->
       <SettingsCard :title="t('teacherProfile.emailConfig')" icon="pi pi-envelope">
         <div class="email-body">
           <div class="field-group full-width">
             <label>{{ t('teacherProfile.currentEmail') }}</label>
             <div class="p-inputgroup">
               <span class="p-inputgroup-addon"><i class="pi pi-envelope"></i></span>
-              <InputText v-model="emailConfig.current" readonly />
+              <InputText :value="profile.email" readonly />
             </div>
           </div>
           <div class="field-group">
-            <label>{{ t('teacherProfile.newEmail') }}</label>
+            <label>{{ t('teacherProfile.newEmailLabel') }}</label>
             <InputText
-              v-model="emailConfig.new"
+              v-model="newEmail"
+              v-bind="newEmailAttrs"
               :placeholder="t('teacherProfile.newEmail')"
+              :invalid="!!errors.newEmail"
               class="w-full"
             />
+            <small v-if="errors.newEmail" class="field-error">{{ errors.newEmail }}</small>
           </div>
           <div class="field-group">
-            <label>{{ t('teacherProfile.confirmEmail') }}</label>
+            <label>{{ t('teacherProfile.confirmNewEmailLabel') }}</label>
             <InputText
-              v-model="emailConfig.confirm"
+              v-model="confirmNewEmail"
+              v-bind="confirmNewEmailAttrs"
               :placeholder="t('teacherProfile.confirmEmail')"
+              :invalid="!!errors.confirmNewEmail"
               class="w-full"
             />
+            <small v-if="errors.confirmNewEmail" class="field-error">{{ errors.confirmNewEmail }}</small>
           </div>
         </div>
       </SettingsCard>
 
-      <!-- Block 3: Security & Password -->
       <SettingsCard :title="t('teacherProfile.security')" icon="pi pi-lock">
         <div class="security-body">
           <div class="field-group full-width">
-            <label>CURRENT PASSWORD</label>
-            <Password v-model="securityConfig.current" toggleMask :feedback="false" fluid />
+            <label>{{ t('teacherProfile.currentPassword') }}</label>
+            <Password
+              v-model="currentPassword"
+              v-bind="currentPasswordAttrs"
+              toggleMask
+              :feedback="false"
+              :invalid="!!errors.currentPassword"
+              fluid
+            />
+            <small v-if="errors.currentPassword" class="field-error">{{ errors.currentPassword }}</small>
           </div>
           <div class="field-group">
-            <label>NEW PASSWORD</label>
-            <Password v-model="securityConfig.new" toggleMask fluid />
+            <label>{{ t('teacherProfile.newPassword') }}</label>
+            <Password
+              v-model="newPassword"
+              v-bind="newPasswordAttrs"
+              toggleMask
+              :invalid="!!errors.newPassword"
+              fluid
+            />
+            <small v-if="errors.newPassword" class="field-error">{{ errors.newPassword }}</small>
           </div>
           <div class="field-group">
-            <label>CONFIRM NEW PASSWORD</label>
-            <Password v-model="securityConfig.confirm" toggleMask :feedback="false" fluid />
+            <label>{{ t('teacherProfile.confirmPassword') }}</label>
+            <Password
+              v-model="confirmNewPassword"
+              v-bind="confirmNewPasswordAttrs"
+              toggleMask
+              :feedback="false"
+              :invalid="!!errors.confirmNewPassword"
+              fluid
+            />
+            <small v-if="errors.confirmNewPassword" class="field-error">{{ errors.confirmNewPassword }}</small>
+          </div>
+
+          <div class="hint-box full-width">
+            {{ t('teacherProfile.passwordHint') }}
           </div>
         </div>
       </SettingsCard>
-    </template>
+
+      <div class="actions-footer">
+        <Button
+          type="button"
+          :label="t('common.cancel')"
+          severity="secondary"
+          outlined
+          :disabled="isSaving || !hasChanges"
+          @click="resetSettingsForm"
+        />
+        <Button
+          type="submit"
+          :label="t('common.saveChanges')"
+          icon="pi pi-check"
+          severity="success"
+          :loading="isSaving"
+          :disabled="!hasChanges"
+        />
+      </div>
+    </form>
   </div>
 </template>
 
 <style scoped>
-/* Стили стали в 2 раза меньше, так как каркас ушел в SettingsCard! */
 .profile-widget {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   max-width: 1000px;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .loading-state {
@@ -205,6 +279,11 @@ const handleSaveProfile = async () => {
   color: var(--text-color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+.field-error {
+  color: var(--color-danger, #ef4444);
+  font-size: 0.75rem;
 }
 
 .w-full {
@@ -272,6 +351,27 @@ const handleSaveProfile = async () => {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
+}
+
+.hint-box {
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary-text-on-subtle);
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.actions-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+:deep(.p-inputtext:disabled) {
+  opacity: 0.7;
+  background-color: var(--surface-ground);
 }
 
 @media (max-width: 768px) {

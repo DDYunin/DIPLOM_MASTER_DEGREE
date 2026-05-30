@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
 
 import Password from 'primevue/password'
 import ToggleSwitch from 'primevue/toggleswitch'
@@ -10,20 +12,26 @@ import Message from 'primevue/message'
 import { WidgetCard } from '@/shared/ui'
 import { useNotifications } from '@/shared/model'
 import type { User } from '@/entities/user'
+import { createChangePasswordSchema, getChangePasswordInitialValues } from '@/features/own-profile'
 
 const props = withDefaults(
   defineProps<{
     modelValue: User
-    mode?: 'self' | 'manage' // Режим отображения: 'self' (свой пароль) или 'manage' (управление чужим)
+    mode?: 'self' | 'manage'
+    passwordLoading?: boolean
   }>(),
   {
-    mode: 'manage' // По умолчанию считаем, что мы управляем кем-то
+    mode: 'manage',
+    passwordLoading: false
   }
 )
 
 const { t } = useI18n()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: User]
+  'update-password': [payload: { oldPassword: string; newPassword: string }]
+}>()
 const notifications = useNotifications()
 
 // Двухстороннее связывание профиля
@@ -32,12 +40,16 @@ const profile = computed({
   set: (val) => emit('update:modelValue', val)
 })
 
-// Локальное состояние для формы смены пароля (используется только в режиме 'self')
-const passwords = ref({
-  current: '',
-  new: '',
-  confirm: ''
+const validationSchema = computed(() => toTypedSchema(createChangePasswordSchema(t)))
+
+const { defineField, errors, handleSubmit, resetForm } = useForm({
+  validationSchema,
+  initialValues: getChangePasswordInitialValues()
 })
+
+const [currentPassword, currentPasswordAttrs] = defineField('currentPassword')
+const [newPassword, newPasswordAttrs] = defineField('newPassword')
+const [confirmNewPassword, confirmNewPasswordAttrs] = defineField('confirmNewPassword')
 
 // Экшены для режима 'manage'
 const handleSendResetLink = () => {
@@ -56,6 +68,19 @@ const handleGeneratePassword = () => {
     'New temporary password generated and sent to user.'
   )
 }
+
+const handleUpdatePassword = handleSubmit((formValues) => {
+  emit('update-password', {
+    oldPassword: formValues.currentPassword,
+    newPassword: formValues.newPassword
+  })
+})
+
+const clearPasswordFields = () => {
+  resetForm({ values: getChangePasswordInitialValues() })
+}
+
+defineExpose({ clearPasswordFields })
 </script>
 
 <template>
@@ -72,40 +97,58 @@ const handleGeneratePassword = () => {
         <div class="form-field full-width">
           <label>{{ t('securityCard.currentPassword') }}</label>
           <Password
-            v-model="passwords.current"
+            v-model="currentPassword"
+            v-bind="currentPasswordAttrs"
             :feedback="false"
             toggleMask
+            :invalid="!!errors.currentPassword"
             class="w-full"
             inputClass="w-full"
           />
+          <small v-if="errors.currentPassword" class="field-error">{{ errors.currentPassword }}</small>
         </div>
 
         <div class="form-field">
           <label>{{ t('securityCard.newPassword') }}</label>
           <Password
-            v-model="passwords.new"
+            v-model="newPassword"
+            v-bind="newPasswordAttrs"
             :feedback="true"
             toggleMask
+            :invalid="!!errors.newPassword"
             class="w-full"
             inputClass="w-full"
           />
+          <small v-if="errors.newPassword" class="field-error">{{ errors.newPassword }}</small>
         </div>
 
         <div class="form-field">
           <label>{{ t('securityCard.confirmPassword') }}</label>
           <Password
-            v-model="passwords.confirm"
+            v-model="confirmNewPassword"
+            v-bind="confirmNewPasswordAttrs"
             :feedback="false"
             toggleMask
+            :invalid="!!errors.confirmNewPassword"
             class="w-full"
             inputClass="w-full"
           />
+          <small v-if="errors.confirmNewPassword" class="field-error">{{ errors.confirmNewPassword }}</small>
         </div>
       </div>
 
       <Message severity="info" :closable="false" class="custom-message">
         {{ t('securityCard.passwordHint') }}
       </Message>
+
+      <div class="password-actions">
+        <Button
+          :label="t('securityCard.updatePassword')"
+          icon="pi pi-lock"
+          :loading="passwordLoading"
+          @click="handleUpdatePassword"
+        />
+      </div>
     </div>
 
     <!-- ================================================== -->
@@ -184,6 +227,10 @@ const handleGeneratePassword = () => {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+.field-error {
+  color: var(--color-danger, #ef4444);
+  font-size: 0.75rem;
+}
 .w-full {
   width: 100%;
 }
@@ -192,6 +239,10 @@ const handleGeneratePassword = () => {
 }
 .custom-message {
   margin-top: 0.5rem;
+}
+.password-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Стили для управления доступом (Режим Manage) */

@@ -1,41 +1,111 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { type QuestionType, type Difficulty } from '@/entities/question-bank'
+import { type QuestionType } from '@/entities/question-bank'
 import { useQuestionBanksManagerStore } from '../model/store'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import Message from 'primevue/message'
+import Skeleton from 'primevue/skeleton'
+import { useConfirm } from 'primevue/useconfirm'
 
-const { t } = useI18n()
+import { useNotifications } from '@/shared/model'
+
+const { t, locale } = useI18n()
 const widgetStore = useQuestionBanksManagerStore()
 const router = useRouter()
+const confirm = useConfirm()
+const notifications = useNotifications()
+
+const bankTitleDraft = ref('')
+const bankDescriptionDraft = ref('')
+
+const syncDraftFromSelectedBank = () => {
+  if (!widgetStore.selectedBank) {
+    bankTitleDraft.value = ''
+    bankDescriptionDraft.value = ''
+    return
+  }
+
+  bankTitleDraft.value = widgetStore.selectedBank.title
+  bankDescriptionDraft.value = widgetStore.selectedBank.description
+}
+
+const hasBankChanges = computed(() => {
+  if (!widgetStore.selectedBank) {
+    return false
+  }
+
+  return (
+    bankTitleDraft.value.trim() !== widgetStore.selectedBank.title ||
+    bankDescriptionDraft.value.trim() !== widgetStore.selectedBank.description
+  )
+})
+
+const handleSelectBank = async (bankId: string) => {
+  await widgetStore.selectBank(bankId)
+  syncDraftFromSelectedBank()
+}
+
+const handleSaveBank = async () => {
+  if (!hasBankChanges.value) {
+    return
+  }
+
+  await widgetStore.updateSelectedBank(
+    {
+      title: bankTitleDraft.value.trim(),
+      description: bankDescriptionDraft.value.trim()
+    },
+    locale.value
+  )
+  syncDraftFromSelectedBank()
+}
+
+const handleDeleteBank = () => {
+  if (!widgetStore.selectedBankId) {
+    return
+  }
+
+  confirm.require({
+    message: t('teacherQuestionBanks.deleteBankConfirm'),
+    header: t('teacherQuestionBanks.deleteBank'),
+    icon: 'pi pi-exclamation-triangle',
+    rejectLabel: t('common.cancel'),
+    acceptLabel: t('common.delete'),
+    acceptClass: 'p-button-danger',
+    accept: async () => {
+      await widgetStore.deleteSelectedBank()
+      notifications.showToast('success', t('common.delete'), t('teacherQuestionBanks.bankDeleted'))
+    }
+  })
+}
 
 const emit = defineEmits<{
   (e: 'create-bank'): void
 }>()
 
-// Хелперы для стилизации бейджей
 const getTypeStyles = (type: QuestionType) => {
   switch (type) {
-    case 'multiple-choice':
-      return { bg: 'var(--color-accent-purple-muted)', color: 'var(--color-accent-purple-text)', label: 'MULTIPLE CHOICE' }
-    case 'true-false':
-      return { bg: 'var(--color-primary-muted)', color: 'var(--color-primary-text-on-subtle)', label: 'TRUE / FALSE' }
-    case 'short-answer':
-      return { bg: 'var(--color-warning-muted)', color: 'var(--color-warning-text)', label: 'SHORT ANSWER' }
-    case 'essay':
-      return { bg: 'var(--color-warning-muted)', color: 'var(--color-warning-text)', label: 'ESSAY' }
-  }
-}
-
-const getDifficultyStyles = (diff: Difficulty) => {
-  switch (diff) {
-    case 'easy':
-      return { bg: 'var(--color-success-muted)', color: 'var(--color-success-text)', label: 'EASY' }
-    case 'medium':
-      return { bg: 'var(--color-caution-muted)', color: 'var(--color-caution-text)', label: 'MEDIUM' }
-    case 'hard':
-      return { bg: 'var(--color-danger-muted)', color: 'var(--color-danger-text)', label: 'HARD' }
+    case 'SINGLE':
+      return {
+        bg: 'var(--color-primary-muted)',
+        color: 'var(--color-primary-text-on-subtle)',
+        label: t('bankQuestions.types.single')
+      }
+    case 'MULTIPLE':
+      return {
+        bg: 'var(--color-accent-purple-muted)',
+        color: 'var(--color-accent-purple-text)',
+        label: t('bankQuestions.types.multiple')
+      }
+    case 'TEXT':
+      return {
+        bg: 'var(--color-warning-muted)',
+        color: 'var(--color-warning-text)',
+        label: t('bankQuestions.types.text')
+      }
   }
 }
 
@@ -62,13 +132,21 @@ const goToAllQuestions = () => {
         <span class="total-badge">{{ widgetStore.totalBanks }} Total</span>
       </div>
 
-      <div class="banks-list">
+      <Message v-if="widgetStore.loadError" severity="error" :closable="false" class="sidebar-error">
+        {{ t('teacherQuestionBanks.loadError') }}
+      </Message>
+
+      <div v-if="widgetStore.isLoading" class="banks-list banks-list--loading">
+        <Skeleton v-for="index in 3" :key="index" height="96px" class="bank-skeleton" />
+      </div>
+
+      <div v-else class="banks-list">
         <div
           v-for="bank in widgetStore.banksList"
           :key="bank.id"
           class="bank-item"
           :class="{ 'bank-item--active': widgetStore.selectedBankId === bank.id }"
-          @click="widgetStore.selectBank(bank.id)"
+          @click="handleSelectBank(bank.id)"
         >
           <h4 class="bank-title">{{ bank.title }}</h4>
           <p class="bank-desc">{{ bank.description }}</p>
@@ -113,22 +191,24 @@ const goToAllQuestions = () => {
                 icon="pi pi-trash"
                 text
                 rounded
-                severity="secondary"
-                aria-label="Delete Bank"
+                severity="danger"
+                :aria-label="t('teacherQuestionBanks.deleteBank')"
+                :loading="widgetStore.isSaving"
+                @click="handleDeleteBank"
               />
-              <Button :label="t('common.saveChanges')" icon="pi pi-save" text />
+              <Button :label="t('common.saveChanges')" icon="pi pi-save" text :loading="widgetStore.isSaving" :disabled="!hasBankChanges" @click="handleSaveBank" />
             </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">{{ t('teacherQuestionBanks.bankTitle') }}</label>
             <!-- Спец. класс filled-input для имитации серого фона как на макете -->
-            <InputText v-model="widgetStore.selectedBank.title" class="w-full filled-input" />
+            <InputText v-model="bankTitleDraft" class="w-full filled-input" />
           </div>
 
           <div class="form-group">
             <label class="form-label">{{ t('teacherQuestionBanks.description') }}</label>
-            <InputText v-model="widgetStore.selectedBank.description" class="w-full filled-input" />
+            <InputText v-model="bankDescriptionDraft" class="w-full filled-input" />
           </div>
         </section>
 
@@ -145,7 +225,15 @@ const goToAllQuestions = () => {
             </div>
           </div>
 
-          <div class="questions-list">
+          <div v-if="widgetStore.isQuestionsLoading" class="questions-list">
+            <Skeleton v-for="index in 3" :key="index" height="120px" />
+          </div>
+
+          <div v-else-if="widgetStore.selectedBank.questions.length === 0" class="questions-empty">
+            {{ t('teacherQuestionBanks.noQuestionsYet') }}
+          </div>
+
+          <div v-else class="questions-list">
             <div
               v-for="(question, index) in widgetStore.selectedBank.questions"
               :key="question.id"
@@ -170,15 +258,7 @@ const goToAllQuestions = () => {
                   >
                     {{ getTypeStyles(question.type).label }}
                   </span>
-                  <span
-                    class="custom-badge"
-                    :style="{
-                      backgroundColor: getDifficultyStyles(question.difficulty).bg,
-                      color: getDifficultyStyles(question.difficulty).color
-                    }"
-                  >
-                    {{ getDifficultyStyles(question.difficulty).label }}
-                  </span>
+                  <span class="points-badge">{{ question.points }} pts</span>
                 </div>
 
                 <h4 class="question-text">{{ question.text }}</h4>
@@ -251,6 +331,19 @@ const goToAllQuestions = () => {
   flex-direction: column;
   max-height: 700px;
   overflow-y: auto;
+}
+
+.banks-list--loading {
+  padding: 1rem;
+  gap: 0.75rem;
+}
+
+.bank-skeleton {
+  border-radius: var(--radius-md);
+}
+
+.sidebar-error {
+  margin: 1rem;
 }
 
 .bank-item {
@@ -455,6 +548,13 @@ const goToAllQuestions = () => {
   gap: 1rem;
 }
 
+.questions-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--text-color-muted);
+  font-size: 0.875rem;
+}
+
 .question-card {
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
@@ -508,6 +608,15 @@ const goToAllQuestions = () => {
   padding: 0.25rem 0.5rem;
   border-radius: var(--radius-md);
   letter-spacing: 0.5px;
+}
+
+.points-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-subtle);
+  color: var(--text-color-muted);
 }
 
 .question-text {

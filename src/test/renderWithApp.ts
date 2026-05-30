@@ -1,10 +1,10 @@
 import { mount, type MountingOptions, type VueWrapper } from '@vue/test-utils'
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import PrimeVue from 'primevue/config'
-import Aura from '@primeuix/themes/aura'
 import type { Component } from 'vue'
 
 import { i18n } from '@/shared/config/i18n'
+import { primeVueThemeConfig } from '@/shared/config/theme'
 
 export const createTestQueryClient = () =>
   new QueryClient({
@@ -36,12 +36,7 @@ export const renderWithApp = <C extends Component>(
         [
           PrimeVue,
           {
-            theme: {
-              preset: Aura,
-              options: {
-                darkModeSelector: 'html.my-app-dark'
-              }
-            }
+            theme: primeVueThemeConfig
           }
         ],
         ...(options.global?.plugins ?? [])

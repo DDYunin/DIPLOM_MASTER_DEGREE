@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { useQuestionBankEntityStore, questionBankApi } from '@/entities/question-bank'
+import { useQuestionBankEntityStore, questionBankApi, mapBanksToQuestionBanks } from '@/entities/question-bank'
+import { getCurrentUserIdAsNumber } from '@/shared/lib/jwt'
 import type { QuizBankConfig } from './types'
 
 export const useQuizBuilderStore = defineStore('widget-quiz-builder', () => {
@@ -41,10 +42,16 @@ export const useQuizBuilderStore = defineStore('widget-quiz-builder', () => {
     isLoading.value = true
     try {
       // 1. Загружаем доступные банки из API
-      const banks = await questionBankApi.fetchBanks()
+      const userId = getCurrentUserIdAsNumber()
+      if (!userId) {
+        return
+      }
+
+      const banks = await questionBankApi.fetchBanks(userId)
+      const mappedBanks = mapBanksToQuestionBanks(banks)
 
       // 2. Кладем "мясо" (объекты) в глобальную базу
-      entityStore.upsertBanks(banks)
+      entityStore.upsertBanks(mappedBanks)
 
       // 3. Строим локальную конфигурацию для UI
       if (editData) {
@@ -55,7 +62,7 @@ export const useQuizBuilderStore = defineStore('widget-quiz-builder', () => {
         // и т.д., мапим bankConfigs из editData
       } else {
         // Режим создания (дефолтные настройки)
-        bankConfigs.value = banks.map((bank) => ({
+        bankConfigs.value = mappedBanks.map((bank) => ({
           bankId: bank.id,
           isSelected: false,
           drawCount: 0,

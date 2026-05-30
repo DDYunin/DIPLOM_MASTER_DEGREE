@@ -1,33 +1,24 @@
 import { api } from '@/shared/api'
-import type { Course, StudentCourse, StudentCourseDetails  } from '../model/types'
+import { courseApiPath } from '@/shared/config/api-routes'
 
-// === GET ===
-// Получить список курсов преподавателя
-export const fetchCoursesList = () => api<Course[]>('/teacher/courses')
+import type { Course, StudentCourse, StudentCourseDetails } from '../model/types'
 
-// === POST / PATCH ===
-// (Предполагаю синтаксис передачи body для вашей обертки нативного fetch)
+export const fetchCoursesList = () => api<Course[]>(courseApiPath('/teacher/courses'))
 
-// Создать новый курс
 export const createCourse = (courseData: Partial<Course>) =>
-  api<Course>('/teacher/courses', {
+  api<Course>(courseApiPath('/teacher/courses'), {
     method: 'POST',
     body: JSON.stringify(courseData)
   })
 
-// Обновить данные курса по ID
 export const updateCourseById = (id: string, updatedData: Partial<Course>) =>
-  api<Course>(`/teacher/courses/${id}`, {
+  api<Course>(courseApiPath(`/teacher/courses/${id}`), {
     method: 'PATCH',
     body: JSON.stringify(updatedData)
   })
 
-// Методы для студента
+export const fetchStudentCoursesList = () =>
+  api<StudentCourse[]>(courseApiPath('/student/courses'))
 
-// === GET ===
-export const fetchStudentCoursesList = () => api<StudentCourse[]>('/student/courses')
-
-// TODO: получить детальную инфу по курсу
-
-export const fetchStudentCourseDetails = (id: string) => 
-  api<StudentCourseDetails>(`/student/courses/${id}`)
+export const fetchStudentCourseDetails = (id: string) =>
+  api<StudentCourseDetails>(courseApiPath(`/student/courses/${id}`))

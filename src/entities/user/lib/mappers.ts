@@ -1,19 +1,15 @@
 import { ROLES } from '@/shared/config/roles'
-import type { AdminUserListItemDto } from '../api/types'
+import type {
+  AdminUserDetailsResponse,
+  AdminUserListItemDto,
+  UserResponseDto
+} from '../api/types'
 import type { User, UserRole, UserStatus } from '../model/types'
 
 const BACKEND_ROLE_TO_USER_ROLE: Record<string, UserRole> = {
   [ROLES.ADMIN]: 'Super Admin',
-  ADMIN: 'Super Admin',
   [ROLES.TEACHER]: 'Teacher',
-  TEACHER: 'Teacher',
-  Teacher: 'Teacher',
   [ROLES.STUDENT]: 'Student',
-  STUDENT: 'Student',
-  Student: 'Student',
-  ROLE_MODERATOR: 'Moderator',
-  MODERATOR: 'Moderator',
-  Moderator: 'Moderator'
 }
 
 const ROLE_PRIORITY: string[] = [ROLES.ADMIN, ROLES.TEACHER, ROLES.STUDENT]
@@ -34,16 +30,81 @@ const resolvePrimaryRole = (roles: string[]): UserRole => {
   return toUserRole(roles[0])
 }
 
-const buildFullName = (dto: AdminUserListItemDto): string => {
-  const parts = [dto.lastName, dto.firstName, dto.middleName].filter(Boolean)
-  return parts.join(' ') || dto.username
+const buildFullName = (parts: {
+  lastName?: string
+  firstName?: string
+  middleName?: string
+  username?: string
+}): string => {
+  const name = [parts.lastName, parts.firstName, parts.middleName].filter(Boolean).join(' ')
+  return name || parts.username || ''
 }
 
-const buildAvatarInitials = (dto: AdminUserListItemDto): string => {
-  const firstInitial = dto.firstName?.charAt(0) ?? ''
-  const lastInitial = dto.lastName?.charAt(0) ?? ''
+const buildAvatarInitials = (firstName?: string, lastName?: string): string => {
+  const firstInitial = firstName?.charAt(0) ?? ''
+  const lastInitial = lastName?.charAt(0) ?? ''
   return `${firstInitial}${lastInitial}`.toUpperCase()
 }
+
+const buildFullNameFromListItem = (dto: AdminUserListItemDto): string =>
+  buildFullName({
+    lastName: dto.lastName,
+    firstName: dto.firstName,
+    middleName: dto.middleName,
+    username: dto.username
+  })
+
+const buildAvatarInitialsFromListItem = (dto: AdminUserListItemDto): string =>
+  buildAvatarInitials(dto.firstName, dto.lastName)
+
+export const mapUserResponseToUser = (dto: UserResponseDto): User => {
+  const status: UserStatus = dto.active ? 'Active' : 'Inactive'
+
+  return {
+    id: dto.id,
+    firstName: dto.firstName,
+    lastName: dto.lastName,
+    patronymic: dto.middleName,
+    fullName: buildFullName({
+      lastName: dto.lastName,
+      firstName: dto.firstName,
+      middleName: dto.middleName,
+      username: dto.username
+    }),
+    email: dto.email,
+    role: resolvePrimaryRole(dto.roles),
+    status,
+    identifier: dto.username,
+    studentId: dto.username,
+    avatarInitials: buildAvatarInitials(dto.firstName, dto.lastName)
+  }
+}
+
+export const mapAdminUserDetailsToUser = (
+  dto: AdminUserDetailsResponse,
+  userId: string
+): User => ({
+  id: userId,
+  firstName: dto.firstName,
+  lastName: dto.lastName,
+  patronymic: dto.middleName,
+  fullName: buildFullName({
+    lastName: dto.lastName,
+    firstName: dto.firstName,
+    middleName: dto.middleName,
+    username: dto.username
+  }),
+  email: dto.email,
+  role: resolvePrimaryRole(dto.roles),
+  status: 'Active',
+  identifier: dto.username,
+  institute: dto.faculty,
+  department: dto.department,
+  major: dto.fieldOfStudy,
+  group: dto.studentGroup,
+  studentId: dto.username,
+  avatarInitials: buildAvatarInitials(dto.firstName, dto.lastName)
+})
 
 export const mapAdminUserListItemToUser = (dto: AdminUserListItemDto): User => {
   const status: UserStatus = dto.active ? 'Active' : 'Inactive'
@@ -53,12 +114,12 @@ export const mapAdminUserListItemToUser = (dto: AdminUserListItemDto): User => {
     firstName: dto.firstName,
     lastName: dto.lastName,
     patronymic: dto.middleName,
-    fullName: buildFullName(dto),
+    fullName: buildFullNameFromListItem(dto),
     email: dto.email,
     role: resolvePrimaryRole(dto.roles),
     status,
     department: dto.department,
-    avatarInitials: buildAvatarInitials(dto)
+    avatarInitials: buildAvatarInitialsFromListItem(dto)
   }
 }
 

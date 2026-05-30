@@ -1,199 +1,260 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
+import Message from 'primevue/message'
+import Skeleton from 'primevue/skeleton'
+
+import { useOwnProfile, useOwnProfileSettingsForm } from '@/features/own-profile'
+import { useNotifications } from '@/shared/model'
 
 const { t } = useI18n()
+const notifications = useNotifications()
 
-const personalInfo = ref({
-  firstName: 'John',
-  lastName: 'Smith',
-  patronymic: 'Robertovich',
-  institute: 'Faculty of Computer Science',
-  department: 'Software Engineering',
-  avatarInitials: 'JS'
+const { userId, profileQuery, updateEmailMutation, changePasswordMutation } = useOwnProfile()
+
+const profile = computed(() => profileQuery.data.value ?? null)
+const currentEmail = computed(() => profile.value?.email)
+
+const {
+  errors,
+  handleSubmit,
+  hasChanges,
+  hasEmailChanges,
+  hasPasswordChanges,
+  resetSettingsForm,
+  newEmail,
+  newEmailAttrs,
+  confirmNewEmail,
+  confirmNewEmailAttrs,
+  currentPassword,
+  currentPasswordAttrs,
+  newPassword,
+  newPasswordAttrs,
+  confirmNewPassword,
+  confirmNewPasswordAttrs
+} = useOwnProfileSettingsForm(currentEmail)
+
+const isLoading = computed(() => profileQuery.isPending.value)
+const isSaving = computed(
+  () => updateEmailMutation.isPending.value || changePasswordMutation.isPending.value
+)
+
+const avatarInitials = computed(() => {
+  if (!profile.value) {
+    return ''
+  }
+
+  if (profile.value.avatarInitials) {
+    return profile.value.avatarInitials
+  }
+
+  return `${profile.value.firstName.charAt(0)}${profile.value.lastName.charAt(0)}`.toUpperCase()
 })
 
-// Состояние формы для Email
-const emailForm = ref({
-  currentEmail: 'john.smith@university.edu',
-  newEmail: '',
-  confirmNewEmail: ''
+const handleSave = handleSubmit(async (formValues) => {
+  try {
+    if (hasEmailChanges.value) {
+      await updateEmailMutation.mutateAsync(formValues.newEmail.trim())
+      notifications.showToast('success', t('common.save'), t('teacherProfile.saved'))
+    }
+
+    if (hasPasswordChanges.value) {
+      await changePasswordMutation.mutateAsync({
+        oldPassword: formValues.currentPassword,
+        newPassword: formValues.newPassword
+      })
+      notifications.showToast('success', t('common.success'), t('teacherProfile.passwordUpdated'))
+    }
+
+    resetSettingsForm()
+  } catch {
+    // Ошибка уже обработана глобальным API-клиентом
+  }
 })
-
-// Состояние формы для Пароля
-const passwordForm = ref({
-  currentPassword: '',
-  newPassword: '',
-  confirmNewPassword: ''
-})
-
-const handleSave = () => {
-  console.log('Saving changes...', {
-    email: emailForm.value.newEmail,
-    password: passwordForm.value.newPassword
-  })
-  // Здесь будет логика отправки на бэкенд
-}
-
-const handleCancel = () => {
-  // Сброс форм
-  emailForm.value.newEmail = ''
-  emailForm.value.confirmNewEmail = ''
-  passwordForm.value.currentPassword = ''
-  passwordForm.value.newPassword = ''
-  passwordForm.value.confirmNewPassword = ''
-}
 </script>
 
 <template>
   <div class="profile-settings-widget">
-    <!-- КАРТОЧКА 1: Personal Information (Только чтение) -->
-    <div class="settings-card">
-      <div class="card-header">
-        <div class="header-title">
-          <i class="pi pi-user"></i>
-          <span>{{ t('teacherProfile.profileInfo') }}</span>
+    <Message v-if="!userId" severity="error" :closable="false">
+      {{ t('teacherProfile.noUserId') }}
+    </Message>
+
+    <Message v-else-if="profileQuery.isError.value" severity="error" :closable="false">
+      {{ t('teacherProfile.loadError') }}
+    </Message>
+
+    <template v-else-if="isLoading || !profile">
+      <Skeleton width="100%" height="280px" borderRadius="12px" />
+      <Skeleton width="100%" height="180px" borderRadius="12px" />
+      <Skeleton width="100%" height="220px" borderRadius="12px" />
+    </template>
+
+    <form v-else class="profile-settings-form" @submit.prevent="handleSave">
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-title">
+            <i class="pi pi-user"></i>
+            <span>{{ t('teacherProfile.profileInfo') }}</span>
+          </div>
+        </div>
+
+        <div class="card-body info-layout">
+          <div class="avatar-section">
+            <div class="avatar-circle">
+              {{ avatarInitials }}
+              <button type="button" class="avatar-edit-btn" :aria-label="t('teacherProfile.editAvatar')">
+                <i class="pi pi-camera"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="fields-grid">
+            <div class="field-group">
+              <label>{{ t('teacherProfile.lastName') }}</label>
+              <InputText :value="profile.lastName" disabled class="w-full" />
+            </div>
+            <div class="field-group">
+              <label>{{ t('teacherProfile.firstName') }}</label>
+              <InputText :value="profile.firstName" disabled class="w-full" />
+            </div>
+            <div class="field-group">
+              <label>{{ t('teacherProfile.patronymic') }}</label>
+              <InputText :value="profile.patronymic ?? ''" disabled class="w-full" />
+            </div>
+            <div class="field-group">
+              <label>{{ t('teacherProfile.institute') }}</label>
+              <InputText :value="profile.institute ?? ''" disabled class="w-full" />
+            </div>
+            <div class="field-group">
+              <label>{{ t('teacherProfile.department') }}</label>
+              <InputText :value="profile.department ?? ''" disabled class="w-full" />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="card-body info-layout">
-        <!-- Аватарка (как на макете) -->
-        <div class="avatar-section">
-          <div class="avatar-circle">
-            {{ personalInfo.avatarInitials }}
-            <button class="avatar-edit-btn" :aria-label="t('teacherProfile.editAvatar')">
-              <i class="pi pi-camera"></i>
-            </button>
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-title">
+            <i class="pi pi-envelope"></i>
+            <span>{{ t('teacherProfile.emailConfig') }}</span>
           </div>
         </div>
+        <div class="card-body">
+          <div class="field-group w-half mb-4">
+            <label>{{ t('teacherProfile.currentEmail') }}</label>
+            <div class="p-input-icon-left w-full">
+              <i class="pi pi-envelope text-muted"></i>
+              <InputText :value="profile.email" disabled class="w-full pl-5" />
+            </div>
+          </div>
 
-        <!-- Сетка полей (Disabled) -->
-        <div class="fields-grid">
-          <div class="field-group">
-            <label>LAST NAME</label>
-            <InputText :value="personalInfo.lastName" disabled class="w-full" />
-          </div>
-          <div class="field-group">
-            <label>FIRST NAME</label>
-            <InputText :value="personalInfo.firstName" disabled class="w-full" />
-          </div>
-          <div class="field-group">
-            <label>PATRONYMIC</label>
-            <InputText :value="personalInfo.patronymic" disabled class="w-full" />
-          </div>
-          <div class="field-group">
-            <label>INSTITUTE</label>
-            <InputText :value="personalInfo.institute" disabled class="w-full" />
-          </div>
-          <div class="field-group">
-            <label>DEPARTMENT</label>
-            <InputText :value="personalInfo.department" disabled class="w-full" />
+          <div class="fields-grid-2">
+            <div class="field-group">
+              <label>{{ t('teacherProfile.newEmailLabel') }}</label>
+              <InputText
+                v-model="newEmail"
+                v-bind="newEmailAttrs"
+                :placeholder="t('teacherProfile.newEmail')"
+                :invalid="!!errors.newEmail"
+                class="w-full"
+              />
+              <small v-if="errors.newEmail" class="field-error">{{ errors.newEmail }}</small>
+            </div>
+            <div class="field-group">
+              <label>{{ t('teacherProfile.confirmNewEmailLabel') }}</label>
+              <InputText
+                v-model="confirmNewEmail"
+                v-bind="confirmNewEmailAttrs"
+                :placeholder="t('teacherProfile.confirmEmail')"
+                :invalid="!!errors.confirmNewEmail"
+                class="w-full"
+              />
+              <small v-if="errors.confirmNewEmail" class="field-error">{{ errors.confirmNewEmail }}</small>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- КАРТОЧКА 2: Email Configuration (Смена почты) -->
-    <div class="settings-card">
-      <div class="card-header">
-        <div class="header-title">
-          <i class="pi pi-envelope"></i>
-          <span>{{ t('teacherProfile.emailConfig') }}</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="field-group w-half mb-4">
-          <label>CURRENT EMAIL</label>
-          <div class="p-input-icon-left w-full">
-            <i class="pi pi-envelope text-muted"></i>
-            <InputText :value="emailForm.currentEmail" disabled class="w-full pl-5" />
+      <div class="settings-card">
+        <div class="card-header">
+          <div class="header-title">
+            <i class="pi pi-lock"></i>
+            <span>{{ t('teacherProfile.security') }}</span>
           </div>
         </div>
-
-        <div class="fields-grid-2">
-          <div class="field-group">
-            <label>NEW EMAIL</label>
-            <InputText
-              v-model="emailForm.newEmail"
-              :placeholder="t('teacherProfile.newEmail')"
-              class="w-full"
-            />
-          </div>
-          <div class="field-group">
-            <label>CONFIRM NEW EMAIL</label>
-            <InputText
-              v-model="emailForm.confirmNewEmail"
-              :placeholder="t('teacherProfile.confirmEmail')"
-              class="w-full"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- КАРТОЧКА 3: Security & Password (Смена пароля) -->
-    <div class="settings-card">
-      <div class="card-header">
-        <div class="header-title">
-          <i class="pi pi-lock"></i>
-          <span>{{ t('teacherProfile.security') }}</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="field-group w-full mb-4">
-          <label>CURRENT PASSWORD</label>
-          <Password
-            v-model="passwordForm.currentPassword"
-            toggleMask
-            :feedback="false"
-            inputClass="w-full"
-            class="w-full"
-          />
-        </div>
-
-        <div class="fields-grid-2 mb-4">
-          <div class="field-group">
-            <label>NEW PASSWORD</label>
+        <div class="card-body">
+          <div class="field-group w-full mb-4">
+            <label>{{ t('teacherProfile.currentPassword') }}</label>
             <Password
-              v-model="passwordForm.newPassword"
-              toggleMask
-              :feedback="true"
-              inputClass="w-full"
-              class="w-full"
-            />
-          </div>
-          <div class="field-group">
-            <label>CONFIRM NEW PASSWORD</label>
-            <Password
-              v-model="passwordForm.confirmNewPassword"
+              v-model="currentPassword"
+              v-bind="currentPasswordAttrs"
               toggleMask
               :feedback="false"
+              :invalid="!!errors.currentPassword"
               inputClass="w-full"
               class="w-full"
             />
+            <small v-if="errors.currentPassword" class="field-error">{{ errors.currentPassword }}</small>
+          </div>
+
+          <div class="fields-grid-2 mb-4">
+            <div class="field-group">
+              <label>{{ t('teacherProfile.newPassword') }}</label>
+              <Password
+                v-model="newPassword"
+                v-bind="newPasswordAttrs"
+                toggleMask
+                :feedback="true"
+                :invalid="!!errors.newPassword"
+                inputClass="w-full"
+                class="w-full"
+              />
+              <small v-if="errors.newPassword" class="field-error">{{ errors.newPassword }}</small>
+            </div>
+            <div class="field-group">
+              <label>{{ t('teacherProfile.confirmPassword') }}</label>
+              <Password
+                v-model="confirmNewPassword"
+                v-bind="confirmNewPasswordAttrs"
+                toggleMask
+                :feedback="false"
+                :invalid="!!errors.confirmNewPassword"
+                inputClass="w-full"
+                class="w-full"
+              />
+              <small v-if="errors.confirmNewPassword" class="field-error">{{ errors.confirmNewPassword }}</small>
+            </div>
+          </div>
+
+          <div class="hint-box">
+            {{ t('teacherProfile.passwordHint') }}
           </div>
         </div>
-
-        <!-- Подсказка (Hint) как на макете -->
-        <div class="hint-box">
-          Password must be at least 8 characters long and contain one special character.
-        </div>
       </div>
-    </div>
 
-    <!-- FOOTER: Кнопки действий -->
-    <div class="actions-footer">
-      <Button :label="t('common.cancel')" severity="secondary" outlined @click="handleCancel" />
-      <Button
-        :label="t('common.saveChanges')"
-        icon="pi pi-check"
-        severity="success"
-        @click="handleSave"
-      />
-    </div>
+      <div class="actions-footer">
+        <Button
+          type="button"
+          :label="t('common.cancel')"
+          severity="secondary"
+          outlined
+          :disabled="isSaving || !hasChanges"
+          @click="resetSettingsForm"
+        />
+        <Button
+          type="submit"
+          :label="t('common.saveChanges')"
+          icon="pi pi-check"
+          severity="success"
+          :loading="isSaving"
+          :disabled="!hasChanges"
+        />
+      </div>
+    </form>
   </div>
 </template>
 
@@ -204,7 +265,12 @@ const handleCancel = () => {
   gap: 1.5rem;
 }
 
-/* --- КАРТОЧКА --- */
+.profile-settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .settings-card {
   background-color: var(--surface-card);
   border: 1px solid var(--surface-border);
@@ -238,7 +304,6 @@ const handleCancel = () => {
   padding: 1.5rem;
 }
 
-/* --- ВНЕШНИЙ ВИД АВАТАРА --- */
 .info-layout {
   display: flex;
   gap: 2.5rem;
@@ -287,7 +352,6 @@ const handleCancel = () => {
   color: var(--color-primary);
 }
 
-/* --- ПОЛЯ ВВОДА --- */
 .fields-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -315,6 +379,11 @@ const handleCancel = () => {
   letter-spacing: 0.5px;
 }
 
+.field-error {
+  color: var(--color-danger, #ef4444);
+  font-size: 0.75rem;
+}
+
 .w-full {
   width: 100%;
 }
@@ -339,13 +408,11 @@ const handleCancel = () => {
   z-index: 1;
 }
 
-/* Приглушаем текст в disabled инпутах, чтобы было понятнее */
 :deep(.p-inputtext:disabled) {
   opacity: 0.7;
   background-color: var(--surface-ground);
 }
 
-/* --- ПОДСКАЗКА (HINT) --- */
 .hint-box {
   background-color: var(--color-primary-subtle);
   color: var(--color-primary-text-on-subtle);
@@ -356,7 +423,6 @@ const handleCancel = () => {
   font-weight: 500;
 }
 
-/* --- ФУТЕР --- */
 .actions-footer {
   display: flex;
   justify-content: flex-end;
@@ -364,7 +430,6 @@ const handleCancel = () => {
   padding-top: 0.5rem;
 }
 
-/* Адаптив */
 @media (max-width: 768px) {
   .info-layout {
     flex-direction: column;

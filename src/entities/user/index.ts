@@ -6,9 +6,14 @@ import type {
   AdminUsersListQueryParams,
   CreateAdminUserRequest
 } from './api/types'
-import { useUserStore } from './model/store'
-import { mapAdminUserListItemToUser, mapAdminUserListItemsToUsers } from './lib/mappers'
 import * as userApi from './api'
+import {
+  mapAdminUserDetailsToUser,
+  mapAdminUserListItemToUser,
+  mapAdminUserListItemsToUsers,
+  mapUserResponseToUser
+} from './lib/mappers'
+import { useUserStore } from './model/store'
 
 export {
   type User,
@@ -17,8 +22,11 @@ export {
   type AdminUsersPageDto,
   type AdminUsersListQueryParams,
   type CreateAdminUserRequest,
+  type UpdateUserByAdminRequest,
   useUserStore,
   mapAdminUserListItemToUser,
   mapAdminUserListItemsToUsers,
+  mapUserResponseToUser,
+  mapAdminUserDetailsToUser,
   userApi
 }

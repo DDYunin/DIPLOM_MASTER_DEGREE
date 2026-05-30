@@ -93,7 +93,10 @@
     "title": "Настройки системы",
     "generalConfig": "Общие настройки",
     "generalDesc": "Управление профилем администратора и системными параметрами.",
-    "saved": "Настройки системы обновлены."
+    "saved": "Настройки системы обновлены.",
+    "passwordUpdated": "Пароль успешно изменён.",
+    "loadError": "Не удалось загрузить профиль. Попробуйте позже.",
+    "noUserId": "Не удалось определить текущего пользователя. Войдите снова."
   },
   "adminOrg": {
     "title": "Структура",
@@ -188,6 +191,7 @@
     "editDetails": "Редактировать",
     "changeAvatar": "Сменить аватар",
     "fullName": "ФИО",
+    "username": "Имя пользователя",
     "email": "Email",
     "phone": "Телефон",
     "department": "Основное подразделение",
@@ -204,6 +208,10 @@
     "newPassword": "Новый пароль",
     "confirmPassword": "Подтвердите пароль",
     "passwordHint": "Пароль не менее 8 символов, включая цифру.",
+    "updatePassword": "Обновить пароль",
+    "passwordRequired": "Заполните все поля пароля.",
+    "passwordMismatch": "Новый пароль и подтверждение не совпадают.",
+    "passwordMinLength": "Пароль должен содержать не менее 8 символов.",
     "passwordReset": "Сброс пароля",
     "generateNew": "Сгенерировать",
     "sendLink": "Отправить ссылку",
@@ -236,7 +244,10 @@
     "teacherNotFound": "Преподаватель не найден.",
     "studentNotFound": "Студент не найден.",
     "teacherSaved": "Профиль преподавателя обновлён.",
-    "studentSaved": "Профиль студента обновлён."
+    "studentSaved": "Профиль студента обновлён.",
+    "loadError": "Не удалось загрузить профиль пользователя. Попробуйте позже.",
+    "roleMismatch": "Профиль не соответствует выбранному типу пользователя.",
+    "backToUsers": "К списку пользователей"
   },
   "teacherCourses": {
     "title": "Курсы",
@@ -277,7 +288,13 @@
     "bankTitle": "Название банка",
     "description": "Описание",
     "showAllQuestions": "Все вопросы",
-    "manageQuestions": "Вопросы: {name}"
+    "manageQuestions": "Вопросы: {name}",
+    "bankCreated": "Банк вопросов успешно создан.",
+    "bankDeleted": "Банк вопросов удалён.",
+    "deleteBank": "Удалить банк",
+    "deleteBankConfirm": "Удалить этот банк вопросов? Все вопросы в нём будут удалены.",
+    "loadError": "Не удалось загрузить банки вопросов. Попробуйте позже.",
+    "noQuestionsYet": "В этом банке пока нет вопросов."
   },
   "teacherQuiz": {
     "courses": "Курсы",
@@ -361,24 +378,26 @@
   "bankQuestions": {
     "search": "Поиск по тексту вопроса...",
     "type": "Тип",
-    "difficulty": "Сложность",
+    "allTypes": "Все типы",
+    "totalCount": "Всего вопросов: {count}",
+    "selectedCount": "Выбрано: {count}",
+    "deleteConfirm": "Удалить этот вопрос?",
+    "deleteManyConfirm": "Удалить выбранные вопросы ({count})?",
+    "questionCreated": "Вопрос успешно создан.",
+    "questionUpdated": "Вопрос успешно обновлён.",
+    "questionDeleted": "Вопрос удалён.",
+    "questionsDeleted": "Выбранные вопросы удалены.",
     "columns": {
       "text": "Текст вопроса",
       "type": "Тип",
-      "difficulty": "Сложность",
+      "points": "Баллы",
       "actions": "Действия"
     },
     "editQuestion": "Редактировать вопрос",
     "types": {
-      "multipleChoice": "Множественный выбор",
-      "trueFalse": "Верно / неверно",
-      "shortAnswer": "Краткий ответ",
-      "essay": "Развёрнутый ответ"
-    },
-    "difficulty": {
-      "easy": "Лёгкий",
-      "medium": "Средний",
-      "hard": "Сложный"
+      "single": "Один ответ",
+      "multiple": "Несколько ответов",
+      "text": "Текстовый ответ"
     }
   },
   "teacherProfile": {
@@ -389,14 +408,30 @@
     "lastName": "Фамилия",
     "firstName": "Имя",
     "patronymic": "Отчество",
+    "department": "Кафедра",
     "editAvatar": "Изменить аватар",
     "newEmail": "Новый email",
+    "newEmailLabel": "Новый email",
     "confirmEmail": "Подтвердите email",
+    "confirmNewEmailLabel": "Подтверждение email",
     "institute": "Институт",
     "major": "Направление",
     "group": "Группа",
     "studentId": "ID студента",
-    "currentEmail": "Текущий email"
+    "currentEmail": "Текущий email",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmPassword": "Подтверждение пароля",
+    "passwordHint": "Пароль должен содержать не менее 8 символов.",
+    "saved": "Настройки профиля обновлены.",
+    "passwordUpdated": "Пароль успешно изменён.",
+    "loadError": "Не удалось загрузить профиль. Попробуйте позже.",
+    "noUserId": "Не удалось определить текущего пользователя. Войдите снова.",
+    "emailRequired": "Заполните оба поля нового email.",
+    "emailMismatch": "Новые адреса email не совпадают.",
+    "emailSameAsCurrent": "Новый email должен отличаться от текущего.",
+    "passwordRequired": "Заполните все поля пароля.",
+    "passwordMismatch": "Новые пароли не совпадают."
   },
   "studentCourses": {
     "title": "Мои курсы",
@@ -501,6 +536,11 @@
       "prompt": "Текст вопроса",
       "answerOptions": "Варианты ответа",
       "addOption": "Добавить вариант",
+      "addTextAnswer": "Добавить допустимый ответ",
+      "singleHint": "Выберите один правильный ответ.",
+      "multipleHint": "Отметьте все правильные ответы.",
+      "textAnswers": "Допустимые ответы",
+      "textHint": "Добавьте один или несколько допустимых текстовых ответов.",
       "promptPlaceholder": "Введите текст вопроса...",
       "correctAnswer": "Правильный ответ",
       "exactMatchHint": "Ответ должен совпадать точно",

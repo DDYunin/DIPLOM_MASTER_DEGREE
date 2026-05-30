@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
+import Message from 'primevue/message'
 import Skeleton from 'primevue/skeleton'
 
-import { useUserStore, type User } from '@/entities/user'
+import { useAdminManagedUserProfilePage } from '@/features/admin-user-profile'
 import { useNotifications } from '@/shared/model/useNotifications'
 
-// Импорт виджетов
 import { TeacherRolesPermissions } from '@/widgets/teacher-roles-permissions'
 import { TeacherAssignedCourses } from '@/widgets/teacher-assigned-courses'
 import { ProfileInfoCard } from '@/widgets/profile-info-card'
@@ -17,28 +17,37 @@ import { SecuritySettingsCard } from '@/widgets/security-settings-card'
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
 const notifications = useNotifications()
 
-const profileDraft = ref<User | null>(null)
+const userId = computed(() => route.params.id as string)
 
-onMounted(async () => {
-  const userId = route.params.id as string
-  if (userStore.users.length === 0) await userStore.loadUsers()
-
-  const teacherData = userStore.getUserById(userId)
-  if (teacherData) {
-    profileDraft.value = { ...teacherData }
-  } else {
-    notifications.showToast('error', t('adminUserProfile.notFoundTitle'), t('adminUserProfile.teacherNotFound'))
-    router.push('/admin/users')
-  }
-})
+const {
+  profileQuery,
+  profileDraft,
+  departmentOptions,
+  isRoleMismatch,
+  isLoading,
+  isSaving,
+  hasChanges,
+  errors,
+  resetDraft,
+  submitProfile
+} = useAdminManagedUserProfilePage(userId, 'Teacher')
 
 const handleSaveChanges = async () => {
-  if (!profileDraft.value) return
-  await userStore.updateUser(profileDraft.value.id, profileDraft.value)
-  notifications.showToast('success', t('common.save'), t('adminUserProfile.teacherSaved'))
+  try {
+    const saved = await submitProfile()
+    if (saved) {
+      notifications.showToast('success', t('common.save'), t('adminUserProfile.teacherSaved'))
+    }
+  } catch {
+    // Ошибка уже обработана глобальным API-клиентом
+  }
+}
+
+const handleNotFound = () => {
+  notifications.showToast('error', t('adminUserProfile.notFoundTitle'), t('adminUserProfile.teacherNotFound'))
+  router.push({ name: 'admin-users' })
 }
 </script>
 
@@ -55,14 +64,37 @@ const handleSaveChanges = async () => {
     </div>
 
     <div class="profile-container">
-      <div v-if="userStore.isLoading || !profileDraft" class="flex flex-col gap-4">
+      <Message v-if="profileQuery.isError.value" severity="error" :closable="false">
+        {{ t('adminUserProfile.loadError') }}
+        <Button
+          class="ml-3"
+          size="small"
+          :label="t('adminUserProfile.backToUsers')"
+          @click="handleNotFound"
+        />
+      </Message>
+
+      <Message v-else-if="isRoleMismatch" severity="warn" :closable="false">
+        {{ t('adminUserProfile.roleMismatch') }}
+        <Button
+          class="ml-3"
+          size="small"
+          :label="t('adminUserProfile.backToUsers')"
+          @click="router.push({ name: 'admin-users' })"
+        />
+      </Message>
+
+      <div v-else-if="isLoading || !profileDraft" class="flex flex-col gap-4">
         <Skeleton width="100%" height="150px" borderRadius="12px" class="mb-4" />
         <Skeleton width="100%" height="300px" borderRadius="12px" />
       </div>
 
-      <div v-else class="content-column">
-        <!-- ИСПОЛЬЗУЕМ УНИВЕРСАЛЬНУЮ АНКЕТУ -->
-        <ProfileInfoCard v-model="profileDraft" />
+      <form v-else class="content-column" @submit.prevent="handleSaveChanges">
+        <ProfileInfoCard
+          v-model="profileDraft"
+          :field-errors="errors"
+          :department-options="departmentOptions"
+        />
 
         <TeacherRolesPermissions
           :profile="profileDraft"
@@ -70,13 +102,25 @@ const handleSaveChanges = async () => {
           @update:permissions="profileDraft.permissions = $event"
         />
         <TeacherAssignedCourses :profile="profileDraft" />
-        <SecuritySettingsCard v-model="profileDraft" />
+        <SecuritySettingsCard v-model="profileDraft" mode="manage" />
 
         <div class="form-actions">
-          <Button :label="t('common.cancel')" outlined @click="router.back()" />
-          <Button :label="t('common.saveChanges')" icon="pi pi-check" @click="handleSaveChanges" />
+          <Button
+            type="button"
+            :label="t('common.cancel')"
+            outlined
+            :disabled="isSaving || !hasChanges"
+            @click="resetDraft"
+          />
+          <Button
+            type="submit"
+            :label="t('common.saveChanges')"
+            icon="pi pi-check"
+            :loading="isSaving"
+            :disabled="!hasChanges"
+          />
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -107,11 +151,6 @@ const handleSaveChanges = async () => {
   font-weight: 700;
   color: var(--text-color);
 }
-.page-desc {
-  margin: 0;
-  color: var(--text-color-secondary);
-  font-size: 0.875rem;
-}
 .profile-container {
   max-width: 900px;
 }
@@ -128,5 +167,8 @@ const handleSaveChanges = async () => {
 }
 .mb-4 {
   margin-bottom: 1rem;
+}
+.ml-3 {
+  margin-left: 0.75rem;
 }
 </style>

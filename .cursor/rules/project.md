@@ -40,3 +40,6 @@ Write clean, maintainable, production-ready code. Always prioritize type safety,
 - Use `@vue/test-utils` for component testing.
 - Test both the "happy path" and edge cases (especially API errors and missing array indexes due to strict TS rules).
 - Name test files explicitly (e.g., `ComponentName.spec.ts` or `useComposable.spec.ts`).
+
+# Form Validation
+- See `.cursor/rules/validation.md` for the required vee-validate + Zod workflow.

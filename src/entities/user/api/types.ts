@@ -51,3 +51,51 @@ export interface AdminUserResponse {
   active: boolean
   roles: string[]
 }
+
+export interface AdminUserDetailsResponse {
+  firstName: string
+  middleName?: string
+  lastName: string
+  email: string
+  roles: string[]
+  username: string
+  faculty?: string
+  fieldOfStudy?: string
+  studentGroup?: string
+  department?: string
+}
+
+export interface UserResponseDto {
+  id: string
+  username: string
+  email: string
+  firstName: string
+  lastName: string
+  middleName?: string
+  active: boolean
+  roles: string[]
+}
+
+export interface UpdateUserByAdminRequest {
+  email?: string
+  username?: string
+  firstName?: string
+  lastName?: string
+  middleName?: string
+  groupId?: number
+  departmentId?: number
+  roles?: string[]
+}
+
+export interface UpdateOwnProfileRequest {
+  email: string
+}
+
+export interface ChangePasswordRequest {
+  oldPassword: string
+  newPassword: string
+}
+
+export interface ChangeAvatarRequestDto {
+  fileId: string
+}
