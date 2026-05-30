@@ -36,6 +36,11 @@ export const updateAdminUser = (id: string, payload: UpdateUserByAdminRequest) =
     body: JSON.stringify(payload)
   })
 
+export const deleteAdminUser = (id: string) =>
+  api<void>(usersApiPath(`/admin/users/${id}`), {
+    method: 'DELETE'
+  })
+
 export const updateOwnProfileEmail = (payload: UpdateOwnProfileRequest) =>
   api<UserResponseDto>(usersApiPath('/users/me/email'), {
     method: 'PATCH',

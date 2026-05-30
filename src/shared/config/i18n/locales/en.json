@@ -81,6 +81,10 @@
     "subtitle": "Manage access, roles, and status for all university members",
     "statUsers": "Total users",
     "noUsers": "No users found.",
+    "deleteUser": "Delete user",
+    "deleteUserTitle": "Delete user",
+    "deleteUserConfirm": "Are you sure you want to delete {name}? This action cannot be undone.",
+    "userDeleted": "User deleted successfully.",
     "columns": {
       "user": "User",
       "role": "Role",

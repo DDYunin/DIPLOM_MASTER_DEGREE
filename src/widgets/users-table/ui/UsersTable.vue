@@ -1,22 +1,41 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useConfirm } from 'primevue/useconfirm'
 
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Avatar from 'primevue/avatar';
-import Button from 'primevue/button';
-import Tag from 'primevue/tag';
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Avatar from 'primevue/avatar'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 
-import { type User } from '@/entities/user'
-
+import { type User, userApi } from '@/entities/user'
 import { SearchUser } from '@/features/search-user'
 import { FilterUsersByRole } from '@/features/filter-users-by-role'
-import { useAdminUsersTable } from '../model/store';
+import { useNotifications } from '@/shared/model'
+import { useAdminUsersTable } from '../model/store'
 
 const { t } = useI18n()
 const router = useRouter()
-const adminUsersTableStore = useAdminUsersTable();
+const confirm = useConfirm()
+const notifications = useNotifications()
+const queryClient = useQueryClient()
+const adminUsersTableStore = useAdminUsersTable()
+
+const deletingUserId = ref<string | null>(null)
+
+const deleteUserMutation = useMutation({
+  mutationFn: (userId: string) => userApi.deleteAdminUser(userId),
+  onSuccess: () => {
+    notifications.showToast('success', t('common.success'), t('adminUsers.userDeleted'))
+    queryClient.invalidateQueries({ queryKey: ['admin-users-list'] })
+  },
+  onSettled: () => {
+    deletingUserId.value = null
+  }
+})
 
 const onRowClick = (event: { data: User }) => {
   const user = event.data
@@ -52,6 +71,21 @@ const getRoleSeverity = (role: string) => {
 
 const getInitials = (user: User) => {
   return user.avatarInitials || user.fullName.charAt(0)
+}
+
+const confirmDeleteUser = (user: User) => {
+  confirm.require({
+    header: t('adminUsers.deleteUserTitle'),
+    message: t('adminUsers.deleteUserConfirm', { name: user.fullName }),
+    icon: 'pi pi-exclamation-triangle',
+    rejectLabel: t('common.cancel'),
+    acceptLabel: t('common.delete'),
+    acceptClass: 'p-button-danger',
+    accept: () => {
+      deletingUserId.value = user.id
+      deleteUserMutation.mutate(user.id)
+    }
+  })
 }
 </script>
 
@@ -127,8 +161,16 @@ const getInitials = (user: User) => {
       </Column>
 
       <Column :header="t('adminUsers.columns.actions')">
-        <template #body>
-          <Button icon="pi pi-ellipsis-v" text rounded @click.stop />
+        <template #body="{ data }">
+          <Button
+            icon="pi pi-trash"
+            text
+            rounded
+            severity="danger"
+            :aria-label="t('adminUsers.deleteUser')"
+            :loading="deletingUserId === data.id && deleteUserMutation.isPending.value"
+            @click.stop="confirmDeleteUser(data)"
+          />
         </template>
       </Column>
     </DataTable>
