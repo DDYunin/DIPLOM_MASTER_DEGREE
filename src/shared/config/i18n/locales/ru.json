@@ -81,6 +81,10 @@
     "subtitle": "Управляйте доступом, ролями и статусом всех членов университета",
     "statUsers": "Всего пользователей",
     "noUsers": "Пользователи не найдены.",
+    "deleteUser": "Удалить пользователя",
+    "deleteUserTitle": "Удаление пользователя",
+    "deleteUserConfirm": "Удалить пользователя {name}? Это действие нельзя отменить.",
+    "userDeleted": "Пользователь успешно удалён.",
     "columns": {
       "user": "Пользователь",
       "role": "Роль",
@@ -181,10 +185,23 @@
   "addPermission": {
     "addPermission": "Добавить доступ",
     "modalTitle": "Область доступа",
-    "subtitle": "Выберите подразделения для предоставления доступа.",
-    "searchPlaceholder": "Поиск в структуре...",
-    "addSelected": "Добавить выбранные",
-    "selectedCount": "Выбрано: {count}"
+    "subtitle": "Выберите тип области и целевую сущность для предоставления доступа.",
+    "scopeType": "Тип области",
+    "scopeTypePlaceholder": "Выберите тип области",
+    "faculty": "Факультет",
+    "facultyPlaceholder": "Выберите факультет",
+    "fieldOfStudy": "Направление подготовки",
+    "fieldOfStudyPlaceholder": "Выберите направление",
+    "studentGroup": "Студенческая группа",
+    "studentGroupPlaceholder": "Выберите группу",
+    "addSelected": "Предоставить доступ",
+    "grantSuccess": "Область доступа успешно добавлена",
+    "loadError": "Не удалось загрузить данные иерархии",
+    "scopeTypes": {
+      "faculty": "Факультет",
+      "fieldOfStudy": "Направление подготовки",
+      "studentGroup": "Студенческая группа"
+    }
   },
   "profileCard": {
     "title": "Информация профиля",
@@ -222,11 +239,12 @@
   "teacherRoles": {
     "title": "Роли и права",
     "subtitle": "Уровни доступа и группы, назначенные пользователю",
+    "subtitleReadonly": "Студенческие группы, к которым у вас есть доступ",
     "assignedGroups": "Назначенные группы",
-    "publishGrades": "Публикация оценок",
-    "publishGradesDesc": "Может утверждать итоговые оценки",
-    "manageUsers": "Управление пользователями",
-    "manageUsersDesc": "Может добавлять студентов"
+    "assignedScopes": "Области доступа",
+    "noAssignedGroups": "Области доступа пока не назначены",
+    "loadScopesError": "Не удалось загрузить назначенные области доступа",
+    "scopeRevoked": "Область доступа успешно удалена"
   },
   "teacherAssigned": {
     "title": "Назначенные курсы",
@@ -272,7 +290,9 @@
     "students": "Студенты",
     "nextDue": "Ближайший дедлайн",
     "edit": "Редактировать",
-    "manage": "Управление"
+    "manage": "Управление",
+    "courseCreated": "Курс успешно создан.",
+    "courseUpdated": "Курс успешно обновлён."
   },
   "teacherQuestionBanks": {
     "title": "Банки вопросов",
@@ -346,6 +366,12 @@
     "deleteMaterial": "Удалить материал",
     "topicCreated": "Тема создана.",
     "topicUpdated": "Тема обновлена.",
+    "topicDeleted": "Тема удалена.",
+    "materialCreated": "Материал добавлен.",
+    "materialUpdated": "Материал обновлён.",
+    "materialDeleted": "Материал удалён.",
+    "contentReloaded": "Содержание курса обновлено.",
+    "status": "Статус курса",
     "video": "Видео",
     "fileReading": "Файл / материал",
     "assignment": "Задание"

@@ -6,15 +6,20 @@ import { useToast } from 'primevue/usetoast'
 import ConfirmDialog from 'primevue/confirmdialog'
 
 import { useNotifications, useThemeStore } from '@/shared/model'
+import { setSessionExpiredHandler } from '@/shared/api'
 import { useSessionStore } from '@/entities/session'
 
 const toast = useToast()
 const notifications = useNotifications()
-useThemeStore() // Инициализируем стор темы
+useThemeStore()
 
-// --- ИНИЦИАЛИЗАЦИЯ СЕССИИ ---
 const sessionStore = useSessionStore()
-sessionStore.initAuth() // Читаем токены из localStorage
+
+setSessionExpiredHandler(() => {
+  void sessionStore.logout()
+})
+
+void sessionStore.initAuth()
 
 // Следим за изменениями переменной message в сторе
 watch(

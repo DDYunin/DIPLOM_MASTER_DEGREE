@@ -1,89 +1,114 @@
 import { usersApiPath } from '@/shared/config/api-routes'
+import { isAccessTokenExpiringSoon } from '@/shared/lib/jwt'
 
+import { notifySessionExpired } from './auth-session'
 import { baseFetch } from './base'
 import { tokenService } from './token.service'
 
 interface FailedRequest {
-  resolve: (token: string | null) => void
-  reject: (error: any) => void
+  resolve: (token: string) => void
+  reject: (error: unknown) => void
 }
 
-let isRefreshing = false
+interface RefreshResponse {
+  accessToken: string
+  refreshToken?: string
+}
 
+const REFRESH_ENDPOINT = usersApiPath('/auth/refresh')
+const REFRESH_THRESHOLD_SECONDS = 60
+
+let isRefreshing = false
+let refreshPromise: Promise<string> | null = null
 let failedQueue: FailedRequest[] = []
 
-// Представим, что эта функция реализована: она должна перебрать failedQueue
-// и вызвать resolve(token) или reject(error) для каждого элемента.
-const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error)
-    } else {
-      prom.resolve(token)
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((request) => {
+    if (error || !token) {
+      request.reject(error ?? new Error('Unable to refresh access token'))
+      return
     }
+
+    request.resolve(token)
   })
+
   failedQueue = []
+}
+
+const requestRefreshToken = async (): Promise<string> => {
+  const response = await baseFetch<RefreshResponse>(REFRESH_ENDPOINT, {
+    method: 'GET'
+  })
+
+  if (!response.accessToken) {
+    throw new Error('Refresh response does not contain access token')
+  }
+
+  tokenService.setTokens(response.accessToken, response.refreshToken)
+  return response.accessToken
+}
+
+export const refreshAccessToken = async (): Promise<string> => {
+  if (refreshPromise) {
+    return refreshPromise
+  }
+
+  isRefreshing = true
+  refreshPromise = (async () => {
+    try {
+      const accessToken = await requestRefreshToken()
+      processQueue(null, accessToken)
+      return accessToken
+    } catch (error) {
+      processQueue(error, null)
+      tokenService.clearTokens()
+      notifySessionExpired()
+      throw error
+    } finally {
+      isRefreshing = false
+      refreshPromise = null
+    }
+  })()
+
+  return refreshPromise
+}
+
+export const ensureValidAccessToken = async (): Promise<void> => {
+  const accessToken = tokenService.getAccessToken()
+  if (!accessToken) {
+    return
+  }
+
+  if (!isAccessTokenExpiringSoon(REFRESH_THRESHOLD_SECONDS)) {
+    return
+  }
+
+  if (isRefreshing && refreshPromise) {
+    await refreshPromise
+    return
+  }
+
+  await refreshAccessToken()
 }
 
 export const refreshTokenAndRetry = async <T>(
   endpoint: string,
   options: RequestInit
 ): Promise<T> => {
-  // 1. Если процесс обновления УЖЕ идет в другом запросе
-  if (isRefreshing) {
-    return new Promise(function (resolve, reject) {
-      // Ставим этот запрос в очередь
-      failedQueue.push({
-        resolve: function (token: string | null) {
-          // Когда токен обновится, подставляем его и повторяем запрос
-          const headers = new Headers(options.headers)
-          headers.set('Authorization', `Bearer ${token}`)
-          resolve(baseFetch<T>(endpoint, { ...options, headers }))
-        },
-        reject: function (err: any) {
-          reject(err)
-        }
-      })
-    })
+  const accessToken = await refreshAccessToken()
+
+  const headers = new Headers(options.headers)
+  headers.set('Authorization', `Bearer ${accessToken}`)
+
+  return baseFetch<T>(endpoint, { ...options, headers })
+}
+
+export const waitForAccessTokenRefresh = (): Promise<string> => {
+  if (refreshPromise) {
+    return refreshPromise
   }
 
-  // 2. Если мы первые, кто столкнулся с 401 ошибкой — блокируем очередь
-  isRefreshing = true
-
-  try {
-    const refreshToken = tokenService.getRefreshToken()
-    if (!refreshToken) {
-      throw new Error('Refresh token is missing')
-    }
-
-    // Делаем запрос на бэкенд за новой парой токенов
-    // ВАЖНО: используем "глупый" baseFetch, чтобы не попасть в бесконечный цикл 401 ошибок
-    const response = await baseFetch<{ accessToken: string; refreshToken: string }>(
-      usersApiPath('/auth/refresh'),
-      {
-        method: 'POST',
-        body: JSON.stringify({ refreshToken })
-      }
-    )
-
-    // Сохраняем новые токены в localStorage
-    tokenService.setTokens(response.accessToken, response.refreshToken)
-
-    // Разбудить все ожидающие запросы, передав им новый токен
-    processQueue(null, response.accessToken)
-
-    // Повторить наш текущий (первый упавший) запрос с новым токеном
-    const headers = new Headers(options.headers)
-    headers.set('Authorization', `Bearer ${response.accessToken}`)
-
-    return await baseFetch<T>(endpoint, { ...options, headers })
-  } catch (error) {
-    // Если refresh-токен тоже протух или сервер вернул ошибку
-    processQueue(error, null) // Отклоняем все ждущие запросы
-    tokenService.clearTokens() // Очищаем хранилище
-    throw error
-  } finally {
-    // В любом случае (успех или ошибка) снимаем блокировку
-    isRefreshing = false
-  }
+  return new Promise<string>((resolve, reject) => {
+    failedQueue.push({ resolve, reject })
+  })
 }

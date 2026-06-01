@@ -81,6 +81,10 @@
     "subtitle": "Manage access, roles, and status for all university members",
     "statUsers": "Total users",
     "noUsers": "No users found.",
+    "deleteUser": "Delete user",
+    "deleteUserTitle": "Delete user",
+    "deleteUserConfirm": "Are you sure you want to delete {name}? This action cannot be undone.",
+    "userDeleted": "User deleted successfully.",
     "columns": {
       "user": "User",
       "role": "Role",
@@ -181,10 +185,23 @@
   "addPermission": {
     "addPermission": "Add permission",
     "modalTitle": "Add permission scope",
-    "subtitle": "Select organizations to grant access.",
-    "searchPlaceholder": "Search hierarchy...",
-    "addSelected": "Add selected",
-    "selectedCount": "{count} selected"
+    "subtitle": "Select the scope type and target entity to grant access.",
+    "scopeType": "Scope type",
+    "scopeTypePlaceholder": "Select scope type",
+    "faculty": "Faculty",
+    "facultyPlaceholder": "Select faculty",
+    "fieldOfStudy": "Field of study",
+    "fieldOfStudyPlaceholder": "Select field of study",
+    "studentGroup": "Student group",
+    "studentGroupPlaceholder": "Select student group",
+    "addSelected": "Grant access",
+    "grantSuccess": "Access scope granted successfully",
+    "loadError": "Failed to load hierarchy data",
+    "scopeTypes": {
+      "faculty": "Faculty",
+      "fieldOfStudy": "Field of study",
+      "studentGroup": "Student group"
+    }
   },
   "profileCard": {
     "title": "Profile information",
@@ -222,11 +239,12 @@
   "teacherRoles": {
     "title": "Roles & permissions",
     "subtitle": "Access levels and administrative groups assigned to this user",
+    "subtitleReadonly": "Student groups you have access to",
     "assignedGroups": "Assigned groups",
-    "publishGrades": "Publish grades",
-    "publishGradesDesc": "Can finalize term grades",
-    "manageUsers": "Manage system users",
-    "manageUsersDesc": "Can add new students"
+    "assignedScopes": "Access scopes",
+    "noAssignedGroups": "No access scopes assigned yet",
+    "loadScopesError": "Failed to load assigned access scopes",
+    "scopeRevoked": "Access scope revoked successfully"
   },
   "teacherAssigned": {
     "title": "Assigned courses",
@@ -272,7 +290,9 @@
     "students": "Students",
     "nextDue": "Next due",
     "edit": "Edit",
-    "manage": "Manage"
+    "manage": "Manage",
+    "courseCreated": "Course created successfully.",
+    "courseUpdated": "Course updated successfully."
   },
   "teacherQuestionBanks": {
     "title": "Question banks",
@@ -346,6 +366,12 @@
     "deleteMaterial": "Delete material",
     "topicCreated": "Topic has been created.",
     "topicUpdated": "Topic has been updated.",
+    "topicDeleted": "Topic has been deleted.",
+    "materialCreated": "Material has been added.",
+    "materialUpdated": "Material has been updated.",
+    "materialDeleted": "Material has been deleted.",
+    "contentReloaded": "Course content reloaded.",
+    "status": "Course status",
     "video": "Video",
     "fileReading": "File / reading",
     "assignment": "Assignment"

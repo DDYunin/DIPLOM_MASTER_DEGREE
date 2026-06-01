@@ -19,10 +19,12 @@ const props = withDefaults(
     modelValue: User
     mode?: 'self' | 'manage'
     passwordLoading?: boolean
+    showMfa?: boolean
   }>(),
   {
     mode: 'manage',
-    passwordLoading: false
+    passwordLoading: false,
+    showMfa: true
   }
 )
 
@@ -156,7 +158,7 @@ defineExpose({ clearPasswordFields })
     <!-- ================================================== -->
     <div v-else class="security-layout">
       <!-- Блок с карточками действий -->
-      <div class="advanced-security-grid">
+      <div class="advanced-security-grid" :class="{ 'single-column': !showMfa }">
         <!-- Карточка 1: Сброс пароля -->
         <div class="security-box">
           <div class="box-icon bg-blue"><i class="pi pi-key"></i></div>
@@ -182,7 +184,7 @@ defineExpose({ clearPasswordFields })
         </div>
 
         <!-- Карточка 2: Двухфакторная аутентификация -->
-        <div class="security-box">
+        <div v-if="showMfa" class="security-box">
           <div class="box-icon bg-blue"><i class="pi pi-mobile"></i></div>
           <div class="box-content">
             <span class="box-title">{{ t('securityCard.mfa') }}</span>
@@ -250,6 +252,9 @@ defineExpose({ clearPasswordFields })
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+}
+.advanced-security-grid.single-column {
+  grid-template-columns: 1fr;
 }
 .security-box {
   border: 1px solid var(--surface-border);

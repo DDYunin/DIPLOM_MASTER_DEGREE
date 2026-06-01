@@ -9,6 +9,7 @@ import Skeleton from 'primevue/skeleton'
 
 import { useOwnProfile, useOwnProfileSettingsForm } from '@/features/own-profile'
 import { useNotifications } from '@/shared/model'
+import { TeacherRolesPermissions } from '@/widgets/teacher-roles-permissions'
 
 const { t } = useI18n()
 const notifications = useNotifications()
@@ -92,169 +93,185 @@ const handleSave = handleSubmit(async (formValues) => {
       <Skeleton width="100%" height="220px" borderRadius="12px" />
     </template>
 
-    <form v-else class="profile-settings-form" @submit.prevent="handleSave">
-      <div class="settings-card">
-        <div class="card-header">
-          <div class="header-title">
-            <i class="pi pi-user"></i>
-            <span>{{ t('teacherProfile.profileInfo') }}</span>
+    <template v-else>
+      <form class="profile-settings-form" @submit.prevent="handleSave">
+        <div class="settings-card">
+          <div class="card-header">
+            <div class="header-title">
+              <i class="pi pi-user"></i>
+              <span>{{ t('teacherProfile.profileInfo') }}</span>
+            </div>
+          </div>
+
+          <div class="card-body info-layout">
+            <div class="avatar-section">
+              <div class="avatar-circle">
+                {{ avatarInitials }}
+                <button
+                  type="button"
+                  class="avatar-edit-btn"
+                  :aria-label="t('teacherProfile.editAvatar')"
+                >
+                  <i class="pi pi-camera"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="fields-grid">
+              <div class="field-group">
+                <label>{{ t('teacherProfile.lastName') }}</label>
+                <InputText :value="profile.lastName" disabled class="w-full" />
+              </div>
+              <div class="field-group">
+                <label>{{ t('teacherProfile.firstName') }}</label>
+                <InputText :value="profile.firstName" disabled class="w-full" />
+              </div>
+              <div class="field-group">
+                <label>{{ t('teacherProfile.patronymic') }}</label>
+                <InputText :value="profile.patronymic ?? ''" disabled class="w-full" />
+              </div>
+              <div class="field-group">
+                <label>{{ t('teacherProfile.institute') }}</label>
+                <InputText :value="profile.institute ?? ''" disabled class="w-full" />
+              </div>
+              <div class="field-group">
+                <label>{{ t('teacherProfile.department') }}</label>
+                <InputText :value="profile.department ?? ''" disabled class="w-full" />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="card-body info-layout">
-          <div class="avatar-section">
-            <div class="avatar-circle">
-              {{ avatarInitials }}
-              <button type="button" class="avatar-edit-btn" :aria-label="t('teacherProfile.editAvatar')">
-                <i class="pi pi-camera"></i>
-              </button>
+        <TeacherRolesPermissions readonly />
+
+        <div class="settings-card">
+          <div class="card-header">
+            <div class="header-title">
+              <i class="pi pi-envelope"></i>
+              <span>{{ t('teacherProfile.emailConfig') }}</span>
             </div>
           </div>
+          <div class="card-body">
+            <div class="field-group w-half mb-4">
+              <label>{{ t('teacherProfile.currentEmail') }}</label>
+              <div class="p-input-icon-left w-full">
+                <i class="pi pi-envelope text-muted"></i>
+                <InputText :value="profile.email" disabled class="w-full pl-5" />
+              </div>
+            </div>
 
-          <div class="fields-grid">
-            <div class="field-group">
-              <label>{{ t('teacherProfile.lastName') }}</label>
-              <InputText :value="profile.lastName" disabled class="w-full" />
-            </div>
-            <div class="field-group">
-              <label>{{ t('teacherProfile.firstName') }}</label>
-              <InputText :value="profile.firstName" disabled class="w-full" />
-            </div>
-            <div class="field-group">
-              <label>{{ t('teacherProfile.patronymic') }}</label>
-              <InputText :value="profile.patronymic ?? ''" disabled class="w-full" />
-            </div>
-            <div class="field-group">
-              <label>{{ t('teacherProfile.institute') }}</label>
-              <InputText :value="profile.institute ?? ''" disabled class="w-full" />
-            </div>
-            <div class="field-group">
-              <label>{{ t('teacherProfile.department') }}</label>
-              <InputText :value="profile.department ?? ''" disabled class="w-full" />
+            <div class="fields-grid-2">
+              <div class="field-group">
+                <label>{{ t('teacherProfile.newEmailLabel') }}</label>
+                <InputText
+                  v-model="newEmail"
+                  v-bind="newEmailAttrs"
+                  :placeholder="t('teacherProfile.newEmail')"
+                  :invalid="!!errors.newEmail"
+                  class="w-full"
+                />
+                <small v-if="errors.newEmail" class="field-error">{{ errors.newEmail }}</small>
+              </div>
+              <div class="field-group">
+                <label>{{ t('teacherProfile.confirmNewEmailLabel') }}</label>
+                <InputText
+                  v-model="confirmNewEmail"
+                  v-bind="confirmNewEmailAttrs"
+                  :placeholder="t('teacherProfile.confirmEmail')"
+                  :invalid="!!errors.confirmNewEmail"
+                  class="w-full"
+                />
+                <small v-if="errors.confirmNewEmail" class="field-error">{{
+                  errors.confirmNewEmail
+                }}</small>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="settings-card">
-        <div class="card-header">
-          <div class="header-title">
-            <i class="pi pi-envelope"></i>
-            <span>{{ t('teacherProfile.emailConfig') }}</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="field-group w-half mb-4">
-            <label>{{ t('teacherProfile.currentEmail') }}</label>
-            <div class="p-input-icon-left w-full">
-              <i class="pi pi-envelope text-muted"></i>
-              <InputText :value="profile.email" disabled class="w-full pl-5" />
+        <div class="settings-card">
+          <div class="card-header">
+            <div class="header-title">
+              <i class="pi pi-lock"></i>
+              <span>{{ t('teacherProfile.security') }}</span>
             </div>
           </div>
-
-          <div class="fields-grid-2">
-            <div class="field-group">
-              <label>{{ t('teacherProfile.newEmailLabel') }}</label>
-              <InputText
-                v-model="newEmail"
-                v-bind="newEmailAttrs"
-                :placeholder="t('teacherProfile.newEmail')"
-                :invalid="!!errors.newEmail"
-                class="w-full"
-              />
-              <small v-if="errors.newEmail" class="field-error">{{ errors.newEmail }}</small>
-            </div>
-            <div class="field-group">
-              <label>{{ t('teacherProfile.confirmNewEmailLabel') }}</label>
-              <InputText
-                v-model="confirmNewEmail"
-                v-bind="confirmNewEmailAttrs"
-                :placeholder="t('teacherProfile.confirmEmail')"
-                :invalid="!!errors.confirmNewEmail"
-                class="w-full"
-              />
-              <small v-if="errors.confirmNewEmail" class="field-error">{{ errors.confirmNewEmail }}</small>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="settings-card">
-        <div class="card-header">
-          <div class="header-title">
-            <i class="pi pi-lock"></i>
-            <span>{{ t('teacherProfile.security') }}</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="field-group w-full mb-4">
-            <label>{{ t('teacherProfile.currentPassword') }}</label>
-            <Password
-              v-model="currentPassword"
-              v-bind="currentPasswordAttrs"
-              toggleMask
-              :feedback="false"
-              :invalid="!!errors.currentPassword"
-              inputClass="w-full"
-              class="w-full"
-            />
-            <small v-if="errors.currentPassword" class="field-error">{{ errors.currentPassword }}</small>
-          </div>
-
-          <div class="fields-grid-2 mb-4">
-            <div class="field-group">
-              <label>{{ t('teacherProfile.newPassword') }}</label>
+          <div class="card-body">
+            <div class="field-group w-full mb-4">
+              <label>{{ t('teacherProfile.currentPassword') }}</label>
               <Password
-                v-model="newPassword"
-                v-bind="newPasswordAttrs"
-                toggleMask
-                :feedback="true"
-                :invalid="!!errors.newPassword"
-                inputClass="w-full"
-                class="w-full"
-              />
-              <small v-if="errors.newPassword" class="field-error">{{ errors.newPassword }}</small>
-            </div>
-            <div class="field-group">
-              <label>{{ t('teacherProfile.confirmPassword') }}</label>
-              <Password
-                v-model="confirmNewPassword"
-                v-bind="confirmNewPasswordAttrs"
+                v-model="currentPassword"
+                v-bind="currentPasswordAttrs"
                 toggleMask
                 :feedback="false"
-                :invalid="!!errors.confirmNewPassword"
+                :invalid="!!errors.currentPassword"
                 inputClass="w-full"
                 class="w-full"
               />
-              <small v-if="errors.confirmNewPassword" class="field-error">{{ errors.confirmNewPassword }}</small>
+              <small v-if="errors.currentPassword" class="field-error">{{
+                errors.currentPassword
+              }}</small>
+            </div>
+
+            <div class="fields-grid-2 mb-4">
+              <div class="field-group">
+                <label>{{ t('teacherProfile.newPassword') }}</label>
+                <Password
+                  v-model="newPassword"
+                  v-bind="newPasswordAttrs"
+                  toggleMask
+                  :feedback="true"
+                  :invalid="!!errors.newPassword"
+                  inputClass="w-full"
+                  class="w-full"
+                />
+                <small v-if="errors.newPassword" class="field-error">{{
+                  errors.newPassword
+                }}</small>
+              </div>
+              <div class="field-group">
+                <label>{{ t('teacherProfile.confirmPassword') }}</label>
+                <Password
+                  v-model="confirmNewPassword"
+                  v-bind="confirmNewPasswordAttrs"
+                  toggleMask
+                  :feedback="false"
+                  :invalid="!!errors.confirmNewPassword"
+                  inputClass="w-full"
+                  class="w-full"
+                />
+                <small v-if="errors.confirmNewPassword" class="field-error">{{
+                  errors.confirmNewPassword
+                }}</small>
+              </div>
+            </div>
+
+            <div class="hint-box">
+              {{ t('teacherProfile.passwordHint') }}
             </div>
           </div>
-
-          <div class="hint-box">
-            {{ t('teacherProfile.passwordHint') }}
-          </div>
         </div>
-      </div>
 
-      <div class="actions-footer">
-        <Button
-          type="button"
-          :label="t('common.cancel')"
-          severity="secondary"
-          outlined
-          :disabled="isSaving || !hasChanges"
-          @click="resetSettingsForm"
-        />
-        <Button
-          type="submit"
-          :label="t('common.saveChanges')"
-          icon="pi pi-check"
-          severity="success"
-          :loading="isSaving"
-          :disabled="!hasChanges"
-        />
-      </div>
-    </form>
+        <div class="actions-footer">
+          <Button
+            type="button"
+            :label="t('common.cancel')"
+            severity="secondary"
+            outlined
+            :disabled="isSaving || !hasChanges"
+            @click="resetSettingsForm"
+          />
+          <Button
+            type="submit"
+            :label="t('common.saveChanges')"
+            icon="pi pi-check"
+            severity="success"
+            :loading="isSaving"
+            :disabled="!hasChanges"
+          />
+        </div>
+      </form>
+    </template>
   </div>
 </template>
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
 import { useCourseContentStore, type ElementType } from '@/entities/course-content'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
@@ -10,6 +11,10 @@ import { useNotifications } from '@/shared/model/useNotifications'
 
 import { CreateTopicModal } from '@/features/create-course-topic'
 import { CreateElementModal } from '@/features/create-course-element'
+
+const props = defineProps<{
+  courseId: string
+}>()
 
 const { t } = useI18n()
 const router = useRouter()
@@ -35,13 +40,17 @@ const openEditTopic = (topic: any) => {
   isTopicModalVisible.value = true
 }
 
-const handleTopicSave = (data: any) => {
-  if (data.id) {
-    contentStore.updateTopic(data.id, data)
-    notifications.showToast('success', t('common.success'), t('courseEditor.topicUpdated'))
-  } else {
-    contentStore.createTopic(data)
-    notifications.showToast('success', t('common.success'), t('courseEditor.topicCreated'))
+const handleTopicSave = async (data: any) => {
+  try {
+    if (data.id) {
+      await contentStore.updateTopic(data.id, { title: data.title })
+      notifications.showToast('success', t('common.success'), t('courseEditor.topicUpdated'))
+    } else {
+      await contentStore.createTopic({ title: data.title })
+      notifications.showToast('success', t('common.success'), t('courseEditor.topicCreated'))
+    }
+  } catch {
+    // Toast об ошибке показывает API-клиент
   }
 }
 
@@ -52,12 +61,11 @@ const openAddElement = (topicId: string) => {
 }
 
 const openEditElement = (topicId: string, element: any) => {
-  // ЕСЛИ ТИП КВИЗ - УВОДИМ НА СТРАНИЦУ
   if (element.type === 'quiz') {
     router.push({
       name: 'teacher-quiz-builder',
       params: { id: route.params.id as string },
-      query: { editId: element.id }
+      query: { editId: element.id, sectionItemId: element.id }
     })
     return
   }
@@ -67,21 +75,60 @@ const openEditElement = (topicId: string, element: any) => {
   isElementModalVisible.value = true
 }
 
-const handleElementSave = (data: any) => {
-  // Добавляем элемент в локальный стор (можешь добавить этот экшен в useCourseContentStore)
-  if (data.id) {
-    contentStore.updateElement(data.topicId, data.id, data)
-  } else {
-    contentStore.createElement(data)
+const handleElementSave = async (data: any) => {
+  try {
+    if (data.id) {
+      await contentStore.updateElement(data.topicId, data.id, data)
+      notifications.showToast('success', t('common.success'), t('courseEditor.materialUpdated'))
+    } else {
+      await contentStore.createElement(data)
+      notifications.showToast('success', t('common.success'), t('courseEditor.materialCreated'))
+    }
+  } catch {
+    // Toast об ошибке показывает API-клиент
   }
 }
 
-const handleGoToQuizBuilder = (topicId: string) => {
-  router.push({
-    name: 'teacher-quiz-builder',
-    params: { id: route.params.id as string },
-    query: { topicId }
-  })
+const handleDeleteTopic = async (topicId: string) => {
+  try {
+    await contentStore.deleteTopic(topicId)
+    notifications.showToast('success', t('common.success'), t('courseEditor.topicDeleted'))
+  } catch {
+    // Toast об ошибке показывает API-клиент
+  }
+}
+
+const handleDeleteElement = async (topicId: string, elementId: string) => {
+  try {
+    await contentStore.deleteElement(topicId, elementId)
+    notifications.showToast('success', t('common.success'), t('courseEditor.materialDeleted'))
+  } catch {
+    // Toast об ошибке показывает API-клиент
+  }
+}
+
+const handleGoToQuizBuilder = async (topicId: string) => {
+  try {
+    const sectionItemId = await contentStore.createElement({
+      topicId,
+      type: 'quiz',
+      title: t('teacherQuiz.newAssessment'),
+      meta: 'Draft'
+    })
+
+    router.push({
+      name: 'teacher-quiz-builder',
+      params: { id: route.params.id as string },
+      query: { topicId, sectionItemId: sectionItemId ?? undefined }
+    })
+  } catch {
+    // Toast об ошибке показывает API-клиент
+  }
+}
+
+const handleReloadContent = async () => {
+  await contentStore.loadCourseContent(props.courseId)
+  notifications.showToast('success', t('common.success'), t('courseEditor.contentReloaded'))
 }
 
 // Хелперы для рендера иконок и цветов в зависимости от типа элемента
@@ -147,8 +194,14 @@ const getElementConfig = (type: ElementType) => {
           </div>
         </div>
         <div class="toolbar-right">
-          <span class="last-saved">{{ t('courseEditor.lastSaved') }}</span>
-          <Button :label="t('common.save')" icon="pi pi-save" outlined severity="secondary" />
+          <Button
+            :label="t('common.refresh')"
+            icon="pi pi-refresh"
+            outlined
+            severity="secondary"
+            :loading="contentStore.isSaving"
+            @click="handleReloadContent"
+          />
         </div>
       </div>
 
@@ -180,7 +233,7 @@ const getElementConfig = (type: ElementType) => {
                 text
                 rounded
                 severity="danger"
-                @click.stop="contentStore.deleteTopic(topic.id)"
+                @click.stop="handleDeleteTopic(topic.id)"
                 :aria-label="t('courseEditor.deleteTopic')"
               />
               <i
@@ -235,7 +288,7 @@ const getElementConfig = (type: ElementType) => {
                   text
                   rounded
                   severity="danger"
-                  @click="contentStore.deleteElement(topic.id, element.id)"
+                  @click="handleDeleteElement(topic.id, element.id)"
                   :aria-label="t('courseEditor.deleteMaterial')"
                 />
               </div>

@@ -1,117 +1,214 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Topic, ContentElement } from './types'
+
+import * as courseApi from '@/entities/course/api'
+import { mapCourseWithItemsToTopics, mapUiElementTypeToApi } from '../lib/mappers'
+import type { ContentElement, ElementType, Topic } from './types'
+
+export interface CreateElementInput {
+  topicId: string
+  type: ElementType
+  title: string
+  meta?: string
+}
+
+export interface UpdateElementInput {
+  topicId: string
+  id: string
+  title: string
+  meta?: string
+  type?: ElementType
+}
 
 export const useCourseContentStore = defineStore('course-content', () => {
-  // Мок-данные строго по твоему макету
-  const topics = ref<Topic[]>([
-    {
-      id: 'topic-1',
-      title: 'Topic 1: Principles of Design',
-      meta: '3 items • 45 mins',
-      isExpanded: true,
-      elements: [
-        { id: 'el-1', type: 'video', title: '1.1 Contrast and Balance', meta: '10:00 mins' },
-        { id: 'el-2', type: 'file', title: '1.2 The History of Bauhaus', meta: '5 pages' },
-        { id: 'el-3', type: 'quiz', title: 'Unit 1 Assessment', meta: '15 questions • 50 pts' }
-      ]
-    },
-    {
-      id: 'topic-2',
-      title: 'Topic 2: Color Theory',
-      meta: '2 items • 25 mins',
-      isExpanded: true,
-      elements: [
-        { id: 'el-4', type: 'video', title: '2.1 Understanding Hex Codes', meta: '12:30 mins' },
-        { id: 'el-5', type: 'assignment', title: 'Create your palette', meta: 'Due: Oct 12' }
-      ]
-    }
-  ])
+  const courseId = ref<string | null>(null)
+  const topics = ref<Topic[]>([])
+  const isLoading = ref(false)
+  const isSaving = ref(false)
 
-  // --- Геттеры для правой панели (Content Summary) ---
   const totalTopics = computed(() => topics.value.length)
   const totalElements = computed(() =>
     topics.value.reduce((sum, topic) => sum + topic.elements.length, 0)
   )
 
-  // --- Экшены ---
+  const setTopics = (nextTopics: Topic[]) => {
+    topics.value = nextTopics
+  }
+
+  const loadCourseContent = async (nextCourseId: string) => {
+    courseId.value = nextCourseId
+    isLoading.value = true
+
+    try {
+      const response = await courseApi.fetchCourseWithItems(Number(nextCourseId))
+      topics.value = mapCourseWithItemsToTopics(response.sections ?? [])
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   const toggleTopic = (topicId: string) => {
-    const topic = topics.value.find((t) => t.id === topicId)
+    const topic = topics.value.find((item) => item.id === topicId)
     if (topic) {
       topic.isExpanded = !topic.isExpanded
     }
   }
 
-  const expandAll = () => topics.value.forEach((t) => (t.isExpanded = true))
-  const collapseAll = () => topics.value.forEach((t) => (t.isExpanded = false))
+  const expandAll = () => topics.value.forEach((topic) => (topic.isExpanded = true))
+  const collapseAll = () => topics.value.forEach((topic) => (topic.isExpanded = false))
 
-  const createTopic = (data: { title: string; meta?: string }) => {
-    const newTopic: Topic = {
-      id: `topic-${Date.now()}`,
-      title: data.title,
-      meta: data.meta || '0 items • 0 mins',
-      elements: [],
-      isExpanded: true
+  const createTopic = async (data: { title: string }) => {
+    if (!courseId.value) {
+      throw new Error('Course id is not set')
     }
-    topics.value.push(newTopic)
-  }
 
-  const updateTopic = (id: string, data: { title: string; meta: string }) => {
-    const topic = topics.value.find((t) => t.id === id)
-    if (topic) {
-      topic.title = data.title
-      topic.meta = data.meta
-    }
-  }
-
-  const deleteTopic = (id: string) => {
-    topics.value = topics.value.filter((t) => t.id !== id)
-  }
-
-  const createElement = (data: any) => {
-    const topic = topics.value.find((t) => t.id === data.topicId)
-    if (topic) {
-      topic.elements.push({
-        id: `el-${Date.now()}`,
-        type: data.type,
+    isSaving.value = true
+    try {
+      const dto = await courseApi.createCourseSection({
+        courseId: Number(courseId.value),
         title: data.title,
-        meta: data.meta
+        sortOrder: topics.value.length
       })
+
+      topics.value.push({
+        id: String(dto.id),
+        title: dto.title,
+        meta: '0 items',
+        elements: [],
+        isExpanded: true,
+        sortOrder: dto.sortOrder
+      })
+    } finally {
+      isSaving.value = false
     }
   }
 
-  const updateElement = (topicId: string, elementId: string, data: ContentElement) => {
-    const topic = topics.value.find((t) => t.id === topicId)
-    if (topic) {
-      const elIndex = topic.elements.findIndex((e) => e.id === elementId)
-      if (elIndex > -1) {
-        topic.elements[elIndex] = { ...topic.elements[elIndex], ...data }
+  const updateTopic = async (id: string, data: { title: string }) => {
+    isSaving.value = true
+    try {
+      const dto = await courseApi.updateCourseSection(Number(id), {
+        title: data.title
+      })
+
+      const topic = topics.value.find((item) => item.id === id)
+      if (topic) {
+        topic.title = dto.title
       }
+    } finally {
+      isSaving.value = false
     }
   }
 
-  const deleteElement = (topicId: string, elementId: string) => {
-    const topic = topics.value.find((t) => t.id === topicId)
-    if (topic) {
-      topic.elements = topic.elements.filter((e) => e.id !== elementId)
+  const deleteTopic = async (id: string) => {
+    isSaving.value = true
+    try {
+      await courseApi.deleteCourseSection(Number(id))
+      topics.value = topics.value.filter((topic) => topic.id !== id)
+    } finally {
+      isSaving.value = false
     }
+  }
+
+  const createElement = async (data: CreateElementInput) => {
+    const topic = topics.value.find((item) => item.id === data.topicId)
+    if (!topic) {
+      throw new Error('Topic not found')
+    }
+
+    isSaving.value = true
+    try {
+      const dto = await courseApi.createCourseSectionItem({
+        sectionId: Number(data.topicId),
+        title: data.title,
+        itemType: mapUiElementTypeToApi(data.type),
+        sortOrder: topic.elements.length,
+        isPublished: false
+      })
+
+      if (data.type === 'assignment') {
+        await courseApi.createAssignment({
+          itemId: dto.id,
+          description: data.meta
+        })
+      }
+
+      topic.elements.push({
+        id: String(dto.id),
+        type: data.type,
+        title: dto.title,
+        meta: data.meta || 'Draft',
+        itemId: dto.itemId,
+        isPublished: dto.isPublished ?? false,
+        sortOrder: dto.sortOrder
+      })
+      topic.meta = `${topic.elements.length} items`
+
+      return String(dto.id)
+    } finally {
+      isSaving.value = false
+    }
+  }
+
+  const updateElement = async (topicId: string, elementId: string, data: UpdateElementInput) => {
+    isSaving.value = true
+    try {
+      const dto = await courseApi.updateCourseSectionItem(Number(elementId), {
+        title: data.title,
+        itemType: data.type ? mapUiElementTypeToApi(data.type) : undefined
+      })
+
+      const topic = topics.value.find((item) => item.id === topicId)
+      const element = topic?.elements.find((item) => item.id === elementId)
+      if (element) {
+        element.title = dto.title
+        element.meta = data.meta || element.meta
+        if (data.type) {
+          element.type = data.type
+        }
+      }
+    } finally {
+      isSaving.value = false
+    }
+  }
+
+  const deleteElement = async (topicId: string, elementId: string) => {
+    isSaving.value = true
+    try {
+      await courseApi.deleteCourseSectionItem(Number(elementId))
+
+      const topic = topics.value.find((item) => item.id === topicId)
+      if (topic) {
+        topic.elements = topic.elements.filter((element) => element.id !== elementId)
+        topic.meta = `${topic.elements.length} items`
+      }
+    } finally {
+      isSaving.value = false
+    }
+  }
+
+  const reset = () => {
+    courseId.value = null
+    topics.value = []
   }
 
   return {
+    courseId,
     topics,
+    isLoading,
+    isSaving,
     totalTopics,
     totalElements,
+    loadCourseContent,
     toggleTopic,
     expandAll,
     collapseAll,
     createTopic,
     updateTopic,
     deleteTopic,
-    /** Создание элемента топика */
     createElement,
-    /** Обновление элемента топика */
     updateElement,
-    /** Удаление элемента топика */
-    deleteElement
+    deleteElement,
+    reset,
+    setTopics
   }
 })

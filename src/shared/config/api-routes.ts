@@ -7,9 +7,9 @@
  */
 export const API_GATEWAY = '/api'
 
-export const USERS_API_PREFIX = `${API_GATEWAY}/users/v1`
+export const USERS_API_PREFIX = `${API_GATEWAY}/us/api/v1`
 export const COURSE_API_PREFIX = `${API_GATEWAY}/course/cs/v1`
-export const FILES_API_PREFIX = `${API_GATEWAY}/files/v1`
+export const FILES_API_PREFIX = `${API_GATEWAY}/fs/api/v1`
 
 const withLeadingSlash = (path: string): string => (path.startsWith('/') ? path : `/${path}`)
 

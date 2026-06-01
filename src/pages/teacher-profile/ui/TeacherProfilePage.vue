@@ -96,13 +96,9 @@ const handleNotFound = () => {
           :department-options="departmentOptions"
         />
 
-        <TeacherRolesPermissions
-          :profile="profileDraft"
-          @update:groups="profileDraft.groups = $event"
-          @update:permissions="profileDraft.permissions = $event"
-        />
+        <TeacherRolesPermissions :teacher-id="userId" />
         <TeacherAssignedCourses :profile="profileDraft" />
-        <SecuritySettingsCard v-model="profileDraft" mode="manage" />
+        <SecuritySettingsCard v-model="profileDraft" mode="manage" :show-mfa="false" />
 
         <div class="form-actions">
           <Button

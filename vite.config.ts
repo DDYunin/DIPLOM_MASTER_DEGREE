@@ -12,20 +12,20 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api/users': {
+      '/api/us': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/users/, '/api')
+        rewrite: (path) => path.replace(/^\/api\/us/, '/us')
       },
       '/api/course': {
         target: 'http://localhost:10001',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/course/, '')
       },
-      '/api/files': {
+      '/api/fs': {
         target: 'http://localhost:8087',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/files/, '')
+        rewrite: (path) => path.replace(/^\/api\/fs/, '/fs')
       }
     }
   }

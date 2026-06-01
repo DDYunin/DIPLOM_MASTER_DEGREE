@@ -1,11 +1,16 @@
+const DEFAULT_FETCH_OPTIONS: RequestInit = {
+  credentials: 'include'
+}
+
 export const baseFetch = async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
   const headers = new Headers(options.headers)
 
-  if (!headers.has('Content-Type')) {
+  if (!headers.has('Content-Type') && options.body) {
     headers.set('Content-Type', 'application/json')
   }
 
   const response = await fetch(endpoint, {
+    ...DEFAULT_FETCH_OPTIONS,
     ...options,
     headers
   })

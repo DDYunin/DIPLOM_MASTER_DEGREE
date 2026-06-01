@@ -1,81 +1,161 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useMutation } from '@tanstack/vue-query'
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import IconField from 'primevue/iconfield'
-import InputIcon from 'primevue/inputicon'
-import Tree from 'primevue/tree'
+import Select from 'primevue/select'
+import Message from 'primevue/message'
 
-// Мок-данные для дерева иерархии (в реальном приложении придут с бэкенда)
-import { rawTreeData } from '../api/mock'
+import { organizationApi } from '@/entities/organization'
+import { grantTeacherGroupAccess, type TeacherScopeType } from '@/entities/teacher-access'
+import { useNotifications } from '@/shared/model'
 
-const { t } = useI18n()
-
-const emit = defineEmits<{
-  (e: 'add', groups: string[]): void
+const props = defineProps<{
+  teacherId: string
 }>()
 
+const emit = defineEmits<{
+  granted: []
+}>()
+
+const { t } = useI18n()
+const notifications = useNotifications()
+
 const isVisible = ref(false)
-const searchQuery = ref('')
-const selectedKeys = ref<Record<string, any>>({})
+const scopeType = ref<TeacherScopeType | null>(null)
+const facultyId = ref<number | null>(null)
+const fieldOfStudyId = ref<number | null>(null)
+const studentGroupId = ref<number | null>(null)
 
-// Плоский справочник для быстрого поиска узлов по их key
-const flatNodeMap: Record<string, any> = {}
-const buildFlatMap = (nodes: any[]) => {
-  nodes.forEach((node) => {
-    flatNodeMap[node.key] = node
-    if (node.children) buildFlatMap(node.children)
-  })
+const faculties = ref<{ id: number; name: string }[]>([])
+const fieldsOfStudy = ref<{ id: number; name: string }[]>([])
+const studentGroups = ref<{ id: number; name: string }[]>([])
+
+const isLoadingFaculties = ref(false)
+const isLoadingFields = ref(false)
+const isLoadingGroups = ref(false)
+const loadError = ref<string | null>(null)
+
+const scopeTypeOptions = computed(() => [
+  { label: t('addPermission.scopeTypes.faculty'), value: 'FACULTY' as const },
+  { label: t('addPermission.scopeTypes.fieldOfStudy'), value: 'FIELD_OF_STUDY' as const },
+  { label: t('addPermission.scopeTypes.studentGroup'), value: 'STUDENT_GROUP' as const }
+])
+
+const showFacultySelect = computed(() => scopeType.value !== null)
+const showFieldSelect = computed(
+  () => scopeType.value === 'FIELD_OF_STUDY' || scopeType.value === 'STUDENT_GROUP'
+)
+const showGroupSelect = computed(() => scopeType.value === 'STUDENT_GROUP')
+
+const scopeId = computed<number | null>(() => {
+  if (scopeType.value === 'FACULTY') return facultyId.value
+  if (scopeType.value === 'FIELD_OF_STUDY') return fieldOfStudyId.value
+  if (scopeType.value === 'STUDENT_GROUP') return studentGroupId.value
+  return null
+})
+
+const canSubmit = computed(() => scopeType.value !== null && scopeId.value !== null)
+
+const resetForm = () => {
+  scopeType.value = null
+  facultyId.value = null
+  fieldOfStudyId.value = null
+  studentGroupId.value = null
+  fieldsOfStudy.value = []
+  studentGroups.value = []
+  loadError.value = null
 }
-buildFlatMap(rawTreeData)
 
-// Рекурсивный фильтр для поиска
-const filteredTreeData = computed(() => {
-  if (!searchQuery.value) return rawTreeData
-  const lowerQuery = searchQuery.value.toLowerCase()
-
-  const filterNodes = (nodes: any[]): any[] => {
-    return nodes.reduce((acc, node) => {
-      const isMatch = node.label.toLowerCase().includes(lowerQuery)
-      const filteredChildren = node.children ? filterNodes(node.children) : []
-
-      if (isMatch || filteredChildren.length > 0) {
-        acc.push({
-          ...node,
-          children: filteredChildren.length > 0 ? filteredChildren : node.children
-        })
-      }
-      return acc
-    }, [])
+const loadFaculties = async () => {
+  isLoadingFaculties.value = true
+  loadError.value = null
+  try {
+    const response = await organizationApi.fetchFacultiesList()
+    faculties.value = response.items
+  } catch {
+    loadError.value = t('addPermission.loadError')
+  } finally {
+    isLoadingFaculties.value = false
   }
-  return filterNodes(rawTreeData)
+}
+
+const loadFieldsOfStudy = async (selectedFacultyId: number) => {
+  isLoadingFields.value = true
+  loadError.value = null
+  try {
+    const response = await organizationApi.fetchFieldsOfStudyByFaculty(selectedFacultyId)
+    fieldsOfStudy.value = response.items
+  } catch {
+    loadError.value = t('addPermission.loadError')
+  } finally {
+    isLoadingFields.value = false
+  }
+}
+
+const loadStudentGroups = async (selectedFieldId: number) => {
+  isLoadingGroups.value = true
+  loadError.value = null
+  try {
+    const response = await organizationApi.fetchStudentGroupsByFieldOfStudy(selectedFieldId)
+    studentGroups.value = response.items
+  } catch {
+    loadError.value = t('addPermission.loadError')
+  } finally {
+    isLoadingGroups.value = false
+  }
+}
+
+watch(scopeType, () => {
+  facultyId.value = null
+  fieldOfStudyId.value = null
+  studentGroupId.value = null
+  fieldsOfStudy.value = []
+  studentGroups.value = []
 })
 
-// Вычисляем количество выбранных ИМЕННО КОНЕЧНЫХ ГРУПП (не считая родительские папки)
-const selectedGroupsCount = computed(() => {
-  return Object.entries(selectedKeys.value).filter(([key, val]) => {
-    return val.checked && flatNodeMap[key]?.data?.type === 'group'
-  }).length
+watch(facultyId, (value) => {
+  fieldOfStudyId.value = null
+  studentGroupId.value = null
+  studentGroups.value = []
+  if (value && showFieldSelect.value) {
+    loadFieldsOfStudy(value)
+  }
 })
 
-const openModal = () => {
-  searchQuery.value = ''
-  selectedKeys.value = {}
+watch(fieldOfStudyId, (value) => {
+  studentGroupId.value = null
+  if (value && showGroupSelect.value) {
+    loadStudentGroups(value)
+  }
+})
+
+const grantMutation = useMutation({
+  mutationFn: () =>
+    grantTeacherGroupAccess(props.teacherId, {
+      scopeType: scopeType.value!,
+      scopeId: scopeId.value!
+    }),
+  onSuccess: () => {
+    notifications.showToast('success', t('common.success'), t('addPermission.grantSuccess'))
+    isVisible.value = false
+    resetForm()
+    emit('granted')
+  }
+})
+
+const openModal = async () => {
+  resetForm()
   isVisible.value = true
+  if (faculties.value.length === 0) {
+    await loadFaculties()
+  }
 }
 
 const handleSave = () => {
-  // Собираем названия выбранных групп
-  const newGroups = Object.entries(selectedKeys.value)
-    .filter(([key, val]) => val.checked && flatNodeMap[key]?.data?.type === 'group')
-    .map(([key]) => flatNodeMap[key].label)
-
-  if (newGroups.length > 0) {
-    emit('add', newGroups)
-  }
-  isVisible.value = false
+  if (!canSubmit.value || grantMutation.isPending.value) return
+  grantMutation.mutate()
 }
 </script>
 
@@ -87,11 +167,11 @@ const handleSave = () => {
     class="add-btn"
     @click="openModal"
   />
-  <!-- TODO: лишнее дерево, поменять на другой вариант -->
+
   <Dialog
     v-model:visible="isVisible"
     modal
-    :style="{ width: '600px' }"
+    :style="{ width: '520px' }"
     class="permission-dialog"
     :pt="{
       header: { class: 'dialog-header' },
@@ -105,56 +185,76 @@ const handleSave = () => {
       </div>
     </template>
 
-    <div class="search-container">
-      <IconField iconPosition="left">
-        <InputIcon class="pi pi-search search-icon" />
-        <InputText
-          v-model="searchQuery"
-          :placeholder="t('addPermission.searchPlaceholder')"
-          class="search-input"
+    <Message v-if="loadError" severity="error" :closable="false" class="load-error">
+      {{ loadError }}
+    </Message>
+
+    <div class="form-fields">
+      <div class="form-field">
+        <label>{{ t('addPermission.scopeType') }}</label>
+        <Select
+          v-model="scopeType"
+          :options="scopeTypeOptions"
+          optionLabel="label"
+          optionValue="value"
+          :placeholder="t('addPermission.scopeTypePlaceholder')"
+          class="w-full"
         />
-      </IconField>
-    </div>
+      </div>
 
-    <div class="tree-container">
-      <Tree
-        :value="filteredTreeData"
-        selectionMode="checkbox"
-        v-model:selectionKeys="selectedKeys"
-        class="custom-tree"
-        :expandedKeys="{ 'uni-1': true, 'inst-1': true, 'dept-1': true }"
-      >
-        <template #default="slotProps">
-          <div class="custom-node">
-            <div class="node-left">
-              <i :class="slotProps.node.data.icon" class="node-icon"></i>
-              <span class="node-label">{{ slotProps.node.label }}</span>
-            </div>
+      <div v-if="showFacultySelect" class="form-field">
+        <label>{{ t('addPermission.faculty') }}</label>
+        <Select
+          v-model="facultyId"
+          :options="faculties"
+          optionLabel="name"
+          optionValue="id"
+          :placeholder="t('addPermission.facultyPlaceholder')"
+          :loading="isLoadingFaculties"
+          class="w-full"
+        />
+      </div>
 
-            <!-- Показываем бейджик "Selected" только для полностью выбранных узлов -->
-            <div v-if="selectedKeys[slotProps.node.key]?.checked" class="selected-badge">
-              <i class="pi pi-check badge-icon"></i>
-              {{ t('common.selected', { count: 1 }) }}
-            </div>
-          </div>
-        </template>
-      </Tree>
+      <div v-if="showFieldSelect" class="form-field">
+        <label>{{ t('addPermission.fieldOfStudy') }}</label>
+        <Select
+          v-model="fieldOfStudyId"
+          :options="fieldsOfStudy"
+          optionLabel="name"
+          optionValue="id"
+          :placeholder="t('addPermission.fieldOfStudyPlaceholder')"
+          :loading="isLoadingFields"
+          :disabled="!facultyId"
+          class="w-full"
+        />
+      </div>
+
+      <div v-if="showGroupSelect" class="form-field">
+        <label>{{ t('addPermission.studentGroup') }}</label>
+        <Select
+          v-model="studentGroupId"
+          :options="studentGroups"
+          optionLabel="name"
+          optionValue="id"
+          :placeholder="t('addPermission.studentGroupPlaceholder')"
+          :loading="isLoadingGroups"
+          :disabled="!fieldOfStudyId"
+          class="w-full"
+        />
+      </div>
     </div>
 
     <template #footer>
-      <div class="footer-container">
-        <span class="selected-count">{{
-          t('addPermission.selectedCount', { count: selectedGroupsCount })
-        }}</span>
-        <div class="footer-actions">
-          <Button :label="t('common.cancel')" text class="cancel-btn" @click="isVisible = false" />
-          <Button
-            :label="t('addPermission.addSelected')"
-            class="save-btn"
-            icon="pi pi-check"
-            @click="handleSave"
-          />
-        </div>
+      <div class="footer-actions">
+        <Button :label="t('common.cancel')" text class="cancel-btn" @click="isVisible = false" />
+        <Button
+          :label="t('addPermission.addSelected')"
+          class="save-btn"
+          icon="pi pi-check"
+          :loading="grantMutation.isPending.value"
+          :disabled="!canSubmit"
+          @click="handleSave"
+        />
       </div>
     </template>
   </Dialog>
@@ -169,120 +269,67 @@ const handleSave = () => {
   padding: 0.5rem 1rem;
 }
 
-/* Кастомизация шапки модального окна */
 .header-container {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
+
 .dialog-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-color);
 }
+
 .dialog-subtitle {
   margin: 0;
   font-size: 0.875rem;
   color: var(--text-color-secondary);
 }
 
-.search-container {
-  margin-bottom: 1.5rem;
+.load-error {
+  margin-bottom: 1rem;
+}
+
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
   margin-top: 0.5rem;
 }
-.search-input {
-  width: 100%;
-  border-radius: 8px;
-  border-color: var(--surface-border);
-}
-.search-icon {
-  color: var(--text-color-placeholder);
-}
 
-/* Кастомизация Tree */
-.tree-container {
-  height: 350px;
-  overflow-y: auto;
-  border: 1px solid var(--surface-border-subtle);
-  border-radius: 8px;
-  padding: 0.5rem;
-}
-
-.custom-tree {
-  border: none;
-  padding: 0;
-}
-
-/* "Пробиваем" стили PrimeVue для растягивания узла на всю ширину */
-:deep(.p-tree-node-content) {
-  border-radius: 8px;
-  padding: 0.5rem;
-  transition: background-color 0.2s;
-}
-:deep(.p-tree-node-label) {
-  width: 100%;
-}
-
-.custom-node {
+.form-field {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.node-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.node-icon {
-  color: var(--text-color-secondary);
-  font-size: 1.1rem;
-}
-.node-label {
-  font-size: 0.875rem;
-  color: var(--text-color-emphasis);
-  font-weight: 500;
-}
-
-.selected-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  background: var(--color-primary-subtle);
-  color: var(--color-primary);
+.form-field label {
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-}
-.badge-icon {
-  font-size: 0.7rem;
-  font-weight: bold;
+  color: var(--text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* Кастомизация Футера */
-.footer-container {
+.w-full {
+  width: 100%;
+}
+
+.footer-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
   width: 100%;
   padding-top: 1rem;
   border-top: 1px solid var(--surface-border-subtle);
 }
-.selected-count {
-  font-size: 0.875rem;
-  color: var(--text-color-secondary);
-  font-weight: 500;
-}
-.footer-actions {
-  display: flex;
-  gap: 0.75rem;
-}
+
 .cancel-btn {
   color: var(--text-color-muted);
 }
+
 .save-btn {
   background: var(--color-primary-strong);
   border: none;
