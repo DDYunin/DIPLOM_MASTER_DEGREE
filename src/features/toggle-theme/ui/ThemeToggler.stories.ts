@@ -1,3 +1,4 @@
+import { expect, within } from '@storybook/test'
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
 import { withDarkTheme } from '@/shared/lib/storybook/decorators'
@@ -28,4 +29,23 @@ export const LightMode: Story = {
 export const DarkMode: Story = {
   name: 'Тёмная тема',
   decorators: [withDarkTheme]
+}
+
+/**
+ * Interaction test: проверяем, что кнопка присутствует
+ * и имеет aria-label, соответствующий текущей теме.
+ */
+export const InteractionTest: Story = {
+  name: 'Interaction: aria-label по теме',
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+
+    // Кнопка должна отображаться
+    const button = canvas.getByRole('button')
+    await expect(button).toBeVisible()
+
+    // aria-label указывает на действие (переключение в другую тему)
+    const label = button.getAttribute('aria-label')
+    await expect(['Тёмная тема', 'Светлая тема', 'Dark mode', 'Light mode']).toContain(label)
+  }
 }

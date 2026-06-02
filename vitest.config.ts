@@ -25,7 +25,29 @@ export default mergeConfig(
             setupFiles: ['./src/test/setup.ts'],
             include: ['src/**/*.{spec,test}.{ts,tsx}'],
             clearMocks: true,
-            restoreMocks: true
+            restoreMocks: true,
+            coverage: {
+              provider: 'v8',
+              reporter: ['text', 'html', 'json-summary'],
+              reportsDirectory: './coverage',
+              include: ['src/**/*.{ts,vue}'],
+              exclude: [
+                'src/**/*.stories.{ts,tsx}',
+                'src/**/*.spec.{ts,tsx}',
+                'src/**/*.test.{ts,tsx}',
+                'src/test/**',
+                'src/main.ts',
+                'src/app/App.vue',
+                'src/**/index.ts',
+                'src/**/*.d.ts'
+              ],
+              thresholds: {
+                lines: 30,
+                functions: 30,
+                branches: 30,
+                statements: 30
+              }
+            }
           }
         },
         {

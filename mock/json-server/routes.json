@@ -1,0 +1,18 @@
+{
+  "/api/us/api/v1/admin/users": "/adminUsers",
+  "/api/us/api/v1/admin/users/:id": "/adminUsers/:id",
+  "/api/us/api/v1/hierarchy/faculties": "/faculties",
+  "/api/us/api/v1/hierarchy/faculties/:id": "/faculties/:id",
+  "/api/us/api/v1/hierarchy/departments": "/departments",
+  "/api/us/api/v1/hierarchy/departments/:id": "/departments/:id",
+  "/api/us/api/v1/hierarchy/fields-of-study": "/fieldsOfStudy",
+  "/api/us/api/v1/hierarchy/fields-of-study/:id": "/fieldsOfStudy/:id",
+  "/api/us/api/v1/hierarchy/student-groups": "/studentGroups",
+  "/api/us/api/v1/hierarchy/student-groups/:id": "/studentGroups/:id",
+  "/api/course/cs/v1/courses": "/courses",
+  "/api/course/cs/v1/courses/:id": "/courses/:id",
+  "/api/course/cs/v1/student/courses": "/studentCourses",
+  "/api/course/cs/v1/student/courses/:id": "/studentCourses/:id",
+  "/api/course/cs/v1/banks": "/questionBanks",
+  "/api/course/cs/v1/banks/:id": "/questionBanks/:id"
+}

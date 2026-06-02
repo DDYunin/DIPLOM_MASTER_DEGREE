@@ -10,7 +10,7 @@ const meta: Meta<typeof LanguageSwitcher> = {
     docs: {
       description: {
         component:
-          'Переключатель локали. Синхронизирует vue-i18n и локаль компонентов PrimeVue.'
+          'Переключатель локали. Синхронизирует vue-i18n и локаль компонентов PrimeVue. Выбор сохраняется в localStorage.'
       }
     }
   }
@@ -20,5 +20,5 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  name: 'По умолчанию'
+  name: 'По умолчанию (EN)'
 }

@@ -1,0 +1,60 @@
+{
+  "adminUsers": [
+    {
+      "id": "user-1",
+      "username": "ivanov",
+      "email": "ivanov@university.edu",
+      "firstName": "Иван",
+      "lastName": "Иванов",
+      "middleName": "Иванович",
+      "active": true,
+      "roles": ["ROLE_STUDENT"],
+      "department": "Кафедра информатики"
+    },
+    {
+      "id": "user-2",
+      "username": "petrova",
+      "email": "petrova@university.edu",
+      "firstName": "Анна",
+      "lastName": "Петрова",
+      "active": true,
+      "roles": ["ROLE_TEACHER"],
+      "department": "Кафедра программной инженерии"
+    }
+  ],
+  "faculties": [
+    { "id": 1, "name": "Institute of Engineering", "shortName": "ENG" },
+    { "id": 2, "name": "Institute of Arts & Design", "shortName": "ART" },
+    { "id": 3, "name": "Business School", "shortName": "BUS" }
+  ],
+  "departments": [
+    { "id": 10, "name": "Software Engineering", "facultyId": 1 },
+    { "id": 11, "name": "Computer Science", "facultyId": 1 }
+  ],
+  "fieldsOfStudy": [{ "id": 20, "code": "09.03.01", "name": "Informatics", "facultyId": 1 }],
+  "studentGroups": [{ "id": 30, "name": "IVT-401", "facultyId": 1, "fieldOfStudyId": 20 }],
+  "courses": [
+    {
+      "id": "course-1",
+      "code": "MATH-101",
+      "title": "Advanced Calculus",
+      "description": "Limits, derivatives, integrals.",
+      "status": "Active",
+      "term": "Fall 2026",
+      "studentsCount": 45,
+      "nextDueLabel": "Midterm",
+      "nextDueDate": "Oct 24"
+    }
+  ],
+  "studentCourses": [
+    {
+      "id": "student-course-1",
+      "code": "WEB-301",
+      "title": "Modern Web Development",
+      "category": "Computer Science",
+      "status": "Active",
+      "instructors": [{ "id": "t-1", "name": "Dr. Anna Petrova" }]
+    }
+  ],
+  "questionBanks": [{ "id": "bank-1", "title": "Midterm questions", "questionsCount": 24 }]
+}

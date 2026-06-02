@@ -19,7 +19,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  name: 'С заголовком и контентом',
+  name: 'С заголовком и иконкой',
   args: {
     title: 'Assigned Courses',
     subtitle: 'Courses you are teaching this semester',
@@ -32,7 +32,7 @@ export const Default: Story = {
     template: `
       <WidgetCard v-bind="args">
         <p style="margin: 0; color: var(--text-color-muted); font-size: 0.875rem;">
-          Здесь может быть таблица, список или любой другой контент виджета.
+          Здесь размещается контент виджета: таблица, список или форма.
         </p>
       </WidgetCard>
     `
@@ -40,7 +40,7 @@ export const Default: Story = {
 }
 
 export const WithHeaderActions: Story = {
-  name: 'С действиями в шапке',
+  name: 'С кнопкой в шапке',
   args: {
     title: 'Permissions',
     icon: 'pi-shield',
@@ -52,10 +52,10 @@ export const WithHeaderActions: Story = {
     template: `
       <WidgetCard v-bind="args">
         <template #header-actions>
-          <Button label="Add permission" icon="pi pi-plus" size="small" />
+          <Button label="Add" icon="pi pi-plus" size="small" />
         </template>
         <p style="margin: 0; color: var(--text-color-secondary); font-size: 0.875rem;">
-          Список прав доступа преподавателя.
+          Список прав доступа.
         </p>
       </WidgetCard>
     `
@@ -63,7 +63,7 @@ export const WithHeaderActions: Story = {
 }
 
 export const Minimal: Story = {
-  name: 'Только контент',
+  name: 'Только контент (без шапки)',
   render: () => ({
     components: { WidgetCard },
     template: `

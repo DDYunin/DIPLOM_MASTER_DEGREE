@@ -40,7 +40,7 @@ export const Default: Story = {
 }
 
 export const WithFooter: Story = {
-  name: 'С футером',
+  name: 'С кнопками в футере',
   render: (args) => ({
     components: { SettingsCard, Button, InputText },
     setup: () => ({ args }),

@@ -15,9 +15,14 @@
     "format": "prettier --write --experimental-cli src/",
     "test": "vitest --project=unit",
     "test:run": "vitest run --project=unit",
+    "test:coverage": "vitest run --project=unit --coverage",
     "test:storybook": "vitest --project=storybook",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "mock:server": "node mock/json-server/server.cjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
@@ -38,6 +43,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",
+    "@playwright/test": "^1.60.0",
     "@storybook/addon-a11y": "^10.4.1",
     "@storybook/addon-docs": "^10.4.1",
     "@storybook/addon-onboarding": "^10.4.1",
@@ -57,7 +63,10 @@
     "eslint-plugin-storybook": "^10.4.1",
     "eslint-plugin-vue": "~10.8.0",
     "happy-dom": "^20.0.10",
+    "husky": "^9.1.7",
     "jiti": "^2.6.1",
+    "json-server": "^0.17.4",
+    "lint-staged": "^17.0.7",
     "npm-run-all2": "^8.0.4",
     "oxlint": "~1.50.0",
     "playwright": "^1.60.0",
@@ -71,5 +80,15 @@
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
+  },
+  "lint-staged": {
+    "*.{vue,ts,tsx,mts}": [
+      "oxlint --fix",
+      "eslint --fix --cache",
+      "prettier --write --experimental-cli"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write --experimental-cli"
+    ]
   }
 }
