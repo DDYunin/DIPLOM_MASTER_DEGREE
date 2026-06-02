@@ -1,6 +1,5 @@
 import type { Decorator } from '@storybook/vue3-vite'
 
-/** Фон и отступы как на страницах приложения (светлая тема). */
 export const withAppSurface: Decorator = () => ({
   template: `
     <div
